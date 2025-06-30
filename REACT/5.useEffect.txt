@@ -1,0 +1,149 @@
+useEffect :
+useEffect(callback, dependencyArray)
+Example :
+useEffect(()=>{}, [])
+
+dependencyArray :
+a] No dependencyArray : It will get executed after every render.
+b] Empty dependencyArray : It will execute only after the initial render.
+                           First component will render and then callback will get executed.
+c] dependencyArray with dependencies : It will execute callback function everytime after the dependency value changes.
+                                       Here dependency refers to state variable.
+-----------------------
+Note : Callback function of useEffect should be just normal function but it can not be async function but however if we want async function then we can create it inside the callback function and call it inside callback itself.
+* useEffect can return only destroy function, it can't return anything apart from that like string or number, it can only return a destroy function and nothing else.
+Important :
+To perform clean-up task once the component gets removed from the DOM we can do it inside the function which gets returned by useEffect callback function.
+Example :
+  useEffect(() => {
+    let count = 0;
+    const id = setInterval(() => {
+      count += 1;
+    }, 1000);
+    
+    // Clean up function
+    return () => {
+      console.log("Clean up ");
+      clearInterval(id);
+    };
+  }, []);
+
+Note : cleanup function runs 
+       1] Before the effect re-runs due to a change in dependencies
+       2] Before the component unmounts
+
+-----------------
+Shimmer UI :
+Showing the fake similar page till the data gets loaded.
+new Array(10).fill(null).map(()=><Card/>)
+------------
+Conditional Rendering :
+Example :
+
+const App = () =>{
+    const [data, setData] = useState([])
+    useEffect(()=>{ setData([......API CALL])},[])
+    return data.length == 0: <Shimmer/> ? (
+        <div>
+          <h1>......</h1>
+        </div>
+    )
+}
+
+============================
+
+Best Practiice:
+import React, { useEffect, useState } from 'react';
+
+const App = () => {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  const [isFetching, setIsFetching] = useState(false);
+
+  useEffect(() => {
+    // Define the async function
+    const fetchData = async () => {
+      
+      try {
+        setIsFetching(true)
+        const response = await fetch('https://api.example.com/data');
+        
+        // Check if the response is successful
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        setData(result);
+      } catch (error) {
+        setError(error.message);
+      } finally{
+      setIsFetching(false)
+      }
+    };
+
+    // Call the async function
+    fetchData();
+  }, []);
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  return (
+    <div>
+      {data ? <pre>{JSON.stringify(data, null, 2)}</pre> : 'Loading...'}
+    </div>
+  );
+};
+
+export default App;
+=========================
+Note :
+1] Using Fetch() :
+When we fetch data using the Fetch API in JavaScript, the initial response is a Response object, not the actual data we often want to work with. This Response object represents the entire HTTP response, including headers and the body.
+After fetching the data from API use .json(),.text(),.blob() to parse and get the actual response data.
+2] Using Axios()
+It will  automatically parses the response as JSON if the response content type is JSON. This means we don't need to call a method like .json() to parse the response.
+we just need to fetch by using .data (Example : const res = await axios.get(""); const data = res.data;)
+=========================
+To bypass CORS 
+append https://corsproxy.io/? infront of our api URL
+Example : https://corsproxy.io/?https://example.com/api/data
+Read more on corsproxy.io 
+=========================
+Creating custom hook to handle Fetching data inside useEffect
+useFetchData.js(custom-hook)
+import { useEffect, useState } from "react";
+
+const useFetchData = (url) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const [isError, setIsError] = useState(false);
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      setIsError(false);
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        await delay(2000);
+        setData(data);
+      } catch (error) {
+        setIsError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [url]);
+  return { isLoading, data, isError };
+};
+
+const delay = (duration) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, duration);
+  });
+};
+export default useFetchData;
+

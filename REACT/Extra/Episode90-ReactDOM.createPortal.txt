@@ -1,0 +1,25 @@
+ReactDOM.createPortal
+
+ReactDOM.createPortal is a feature in React that allows you to render a component or element outside its parent component's DOM hierarchy.
+This is useful for certain UI elements, such as modals.
+
+ReactDOM.createPortal(child, container)
+
+Example :
+Modal.jsx
+const Modal = () => {
+  return ReactDOM.createPortal(
+    <div>
+      <h1>Modal</h1>
+    </div>,
+    document.getElementById("modal-root")
+  );
+};
+
+index.html
+<body>
+  <div id="root"></div>
+  <div id="modal-root"></div>
+</body>
+
+

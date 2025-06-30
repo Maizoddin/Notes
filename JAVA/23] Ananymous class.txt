@@ -1,0 +1,43 @@
+Anonymous class :
+It creates an anonymous class which implements interface OR extends class and creates an object of that class.
+
+Example :
+1] Class :
+
+  abstract class Parent{
+    abstract void run();
+  }
+
+   public static void main(String[] args) {
+
+        Parent p = new Parent(){
+            public void run(){
+                System.out.println("Running");
+            }
+        };
+       p.run();
+
+    }
+
+2] Interface :
+
+ interface Parent{
+    void run();
+ }
+
+ public static void main(String[] args) {
+
+        Parent p = new Parent(){
+            public void run(){
+                System.out.println("Running");
+            }
+        };
+       p.run();
+
+  }
+
+==================================================================
+
+Note :
+* It creates an anonymous class which implements interface or extends class and creates its object.
+* It can have multiple methods.

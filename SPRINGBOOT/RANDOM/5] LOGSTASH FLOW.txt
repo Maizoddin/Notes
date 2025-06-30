@@ -1,0 +1,101 @@
+LOGSTASH :
+It pulls the data from various sources then filters and puts it into the elastic search.
+We should create the config file for pipeline [Example : bank-events.config] and we should mention it into pipeline.yml file.
+In pipeline.yml we can have multiple configurations defined for multiple pipelines.
+In production it runs as a background service [Always active], continuosly monitoring data sources.
+
+Flow :
+1] INPUT PLUGIN : 
+It consumes raw data as soon as it is available.
+It consumes it from sources like [Kafka events, Files, Beats].
+It puts it into the internal event queue[Buffer]
+
+2] WORKER THREAD :
+It pulls the events/data in batch size.
+It filters and puts the data into elastic search
+Default,
+ BatchSize = 125
+ pipeline.workers = No of cores available in CPU
+
+
+===========================================================================
+
+FILTERS :
+GROK PATTERN IS USED TO PARSE RAW LOG DATA INTO STRUCTURED DATA[JSON OBJECT].
+
+EXAMPLE :
+RAW DATA :
+[2025-06-21 14:00:00] [WARN] [User:10120] deposit INR 2200 SUCCESS TXN020 Chennai
+
+filter {
+  grok {
+    match => {
+      "message" => "\[%{TIMESTAMP_ISO8601:timestamp}\] \[%{LOGLEVEL:log_level}\] \[User:%{INT:user_id}\] %{WORD:event_type} %{WORD:currency} %{INT:amount} %{WORD:status} %{WORD:txn_id} %{GREEDYDATA:location}"
+    }
+  }
+
+
+* \ and \  : To escape characters.
+* %{...}   :  This is the general syntax for a Grok pattern.
+* TIMESTAMP_ISO8601: This is a predefined Grok pattern that matches an ISO 8601 compliant timestamp format (like 2025-06-21 14:00:00).
+  timestamp: This is the field name that the extracted value will be assigned to. So, the timestamp "2025-06-21 14:00:00" will be stored in a field called timestamp.
+* \[%{LOGLEVEL:log_level}\]:
+   Similar to the timestamp, \[ and \] are literal square brackets.
+   %{LOGLEVEL:log_level}:
+   LOGLEVEL: Another predefined Grok pattern that matches common log levels like WARN, INFO, ERROR, DEBUG, etc.
+   log_level: The extracted log level ("WARN") will be stored in a field called log_level.
+* \[User:%{INT:user_id}\]:
+  \[User:: Matches the literal string [User:.
+   %{INT:user_id}:
+   INT: Predefined Grok pattern for an integer (whole number).
+   :user_id: The extracted integer ("10120") will be stored in a field called user_id.
+   \]: Matches the literal closing square bracket.
+* %{WORD:event_type}:
+  WORD: Predefined Grok pattern for a single word (alphanumeric characters and underscores).
+  event_type: "deposit" will be stored in event_type.
+* %{GREEDYDATA:location}:
+  GREEDYDATA: A predefined Grok pattern that matches any character (.) zero or more times (*), consuming as much as it can. This is   often used for the very last part of a log line where the content can be variable. It consumes all the data till the line ends.
+
+==========================================================
+
+CONFIG FILE :
+IT BASICALLY CONTAINS
+INPUT{}
+FILTER{}
+OUTPUT{}
+
+EXAMPLE :
+input {
+  file {
+    path => "F:/ELK/bank-logs/events.log"
+    start_position => "beginning"
+    sincedb_path => "NUL"   # Windows-specific: allows re-reading every time
+  }
+}
+
+filter {
+  grok {
+    match => {
+      "message" => "\[%{TIMESTAMP_ISO8601:timestamp}\] \[%{LOGLEVEL:log_level}\] \[User:%{INT:user_id}\] %{WORD:event_type} %{WORD:currency} %{INT:amount} %{WORD:status} %{WORD:txn_id} %{GREEDYDATA:location}"
+    }
+  }
+  mutate {
+    convert => {
+      "amount" => "integer"
+      "user_id" => "integer"
+    }
+  }
+  date {
+    match => ["timestamp", "yyyy-MM-dd HH:mm:ss"]
+    target => "@timestamp"
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["http://localhost:9200"]
+    index => "bank-logs-%{+YYYY.MM.dd}"   # time-based index
+  }
+  stdout { codec => rubydebug }
+}
+

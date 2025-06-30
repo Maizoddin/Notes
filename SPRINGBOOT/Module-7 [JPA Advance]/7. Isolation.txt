@@ -1,0 +1,77 @@
+Isolation Levels :
+Controls how transactions interact with concurrent operations.
+BY DEFAULT MYSQL HAS REPEATABLE_READ.
+
+From least to most restrictive: 
+READ_UNCOMMITTED → READ_COMMITTED → REPEATABLE_READ → SERIALIZABLE.
+
+1] Read Uncommitted :
+Allows: Dirty reads, non-repeatable reads, phantom reads.
+
+Code :
+@Transactional(isolation = Isolation.READ_UNCOMMITTED)
+public Account getBalance(Long accountId) {
+    return accountRepository.findById(accountId).orElseThrow();
+}
+
+----------------------------------------------------------------------------
+
+2] Read Committed :
+Prevents: Dirty reads.
+Allows: Non-repeatable reads, phantom reads.
+Default in most databases.
+
+Code :
+@Transactional(isolation = Isolation.READ_COMMITTED)
+public Account getLatestBalance(Long accountId) {
+    return accountRepository.findById(accountId).orElseThrow();
+}
+
+----------------------------------------------------------------------------
+
+3] Repeatable Read :
+Prevents: Dirty reads, non-repeatable reads.
+Allows: Phantom reads.
+NOTE : IT TAKES THE SNAPSHOT OF THE DATABASE AT THE START OF THE TRANSACTION. SO IN THAT TRANSACTION EVERYTIME WE DO THE QUERY WE GET SAME RESULT AS IT WAS AT THE BEGINNING OF THE TRANSACTION.
+
+Code :
+@Transactional(isolation = Isolation.REPEATABLE_READ)
+public void checkAndUpdate(Long id) {
+    Account acc = accountRepository.findById(id).orElseThrow(); // first read
+    acc.setBalance(acc.getBalance().subtract(BigDecimal.valueOf(100))); // update
+    accountRepository.save(acc);
+    Account reread = accountRepository.findById(id).orElseThrow(); // repeatable
+}
+
+----------------------------------------------------------------------------
+
+4] Serializable
+Prevents: All three anomalies via strict locking[Range Lock].
+Every read is a locking read. so no other transaction can even read the data it needs to wait.
+It makes application transactions very slow.
+Use Case: Financial transactions requiring absolute consistency.
+
+Code :
+@Transactional(isolation = Isolation.SERIALIZABLE)
+public List<Seat> getAndBookFreeSeats() {
+    List<Seat> seats = seatRepository.findByStatus("FREE");
+    // Logic to update and book
+    return seats;
+}
+
+
+
+BASIC QUERIES FOR TESTING ::::
+
+SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+
+SELECT @@transaction_ISOLATION;
+
+SET autocommit = 0;
+
+SELECT @@autocommit;
+
+SELECT CONNECTION_ID();
+
+SELECT DATABASE();
+

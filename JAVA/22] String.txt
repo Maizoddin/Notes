@@ -1,0 +1,25 @@
+* String class exists in java.lang package
+* String is immutable.
+
+* strings are stored in stringpool.
+* If we store same string in 2 variables then it will create only one string in string pool and both the variables will point to that.
+Example :
+String role = "admin";
+String position = "admin";
+
+If we use new keyword then it will create 2 different string objects.
+Example :
+string name = new String("John");
+
+Methods :
+	String s1 = "Maaz";
+        String s2 = "John";
+        s1.toLowerCase();
+        s1.toUpperCase();
+        s1.equals(s2);
+        s1.equalsIgnoreCase(s2);
+        s1.indexOf("a");
+        s1.charAt(2);
+        s1.substring(2, 4);
+        s1.replace("a", "i");
+        s1.length();

@@ -1,0 +1,214 @@
+import React from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import DropDown from "./DropDown";
+import moment from "moment";
+
+const Test = () => {
+  const initialValues = {
+    accountNumber: "",
+    name: "",
+    age: "",
+    gender: "",
+    state: "",
+    bank: "",
+    startDate: "",
+    endDate: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    agree: "",
+  };
+
+  const validationSchema = Yup.object({
+    accountNumber: Yup.string()
+      .required("Account Number is required")
+      .matches(/^\d{12}$/, "Must be 12 digits"),
+    name: Yup.string().required("Name is required"),
+    age: Yup.number()
+      .required("Age is required")
+      .min(20, "Age should not be less than 20"),
+    gender: Yup.string().required("Gender is required"),
+    state: Yup.string().required("State is required"),
+    bank: Yup.string().required("Bank is required"),
+    startDate: Yup.date()
+      .required("Start Date is required")
+      .min(new Date(), "Start date should be greater than current date"),
+    endDate: Yup.date()
+      .required("End date is required")
+      
+      // When methode always gives an array as value for comparison so here startDate is array
+      .when("startDate", (startDate, schema) => {
+        return schema.test({
+          test: (endDate) => {
+            const startDateMoment = moment(startDate[0]).format('YYYY-MM-DD');
+            const endDateMoment = moment(endDate).format('YYYY-MM-DD');
+            return endDateMoment > startDateMoment;
+          },
+          message: "End date must be greater than Start date",
+        });
+      }),
+    email: Yup.string().required("Email is required").email("Invalid email"),
+    password: Yup.string()
+      .required("Password is required")
+      .matches(
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        "Password must be of atleast 8 characters long and should contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+      ),
+    confirmPassword: Yup.string()
+      .required("Confirm password")
+      .oneOf([Yup.ref("password"), null], "Password doesn't macth"),
+    agree: Yup.boolean().required("Click on I agree to continue"),
+  });
+
+  const onSubmit = (values, { resetForm, setSubmitting }) => {
+    console.log("Values", values);
+    setSubmitting(false);
+    resetForm();
+  };
+
+  const banks = [
+    { key: "1", description: "Union" },
+    { key: "2", description: "HDFC" },
+    { key: "3", description: "KVG" },
+  ];
+
+  return (
+    <div>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={onSubmit}
+        validateOnChange={true}
+        validateOnBlur={true}
+	      enableReinitialize={true} 
+      >
+        {(
+          { isSubmitting, values, errors, touched } // we can get {isSubmitting, handleChange, handleBlur, ...prop}
+          ) => (
+          <Form>
+            <div>
+              <label htmlFor="accountNumber">Account Number :</label>
+              <Field
+                name="accountNumber"
+                id="accountNumber"
+                type="text"
+                placeholder="Enter Account Number"
+              />
+              <ErrorMessage name="accountNumber" component="div" />
+            </div>
+            <div>
+              <label htmlFor="name">Name :</label>
+              <Field
+                name="name"
+                id="name"
+                type="text"
+                placeholder="Enter Name"
+              />
+              <ErrorMessage name="name" component="div" />
+            </div>
+            <div>
+              <label htmlFor="age">Age :</label>
+              <Field
+                name="age"
+                id="age"
+                type="number"
+                placeholder="Enter Age"
+              />
+              <ErrorMessage name="age" component="div" />
+            </div>
+            <div>
+              <label htmlFor="gender">Gender :</label>
+              Male <Field name="gender" type="radio" value="male" />
+              Female <Field name="gender" type="radio" value="female" />
+              <ErrorMessage name="gender" component="div" />
+            </div>
+            <div>
+              <label htmlFor="state">State :</label>
+              <Field name="state" id="state" as="select">
+                <option value="">Select</option>
+                <option value="goa">GOA</option>
+                <option value="goa">DELHI</option>
+              </Field>
+              <ErrorMessage name="state" component="div" />
+            </div>
+
+            {/* USING COMPONENT FOR CUSTOM INPUT FIELD */}
+            <div>
+              <Field name="bank">
+                {({ field }) => (
+                  <DropDown
+                    label="Bank"
+                    name="bank"
+                    id="bank"
+                    data={banks}
+                    {...field}
+                  />
+                )}
+              </Field>
+              <ErrorMessage name="bank" component="div" />
+            </div>
+
+            <div>
+              <label htmlFor="startDate">StartDate :</label>
+              <Field
+                name="startDate"
+                id="startDate"
+                type="date"
+                placeholder="Enter Start Date"
+              />
+              <ErrorMessage name="startDate" component="div" />
+            </div>
+            <div>
+              <label htmlFor="endDate">EndDate :</label>
+              <Field
+                name="endDate"
+                id="endDate"
+                type="date"
+                placeholder="Enter End Date"
+              />
+              <ErrorMessage name="endDate" component="div" />
+            </div>
+            <div>
+              <label htmlFor="email">Email :</label>
+              <Field name="email" id="email" type="email" />
+              <ErrorMessage name="email" component="div" />
+            </div>
+            <div>
+              <label htmlFor="password">Password :</label>
+              <Field
+                name="password"
+                id="password"
+                type="password"
+                placeholder="Enter Password"
+              />
+              <ErrorMessage name="password" component="div" />
+            </div>
+            <div>
+              <label htmlFor="confirmPassword">Confirm Password :</label>
+              <Field
+                name="confirmPassword"
+                id="confirmPassword"
+                type="password"
+                placeholder="Confirm Password"
+              />
+              <ErrorMessage name="confirmPassword" component="div" />
+            </div>
+            <div>
+              <label htmlFor="agree">Agree </label>
+              <Field name="agree" id="agree" type="checkbox" />
+              <ErrorMessage name="agree" component="div" />
+            </div>
+            <button type="submit" disabled={isSubmitting}>
+              Submit
+            </button>
+
+            <pre>{JSON.stringify({ values, errors, touched }, null, 2)}</pre>
+          </Form>
+        )}
+      </Formik>
+    </div>
+  );
+};
+
+export default Test;

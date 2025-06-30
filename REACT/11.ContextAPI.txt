@@ -1,0 +1,211 @@
+Context API :
+
+Context API :
+* It's built in feature for state management in react.
+* It's like creating a global Object to store the data
+* Whenever the context value changes then all the components that are using this context value will get re-rendered.
+
+*We should wrap all the components inside our Context component so that all the components can access the context
+
+
+
+=============================================
+Example 1] : Standard Practice
+
+UserContext.js
+import { createContext, useContext, useState } from "react";
+
+export const UserContext = createContext();
+
+export const UserContextProvider = ({ children }) => {
+  const [user, setUser] = useState("");
+  return (
+    <UserContext.Provider value={{ user, setUser }}>
+      {children}
+    </UserContext.Provider>
+  );
+};
+
+export const useUserContext = () => {
+  return useContext(UserContext);
+};
+
+-------------
+App.jsx
+import Login from "./Login";
+import Profile from "./Profile";
+import { UserContextProvider } from "./contexts/UserContext";
+
+const App = () => {
+  return (
+    <UserContextProvider>
+      <Profile />
+      <Login />
+    </UserProvider>
+  );
+};
+
+export default App;
+
+----------------
+Login.jsx
+import React, { useState } from "react";
+import { useUserContext } from "./contexts/UserContext";
+
+const Login = () => {
+  const { setUser } = useUserContext();
+  const [name, setName] = useState("");
+  const onLogin = () => {
+    setUser(name);
+  };
+  return (
+    <div>
+      <h1>SignUp / Login</h1>
+      <div>
+        <label htmlFor="name">Name :</label>
+        <input
+          type="text"
+          onChange={(e) => {
+            setName(e.target.value);
+          }}
+          value={name}
+        />
+      </div>
+      <div>
+        <label htmlFor="password">Password :</label>
+        <input type="text" />
+      </div>
+      <div>
+        <button type="submit" onClick={onLogin}>
+          Login
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
+
+----------
+Profile.jsx
+import React from "react";
+import { useUserContext } from "./contexts/UserContext";
+const Profile = () => {							
+  const { user } = useUserContext();
+  return (
+    <>
+      {!user ? (
+        <h1 style={{ color: "red", font: "bold" }}>Please Login</h1>
+      ) : (
+        <h2 style={{ color: "green" }}>Welcome {user}</h2>
+      )}
+    </>
+  );
+};
+
+export default Profile;
+
+==================
+
+Example 2] : Light / Dark Theme
+ThemeContext.js
+import { createContext, useContext, useEffect, useState } from "react";
+
+export const ThemeContext = createContext({
+  theme: "light",
+  setTheme: () => {},
+});
+
+export const ThemeContextProvider = ({ children }) => {
+  const [theme, setTheme] = useState("light");
+  useEffect(() => {
+    const element = document.querySelector("html");
+    element.classList.remove("light", "dark");
+    element.classList.add(theme);
+  }, [theme]);
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+export const useThemeContext = () => {
+  return useContext(ThemeContext);
+};
+
+------------
+App.jsx
+import Button from "./Button";
+import Profile from "./Profile";
+import { ThemeContextProvider } from "./contexts/ThemeContext";
+const App = () => {
+  return (
+    <ThemeContextProvider>
+        <Button />
+        <Profile />
+    </ThemeContextProvider>
+  );
+};
+
+export default App;
+
+------------
+Profile.jsx
+import React from "react";
+const Profile = () => {
+  return (
+    <div className="shadow-xl bg-slate-100 rounded-lg w-6/12 h-40 mx-auto pt-14 my-5 dark:bg-gray-700">
+      <h1 className="font-bold text-center text-3xl dark:text-white">
+        Maizoddin Chikkodi
+      </h1>
+    </div>
+  );
+};
+
+export default Profile;
+
+---------------------
+Button.jsx
+import React from "react";
+import { useThemeContext } from "./contexts/ThemeContext";
+const Button = () => {
+  const { theme, setTheme } = useThemeContext();
+  const handleClick = () => {
+    const newTheme = (theme === "light" ? "dark" : "light");
+    setTheme(newTheme);
+  };
+  return (
+    <div>
+      <button
+        onClick={handleClick}
+        className="px-3 font-bold text-lg rounded-md bg-gray-600 text-slate-100 dark:bg-slate-200 dark:text-black absolute right-[350px] top-8"
+      >
+        {theme === "light" ? "Dark" : "Light"}
+      </button>
+    </div>
+  );
+};
+
+export default Button;
+
+
+================================================
+
+Problem's with Context API :
+1] Complex Setup and Management :
+As the app gets complex, using context can lead to deeply nested "Context Provider" components.
+
+EXample :
+<AuthContextProvider>
+  <ThemeContextProvider>
+    <TodoContextProvider>
+      <App/>
+    </TodoContextProvider>
+  </ThemeContextProvider>
+</AuthContextProvider>
+
+2] Slow Performance :
+It is not optimized for high frequency state changes[the changes that happens frequently]
+
+3] Does not have tool for debugging.

@@ -1,0 +1,14 @@
+
+Local Storage:
+We can store up to 5mb
+It always takes key, value pair
+value should be string [We can convert value to string using JSON.stringify]
+It returns string so we can convert it using JSON.parse()
+
+The JSON.parse() method in JavaScript is used to parse a JSON string and transform it into a JavaScript object.
+
+The JSON.stringify() method in JavaScript is used to convert a JavaScript object or value into a JSON string.
+
+localStorage.setItem("key","value")   -- value should be JSON.strigify()
+localStorage.getItem("key")   --- convert it using JSON.parse()
+

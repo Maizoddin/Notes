@@ -1,0 +1,29 @@
+Creating package :
+
+Normal :
+1] Add below line on top of our file.
+package packageName;
+
+2] javac -d [path] file.java
+  Example :
+  javac -d . Hello.java          ->  creates package in current folder
+  javac -d packages/mypackage Hello.java  -> Created package inside specified path
+
+3] Run
+   * We can go to path where our package folder is present and we can write
+     java packageName.fileName
+     Example : java projectpackage Hello
+
+   * OR we can stay in current folder only and can write below command
+     java -cp path packageName.fileName
+     Example : java -cp packeges/mypackage Hello.java
+	       cp = class path
+
+
+------------------------
+Importing package :
+
+package currentPackage;
+import packageName.*;  || import packageName.className;
+
+

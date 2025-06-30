@@ -1,0 +1,138 @@
+ENUM  :
+
+enum Day{
+ MONDAY, TUESDAY, WEDNESDAY;
+}
+
+
+Day today = Day.MONDAY;
+// Day[] days = Day.values();
+
+=================================
+
+GENERICS :
+Provides type safety.
+Always use Wrapper classes. and it does the auto boxing for us.
+We can use it with class, interface, methods.
+
+Example (Class) :
+
+class Test {
+    public static void main(String[] args) {
+        Student<Integer, String> student = new Student<>(1, "John");
+        int rollNo = student.getRollNo();
+        String name = student.getName();
+        System.out.println("Roll No : " + rollNo);
+        System.out.println("Name : " + name);
+    }
+}
+
+
+class Student<R, N> {
+    private final R rollNo;
+    private final N name;
+
+    public Student(R rollNo, N name) {
+        this.rollNo = rollNo;
+        this.name = name;
+    }
+
+    public N getName() {
+        return name;
+    }
+
+    public R getRollNo() {
+        return rollNo;
+    }
+}
+
+
+-----------------
+
+Exaple (Interface) :
+class Test {
+    public static void main(String[] args) {
+        CrikcketPlayer<String, Integer> crikcketPlayer = new CrikcketPlayer<>("Maaz", 7);
+        String name = crikcketPlayer.getName();
+        int no = crikcketPlayer.getNo();
+    }
+}
+
+interface Player<T> {
+    T getName();
+}
+
+class CrikcketPlayer<T, U> implements Player<T> {
+    private final T name;
+    private final U no;
+
+    CrikcketPlayer(T name, U no) {
+        this.name = name;
+        this.no = no;
+    }
+
+    @Override
+    public T getName() {
+        return name;
+    }
+
+    public U getNo() {
+        return no;
+    }
+}
+
+--------------
+Example (Method):
+
+class Test {
+    public static void main(String[] args) {
+        Learn learn = new Learn("Udemy");
+        String courseName = learn.getDetails("SpringBoot");
+        System.out.println("Course - "+courseName);
+    }
+}
+
+class Learn {
+    public <T> Learn(T platform) {
+        System.out.println("Welcome to - " + platform);
+    }
+
+    public <U> U getDetails(U courseName) {
+        return courseName;
+    }
+}
+--------------
+
+Bound :
+
+class Test {
+    public static void main(String[] args) {
+        Player<Integer> player = new Player<>(22);
+        System.out.println(player.getRuns());
+    }
+}
+
+
+class Player<T extends Number> {
+    private final T runs;
+
+    public Player(T runs) {
+        this.runs = runs;
+    }
+
+    public T getRuns() {
+        return this.runs;
+    }
+}
+
+-------------------
+
+Upper Bound :
+? extends Number 
+Read only
+Key Rule: List<? extends Number> can contain Integer, Double, Float, etc.
+Only null can be added: list.add(null); ✅
+
+Lower Bound :
+? super Integer 
+Write 

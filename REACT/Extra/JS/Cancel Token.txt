@@ -1,0 +1,44 @@
+import axios from "axios";
+import React, { useRef, useState } from "react";
+
+const Test = () => {
+  const [query, setQuery] = useState("");
+  const cancelTokenRef = useRef(null);
+  const getSuggestions = async (query) => {
+    try {
+      if (cancelTokenRef.current) {
+        cancelTokenRef.current.cancel();
+      }
+      cancelTokenRef.current = axios.CancelToken.source();
+      const response = await axios({
+        url: "https://dummyjson.com/users/search",
+        method: "GET",
+        params: {
+          q: query,
+          limit: 5,
+        },
+        cancelToken: cancelTokenRef.current.token,
+      });
+      console.log("Results", response.data);
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Request Cancelled");
+      } else {
+        console.log(error.status, error.message);
+      }
+    }
+  };
+  const handleInputChange = (event) => {
+    const newQuery = event.target.value;
+    setQuery(newQuery);
+    getSuggestions(newQuery);
+  };
+  return (
+    <div>
+      <h1>Testing...</h1>
+      <input type="text" value={query} onChange={handleInputChange} />
+    </div>
+  );
+};
+
+export default Test;

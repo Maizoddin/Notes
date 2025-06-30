@@ -1,0 +1,78 @@
+Derived Query :
+
+PATTERN :
+1 -> Prefix  [find, query, delete, count]
+2 -> By
+3 -> PropertyName
+4 -> Condition
+
+Example :
+1] List<User> findByName(String name);
+
+2] List<User> findByAgeGreaterThanAndCity(int age, String city);
+
+3] List<User> DeleteByCityContaining(String city);
+
+4] boolean existsByEmail(String email);
+
+5] List<User> findBySalaryBetween(double min, double max);
+
+
+Note : DerivedQuery supports only Fetch and Delete. It does not support update.
+
+--------------------------------------------------
+
+Pagination in Spring Data JPA
+
+* When using pagination in Spring Data JPA, your repository method returns : Page<T>
+* It contains:
+  Content (List<T>)
+  Pagination metadata: total pages, current page, total elements, hasNext, etc.
+
+* Creating a Pageable Object :
+  PageRequest.of(pageNo, pageSize)
+
+  pageNo: starts from 0
+  pageSize: number of records per page
+  Internally, it uses SQL LIMIT and OFFSET
+  PageRequest.of(2, 10)
+// Generates SQL with OFFSET = 20, LIMIT = 10
+
+
+* Repository Method Example
+  Page<Student> findByNameContaining(String name, Pageable pageable);
+
+* Service Layer Code Example
+  public PaginationResponseDTO<StudentDTO> findStudentByNameContaining(String name, int pageNo, int pageSize) {
+    Page<Student> studentPage = studentRepository.findByNameContaining(
+        name, PageRequest.of(pageNo, pageSize)
+    );
+
+    // Convert Page<Student> to Page<StudentDTO>
+    Page<StudentDTO> studentDTOPage = studentPage.map(StudentMapper::toDTO);
+
+    // Build custom response with metadata
+    return StudentMapper.toPaginationResponse(studentDTOPage);
+  }
+
+* PaginationResponseDTO Example
+  public class PaginationResponseDTO<T> {
+    private List<T> data;
+    private long totalNoOfRecords;
+    private int pageNo;
+    private int pageSize;
+    private boolean hasNext;
+  }
+
+* Mapper :
+  public static  <T> PaginationResponseDTO<T> toPaginationResponse(Page<T> page){
+        PaginationResponseDTO<T> paginationResponse = new PaginationResponseDTO<>();
+        paginationResponse.setData(page.getContent());
+        paginationResponse.setPageNo(page.getNumber());
+        paginationResponse.setPageSize(page.getSize());
+        paginationResponse.setTotalNoOfRecords(page.getTotalElements());
+        paginationResponse.setHasNext(page.hasNext());
+        return paginationResponse;
+   }
+
+

@@ -1,0 +1,54 @@
+COMMANDS :
+
+npm install -g @angular/cli
+
+node -v
+npm -v
+ng v
+
+Creating New Project
+ ng new [name]     
+
+Creating New Component
+ ng generate component [name]
+
+Creating New Module
+ ng generate module [name]
+
+Creating New Directive
+ ng generate directive [name]
+
+Creating New Pipe
+ ng generate pipe [name]
+
+Creating New Service
+ ng generate service [name]
+
+Creating New Guard
+ ng generate guard [name]
+
+-----
+
+ng serve
+ng serve --port 1234
+
+
+-------------------------------------
+
+TypeScript :
+* Use  access specifiers to create properties inside class.
+  Example :
+        private num:number = 10;
+        private val = this.num;
+* Use let, var, const to create variables inside methodes(functions)
+* for object [] = "", . = 
+   Example :
+         let std = {id:1,name:"John"}
+         console.log(std['name'], std.name)
+* We can specify optional datatype 
+  Example : status: string | null = null;
+------------------------
+
+Note :
+* The class which have @Injectable only for those classes object we can create through   
+  constructor.

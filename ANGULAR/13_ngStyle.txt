@@ -1,0 +1,9 @@
+[ngStyle] :
+   sets inline styles for an element based on the provided object.
+
+Example :
+<div [ngStyle]="{'color' : currentTextColor, 'background-color' : currentBackGroundColor}">
+
+Note : 
+a. use '' for property
+b. use , to separate properties

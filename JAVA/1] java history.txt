@@ -1,0 +1,53 @@
+Java(OAK)
+
+James Gosling (Sun MicroSystmes - 1995)
+              (Oracle - 2010)
+ 
+LTS version 17 ||  21
+
+Download and Install JDK 
+Go to system environment variable 
+ 1] Inside variable named as path add "C:\Program Files\Java\jdk-21\bin"    which points to our javac
+ 2] create new variable JAVA_HOME and add "C:\Program Files\Java\jdk-21"    which should point to our jdk setup 
+
+
+jshell  -  It can be used for single line commands 
+
+Java is platform independent,
+High Level language,
+Object oriented language
+
+If we have c and c++ .exe file built on windows then we can't run it on mac because platform dependent.
+
+Java is platform independet because of JVM(Java virtual machine).
+JVM is platform dependent but java is platform independet.
+
+Java SE(standard edition) - Core java
+Java EE(enterprise edition) - Advance java
+Java ME(Micro Edition)
+
+
+Bydefault when we install jdk it comes with Java SE.
+JDK contains JRE,  and JRE(Java Runtime Environment) contains JVM(Java Virtual Machine).
+
+JDK contains javac, JRE.
+JRE contains JVM
+JVM contains JIT
+
+JVM is a software that enables computer to run java program.
+JVM contains JIT(Just in time compiler) which translates byte code into os specific machine code.
+
+source code  (.java)
+ javac(compiler)        ----       javac HelloWorld.java    (This will create a HelloWorld.class file  which contains byte code)
+byte code(.class)
+ jvm                     ----      java HelloWorld          (This will run our program which converts bytecode into machine code)
+machine code  
+ os
+ hardware
+
+
+If we have JRE then we can run the project which is having byte code. but we can't develop project.
+
+
+Ctrl + ` = Open setting for theme, size
+Doublt tap on shift = To Search 

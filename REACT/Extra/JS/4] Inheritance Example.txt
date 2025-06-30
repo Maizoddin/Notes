@@ -1,0 +1,128 @@
+// Object ::
+
+// const user = {
+//   name: "Maaz",
+//   status: "Active",
+// };
+
+// const u = Object.create(user);
+
+// Behind the scene
+// const u = {
+//   __proto__: user,
+// };
+
+// ===================================
+
+// Function Constructor ::
+
+// function Person(name) {
+//   this.name = name;
+// }
+
+// Person.prototype.greet = function () {
+//   console.log("Hello", this.name);
+// };
+
+// const p1 = new Person("John");
+// p1.greet();
+
+// Behind the scene
+// const p1 = Object.create(Person.prototype);
+//            {__proto__ : Person.prototype}
+// Person.call(p1, "Alex");
+// p1.greet()
+
+// ===================================
+
+// Class :::
+
+// class Person{
+//     constructor(name){
+//         this.name = name;
+//     }
+//     greet(){
+//         console.log("Hi",this.name);
+//     }
+// }
+
+// const p1 = new Person("John");
+// p1.greet();
+
+// --
+// Behind the scene :
+
+// function Person(name){
+//     this.name = name;
+// }
+
+// Person.prototype.greet = function(){
+//     console.log("Hi",this.name);
+// }
+
+// const p1 = Object.create(Person.prototype);
+// Person.call(p1, "John");
+// p1.greet();
+
+
+=========================================================
+
+Extends Key word behind the scene :::
+
+// class Person {
+//     constructor(name){
+//         this.name = name;
+//     };
+//     getName(){
+//         console.log("My name is :",this.name)
+//     }
+// }
+
+// class Student extends Person{
+//     constructor(name, role){
+//         super(name)
+//         this.role = role;
+//     };
+//     getRole(){
+//         console.log("I am a", this.role);
+//     }
+// }
+
+// const s1 = new Student("Alex", "student")
+// s1.getName();
+// s1.getRole();
+
+
+// -------
+
+function Person(name){
+    this.name = name;
+}
+
+Person.prototype.getName = function(){
+    console.log("My name is :", this.name);
+}
+
+function Student(name, role){
+    Person.call(this, name)
+    this.role = role;
+}
+
+
+// Bad Practice
+// Student.prototype.__proto__ = Person.prototype;
+// Student.prototype.getRole = function(){
+//     console.log("I am a",this.role)
+// }
+
+// Good Practice
+Student.prototype = Object.create(Person.prototype);
+Student.prototype.constructor = Student;
+Student.prototype.getRole = function(){
+    console.log("I am a", this.role)
+}
+
+const p1 = new Student("Alex", "student")
+p1.getName()
+p1.getRole()
+

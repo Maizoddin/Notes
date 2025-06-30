@@ -1,0 +1,1736 @@
+Inline CSS
+<h3 style="background-color: red; color: green;">Hello</h3>
+
+Internal CSS
+<head>
+<style>
+      body {
+        background-color: #dfdfde;
+      }
+      hr {
+        border-style: none;
+        border-top: 4px dotted white;
+        width: 20%;
+        margin: 0 auto;  
+      }
+    </style>
+    </head>
+
+
+
+External CSS
+Style.css file
+body {
+    background-color: #dfdfde;
+  }
+  hr {
+    border-style: none;
+    border-top: 4px dotted white;
+    width: 20%;
+    margin: 0 auto;
+  }
+
+  Index.html
+  <head>
+  <link rel="stylesheet" href="style.css">
+  </head>
+
+
+
+In all 3 Css styling Option's  the Highest Preference is given to the one which is declared at the Last.
+But we can Set the Heighest Preference by using     !important
+important!  : No one can override it.
+Example :
+         <html>
+           <head>
+             <title>Document</title>
+             <style>
+               p {
+                  color: red !important;
+               }
+             </style>
+           </head>
+
+           <body>
+              <p style="color: green">Maaz</p>
+           </body>
+         </html>
+------------------------------
+Font Family : Merriweather,  Montserrat
+Font weight : 400, 900
+Color : 
+Background-color : #4d4d4d
+white-text-color : #ffffff
+black-text-color : #1f1f1f
+------------------------------
+/* Body Background Trick */
+body::before{
+  content: "";
+  width: 100vw;
+  height: 100vh;
+  background:linear-gradient(to right bottom, rgba(0, 255, 21, 0.418), rgba(255, 0, 0, 0.336)),  url("https://source.unsplash.com/collection/190727/1600x900") no-repeat center center/cover;
+  clip-path: polygon(100% 0, 98% 30%, 87% 64%, 8% 52%, 0 0);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  opacity: 0.7;
+}
+------------------------------
+* Border :
+  Properties : width, style, color, redius
+
+.myClass{
+  background-color: pink;
+  height: 100px;
+  width: 100px;
+
+  border-width: 4px;
+  border-style: solid;
+  border-color: black;
+  border-radius:2px ;    
+}
+
+
+.myClass{
+  background-color: pink;
+  height: 100px;
+  width: 100px;
+
+  border: 4px solid red;       /*Width style color*/
+  border-radius:2px ;    
+}
+
+
+.myClass{
+  background-color: pink;
+  height: 100px;
+  width: 100px;
+  
+  border-top: 2px solid red;
+  border-bottom: 4px solid black;
+  border-left: 3px dotted yellow;
+  border-right: 3px double rgb(192, 255, 229);
+
+  border-top-left-radius: 2px;   
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 8px;
+}
+
+
+
+BackGround-Image :-
+.myClass{
+  background-color: pink;
+  height: 100px;
+  width: 100px;
+
+  background-image: url("image.PNG");
+   
+  /* background-repeat: repeat-x;             Repeat Horizontally */
+  /* background-repeat: repeat-y;             Repeat Vertically */
+  /* background-repeat: no-repeat;            No Repeatation*/
+
+  /* background-position: bottom right;       Top-Bottom    Left-Right */      
+}
+
+* Important : 
+/* ShortHand */
+.container{
+  height: 100vh;
+  width: 100vw;
+  background:url("image.PNG") no-repeat center center/cover;
+ }
+
+Important : 
+/* It Reduces the Image Color */
+img{
+  height: 100vh;
+  width: 100vw;
+  opacity: 0.3;
+}
+
+
+-----------------------------------
+
+/* box-sizing:border-box;   :- It will not increase width of the container after adding margin(<100) and padding(<100) */
+*Centering and Removing UnderLine :
+text-decoration : underline  ::- to underline
+text-align :center  ::- It is used to center the content inside the block 
+                        It should be set in parent container
+                        It won't work for Position:Absolute
+
+While using calc() for 1rem = vertical half = 8px  and  horizontal half = 12px
+     
+                
+margin : auto  ::-  TO center the elements whose width is been changed.
+                    It works only for block  elements.
+                    Important : Width must have been set then only it works.
+                    /* Very Important : margin:auto     will not work for position:absolute */
+
+*  Dotted Horizontal Row code
+ hr {       
+  border-style: none;
+  border-top: dotted;
+  border-color: red;
+  border-width: 5px;
+  width: 40px;
+  margin: auto;
+}         
+
+
+  values:
+  1 - all sides
+  2 - top-bottom    left-right
+  3 - top     left-right     bottom
+  4 - top  right  bottom  left
+
+/* colorhunt.co : To find the Colours */
+colorhunt.co : different colors and their codes
+browser default css(w3school) : to know the default browser   : https://www.w3schools.com/csSref/css_default_values.php
+border styles :css border style(w3school)
+pesticide extension: to see all the boxes of web page
+
+
+Note : while applying multiple properties for a single selector then use it in alphabetical order.
+example::
+h1{
+  background-color: red;
+  color: black;
+  font-size: 20px;
+}
+
+use chrome developer tool for debugging the problem
+if we apply all 3 css declaration styles then the one which is declared at the last will be given the highest the priority.
+Everything on the web page is nothing but boxes and we can see those boxes by using peticide extension.
+Use class when we want to apply same property to multiple elements
+Use id when we want to apply css property to unique element
+We can't have more than one id for perticular element.
+We can have more than one class for perticular element.
+Priority::
+1)Id
+2)Class
+3)Tag Selector
+4)Grouping Selector
+5)Universal Selector
+
+Tag Selector
+h1{
+  color: black;
+}
+
+Class Selector
+.myClass{
+  background-color: #fff;
+}
+
+Id Selector
+#myId{
+  background-color: #66BFBF;
+}
+
+Grouping selector
+h1, .myClass, #myId{
+  background-color: black;
+}
+
+Universal Selector
+*{
+  margin: 0;
+  padding: 0;
+}
+
+
+*Advance Selectors : 
+ Html : 
+    <div>
+      <p>1-This is Child of Div</p>
+      <div>
+        <span>
+          <p>2-Inside Div Another Div inside span and then I am It's Child</p>
+        </span>
+      </div>
+    </div>
+    <p>3-This is Sibling of Div</p>
+
+  Css : 
+    /* any <p> which is inside any <div> */
+       div p{
+        color: red;
+      } 
+      /* # Line : 1,2 */
+
+    /* any <p> which immediately inside <div>.(i.e Direct child of <div>) .Nothing inbetween*/
+       div>p{
+        color: red;
+      } 
+      /* # Line : 1 */
+
+    /* <p> which sibling of <div>. i.e <p> which is right after <div>.Nothing should be there inbetween */
+       div+p{
+        color:red;       
+      } 
+      /* # Line : 3 */
+      /* Note : if we use ~ instead of + then all the elements will get selected after that but if we use + then only one element will get selected */
+    
+  *Pseudo Selectors : 
+   Html : 
+
+  <div class="container">
+   <form action="#">
+     <input type="text" placeholder="Name" />
+     <input type="password" placeholder="Password" />
+     <input type="emai" placeholder="Email" />
+     <input type="submit" value="SUBMIT" />
+   </form>
+   <ul>
+     <li id="id-1">Item - 1</li>
+     <li id="id-2">Item - 2</li>
+     <li id="id-3">Item - 3</li>
+     <li id="id-4">Item - 4</li>
+     <li id="id-5">Item - 5</li>
+     <li id="id-6">Item - 6</li>
+   </ul>
+   <h1><a href="http://google.com" target="_blank">Google</a></h1>
+  </div>
+  
+  Css : 
+  /* Attribute Selector */
+  input[type="text"]{
+    background-color: yellow;
+    color: black;
+  }
+
+   a[target="_blank"]{
+    background-color: black;
+    color: orange;
+  }
+
+  input[value="SUBMIT"]{
+    background-color: yellow;
+    color: black;
+  }
+ 
+  /* Html 
+    <p lco> Custom attribute <p> */
+  p[lco]{
+    background-color: #fff;
+  }
+  
+  /* nth Child Selector */
+  li:nth-child(3){
+    background-color: pink;
+  }  
+  li:nth-child(odd){
+    background-color: brown;
+  }
+  li:nth-child(even){
+    background-color: green;
+  } 
+    li:nth-child(2n){                            /* n= 0, 1, 2, 3, 4 ---- */
+  background-color: purple;
+ } 
+
+ --------------------------------------------
+
+
+Pseudo Class :-
+web site: css pseudo classes(:)
+#myID:hover {
+  background-color: yellow;
+}
+
+Example :
+/* unvisited link */
+a:link {
+  color: red;
+  text-decoration:none;
+}
+
+/* visited link */
+a:visited {
+  color: green;
+}
+
+/* mouse over link */
+a:hover {
+  color: hotpink;
+  border: 2px solid black;
+}
+
+/* When user will keep pressing that link then it will be in an active mode */
+a:active{
+  color: gray;
+}
+
+/* When we click on any one input box then its width will be 200px */
+input:focus{
+  width : 200px;
+}
+Note : Visiting Nowhere after Clicking link (#)
+       <a href="#">Nothing</a>
+
+
+-------------------------------------------------------------
+* Pseudo Elements : 
+  
+1. li::first-letter{
+   font-size: 3rem;
+   color: red;
+   font-weight: bold;
+   }
+
+2. p::first-line{
+   font-size: 2rem;
+   background-color: yellow;
+   color: purple;
+  }
+
+3. ::selection{                                     
+   background-color: lightseagreen;
+   color: red;
+   font-size: 4rem;
+  }
+
+  p::selection{
+    background-color: lightseagreen;
+    color: red;
+    font-size: 4rem;
+  }
+
+4. ::placeholder{
+   font-size: 1rem;
+   color: green;
+   }
+
+   input[type="email"]::placeholder{
+    font-size: 1rem;
+    color: red;
+   }
+
+5. p::before{
+   content: "Good Morning";
+   background-color: black;
+   color: white;
+   font-size: 3rem;
+  }
+
+  p:hover::before{
+    content: "Good Morning";
+    background-color: black;
+    color: white;
+    font-size: 3rem;
+   }
+  
+
+6. p::after{
+   content: "All the Best";
+   background-color: black;
+   color: white;
+   font-size: 3rem;
+  }
+
+  p:hover::after{
+    content: "All the Best";
+    background-color: black;
+    color: white;
+    font-size: 3rem;
+   }
+ 
+  h1::after {
+    content: url("image.PNG");   
+  }
+
+
+Example Before and After : 
+Example 1: 
+Html :     
+<div class="parent">
+      <h1>India</h1>
+</div>
+
+Css : 
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+ .parent{
+   height: 100vh;
+   width: 100vw;
+   background-color: bisque;
+   border: 2px solid black;
+   border-radius: 4px;
+
+   display: flex;
+   flex-flow: row wrap;
+   justify-content: center;
+   align-items: center;
+   align-content: center;            
+ }
+
+
+ h1{
+   text-align: center;
+   text-transform: uppercase;
+   letter-spacing: 2px;
+   line-height: 1;
+ }
+
+ h1::before{
+   content: "Australia";
+   background-color: rgb(255, 0, 0);
+   color: white;
+   display: block;
+   font-size: 10px;
+   font-weight: bold;    
+ }
+ 
+ h1::after{
+  content: "Shri-Lanka";
+  background-color: red;
+  color: white;
+  display: block;
+  font-size: 10px;
+  font-weight: bold;   
+ }
+-----------------------
+
+Example 2: 
+Html : 
+<div class="container">
+      <h1>
+        Good Morning
+      </h1>
+</div>
+
+Css : 
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.container{
+ height: 100vh;
+ width: 100vw;
+ background-color: bisque;
+ border: 8px solid black;
+ border-radius: 4px;
+ display: flex;
+ flex-flow: row wrap;
+ justify-content: center;
+ align-items: center;
+ 
+
+}
+h1{
+ text-transform: uppercase;
+ font-size: 2rem;
+ letter-spacing: 2px;
+ font-weight: bold;
+ position: relative;
+ 
+}
+
+h1::before{
+content: "";
+display: block;
+height: 10px;
+width: 100px;
+background-color: red;
+position: absolute;
+top: -10px;
+left: 0px;
+}
+
+h1::after{
+content: "";
+display: block;
+height: 10px;
+width: 175px;
+background-color: red;
+position: absolute;
+bottom: -10px;
+right: 0
+}
+
+---------------------------------------
+Example 3: 
+Html : 
+    <div class="container">
+      <h1>Good Morning</h1>
+    </div>
+
+Css : 
+* {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      .container {
+        height: 100vh;
+        width: 100vw;
+        background-color: bisque;
+        border: 8px solid black;
+        border-radius: 4px;
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: center;
+        align-items: center;
+      }
+      h1 {
+        text-transform: uppercase;
+        font-size: 2rem;
+        letter-spacing: 2px;
+        font-weight: bold;
+        position: relative;
+      }
+
+      h1:hover::before {
+        content: "";
+        display: block;
+        height: 10px;
+        width: 100%;
+        background-color: rgb(10, 8, 8);
+        position: absolute;
+        top: -10px;
+      
+      }
+
+      h1:hover::after {
+        content: "";
+        display: block;
+        height: 10px;
+        width: 100%;
+        background-color: rgb(17, 16, 16);
+        position: absolute;
+        bottom: -10px;
+     
+      }
+---------------------------------------------
+/* Example 4: Best Example about BackGround Image Using before */
+Html : 
+<header>
+   <nav class="navigation">
+    <ul>
+      <li>Home</li>
+      <li>About</li>
+      <li>Services</li>
+      <li>Contact</li>
+    </ul>
+   </nav>
+</header>
+
+<section>
+  <h1>Welcome To Coding World</h1>
+  <p>
+    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat
+    dolore, optio soluta, odit doloribus obcaecati debitis ullam adipisci
+    facere harum quibusdam repellendus, quas ut corporis! Laboriosam itaque
+    expedita minus ratione quas, animi praesentium velit!
+  </p>
+</section>
+
+<hr /> 
+
+<footer><h3>End</h3></footer>
+
+
+Css : 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: url("https://source.unsplash.com/collection/190727/1600x900") no-repeat center center/cover;
+  height: 100vh;
+  width: 100vw;
+  opacity: 0.5;
+  z-index: -1;
+}
+
+header{
+  margin-top: 20px;
+}
+
+ul {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+section {
+  height: 300px;
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+  justify-content: center;
+}
+p {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+}
+h1 {
+  font-size: 2rem;
+}
+
+h3 {
+  text-align: center;
+}
+
+
+
+Note : For Before and After always use absolute Because for design or background we leave the content Epmty so there will be no position for that so we can't use relative so use absolute which will be with reference to body
+---------------------------------------------------
+favicon.io : To create our own icon in url 
+<head>
+<link rel="icon" href="m.ico">
+</head>
+
+* cursor:pointer
+  It displays mouse cursor when we take over mouse on that element
+  Example :
+  .btn{
+    cursor: pointer;
+  }
+-------------------------------------------------------
+Display Properties:
+1. Inline         (<span>)
+2. Block          (<div> <p> <h1> <ol> <ul> <form> <table> )
+3. Inline-Block   (<a>  <img> )
+4. None           (It Hides the Element and it's space)
+
+we can't change the width of inline elements.
+we can change the width of block elements but still it won't allow any other element to sit after it. and we can center elements by using margin : auto
+So it's Better to use inline-block .  (example : img).  But we can't center the elements using margin : auto
+
+----------------------------------------------------------
+
+*Hiding :
+(display:none)  : it disappears the content along with its space
+(visibility:hidden)  : it hides the content but it's space will remain as it is. 
+
+
+
+* z-index :
+  It works only for position changed Elements .(i.e Relative, Absolute, Fixed, Sticky)
+  It is used to Priortise the Elements (i.e Which Element's z-index is highest that will look on Top When multiple Elements have overlapped)
+
+
+* Converting Image Color (White - Black or Black - White)
+  #div1 img{
+  filter:invert(100%);
+  }
+
+
+---------------------------------------------------------------
+
+CSS Positioning:
+1.static
+2.relative
+3.absolute
+4.fixed
+5.sticky
+
+1.static : By default all the elements are static. 
+          
+2.relative : it changes the position with respect to its current position set by html (i.e static position).
+             it changes the position of the element without effecting the position of the other elements.(i.e if other elements are present on side then it will overrride them)
+             i.e it's space will remain as it is.(It will not leave up it's Space)
+             
+3.absolute :  it changes the position of the element with respect to its parent whose position is been set. including padding(in case if we have given padding to parent).
+                if multiple parent's are having their position set then it will take it's  nearest parent's  position. 
+                   if no parent is having it's position set and if we have set body position  then it will take body's position.
+                       and if no parent is having it's position set then it will consider screen's  resolution  as it's parent.
+                           Here element will Leave it's space immediately. 
+                      
+                      
+              it affects the position of the other elements.(i.e next elements will get shifted at it's position immediately after setting "position:absolute" of any element)
+              ex : other elements can shift.
+              ex : to set the element at the top we can set top:0;
+                   or if we want to set the element at the bottom then it could be bottom:0
+4.fixed : it set's  the position with respect to it's  screen's resulation 
+          it also works with respect to it's current position (i.e if we set only RIGHT then Vertically it will be in it's DEFAULT position only)
+          As soon as we set the Position FIXED then it will leave it's space and other elements will come in it's space (i.e It Effects the position of other elements)
+          once we set it's position and makes it's  position fixed then it will remain at it's position fixed even  if we scoll up or down.
+          ex : it is used for navigation bar.
+5.sticky : Example : If our current elements normal position is in middle.
+           and if we set position :sticky;
+                         top : 10px;
+           then whenever we will scroll up the page that time it will get fixed at that position
+
+
+  Relative and sticky won't Leave its space BUT ABSOLUTE and FIXED WILL LEAVE it's Space so other elements will come in it's Position
+  
+  /* If both top and botttom properties are applied to any  element then top will get executed and same goes for left and right    left will get highest priority */
+  Note : we can set negative position as well.
+         example : top : -30px;
+
+-----------------------------------------------------------------------
+* OverFlow :
+  If suppose our container's size is smaller and content inside that container is more then it will overflow.
+  so we will use OverFlow.
+  overflow : hidden,visible, scroll, auto
+             hidden : overflow content will get hide
+             visible : By default overflow content will be visible
+             scroll : It will add scroll bar option
+             auto : It will add scroll bar option only when it is required.
+  Example : If suppose inside our div we have <p>lorem1000</p>
+          div{
+            height :100px;
+            width:100px;
+            background-color:pink;
+            overflow:auto;
+          }
+----------------------------------------------------------
+* Float, Clear :
+  float : If we use float on any element then the next element will take place next after it.
+          If we have 4 elements and we have used float:left on first element then the second element will start from immediately next after to it,
+          so if we want that element also to be floated left then use float: left on that element also and if we don't want second element to be floated left then use clear on that element so it will remain on next new line only.
+  
+  Clear : clear : left  - If we apply (clear : left) on any element then it means that it can't go beside any previous element which is having float:left and it should take new line.
+          clear : right - If we apply (clear : right) on any element then it means that it can't go beside any previous element which is having float:right and it should take new line.
+          clear : both  - If we apply (clear : both) on any element then it means that it can't go beside any previous element which is having float:left or float:right and it should take new line
+  
+  Important Note : 
+  Whenever we use float then the parent container's  size will become small and elements will come out of that, so always use overflow : auto in parent container.
+  
+  Example 1:Navigation Bar
+  Html :
+   <ul>
+     <li>Home</li>
+     <li>About</li>
+     <li>Contact</li>
+     <li>Donate</li>
+   </ul>
+  
+  Css :
+     ul{
+       background-color: green;
+       border: 5px solid black;
+       list-style: none;
+       color: white;
+       overflow: auto;
+     }
+     li{
+       float: left;
+       margin: 5px 10px;
+     }
+  Example 2:Navigation Bar
+  Html :
+  <header>
+   <nav>
+     <ul>
+      <li>Home</li>
+      <li>About</li>
+      <li>Services</li>
+      <li>Contact</li>
+      <input type="text" name="search" id="search" placeholder="Search" />
+     </ul>
+   </nav>
+  </header>
+
+  Css :
+  <style>
+   nav ul {
+    background-color: aquamarine;
+    list-style: none;
+    overflow: auto;
+    border: 2px solid black;
+    border-radius: 4px;
+   }
+   li {
+    float: left;
+    margin: 10px;
+   }
+   #search {
+    padding: 5px;
+    border: 1px solid black;
+    border-radius: 4px;
+    float: right;
+    margin-top: 5px;
+   }
+  </style>
+
+---------------------------------------------------------------------
+* FONTS :  fonts.google.com
+         (copy URL and paste it in the head 
+          copy font-family and paste it in css)
+         (Body = 'Merriweather', serif;
+          h1 = 'Sacramento', cursive;
+          h2,h3 = 'Montserrat', sans-serif;)
+
+flaticon.com : For Images. (ex : computers,profile)
+giphy.com : For GIF's
+
+* Font Size : pixel is static and rem is dynamic (use dynamic)
+            16px = 1rem            
+      /* % - It takes the size with Respect to it's nearest Parent.  
+          By-Default size 16px
+          i.e 100% = 16px
+              50%  = 8px
+      em - It takes the size with respect to it's nearest Parent .(i.e It multiplies with it's Parent)
+           By-Default 1em = 16px
+           Example : Parent : Font-size : 100px
+                     Child  : Font-size : 2em       # 200px
+      rem - It takes the size with respect to html size.(i.e It multiplies with HTML size)
+            Example : html{
+                          font-size : 10px
+                             }
+                      p{
+                        font-size : 5rem          #50px
+                      }
+      vh - It takes entire screen's height
+           Example : height : 50vh;
+                     Then, it takes Half Screen
+      
+      vw - It takes entire screen's width
+           Example : width : 50wh;
+                     Then, it's Width will be Half' Screen
+       */
+Advice : h1 = 90px = 5.625rem
+         h2 = 40px = 2.5rem
+
+Font Properties :
+font-family : 'Courier New', Courier, monospace;
+font-style :  italic;
+font-size : 40px;
+color : red;
+font-weight : bold;
+word-spacing: 10px;
+
+text-align: center;                /* It won't work for position:absolute */
+text-transform: uppercase;
+letter-spacing: 2px;
+line-height: 2;
+
+line-height :: To increase the space between whatever is on top and bottom of that element.
+               Default 1, Double 2 and so on---
+               0 means no space between up and down
+
+text-shadow: 5px 5px 1px green;
+             /* 1.Horizontal away from Left                
+                2.Vertical away from Top
+                3.Blur
+                4.color*/
+
+             /*   We can give Multiple Shadow
+                  text-shadow: 10px 10px 5px green,2px 4px 3px blue; */
+
+
+* css button generator : To generate button
+
+* Box Shadow : 
+  box-shadow: -10px -6px 2px green;
+  /* 1.Horizontal From Left
+     2.Vertical From Top
+     3.Blur
+     4.color */
+
+  box-shadow: inset 15px 14px 3px green;
+  /* It gives shadow from Inside 
+     i.e It comes to left-15px and top-14px*/
+
+  box-shadow:  15px 14px 3px green;
+  /* It comes to right-15px and bottom-14px */
+
+  box-shadow: inset 4px 6px 2px green, 8px 10px 2px purple;
+  /* Multiple Shadow */
+
+---------------------------------------------------------------
+
+**CSS FLEX BOX** :-
+
+Html :
+<section>
+      <div class="item" id="item-1">Box - 1</div>
+      <div class="item" id="item-2">Box - 2</div>
+      <div class="item" id="item-3">Box - 3</div>
+      <div class="item" id="item-4">Box - 4</div>
+      <div class="item" id="item-5">Box - 5</div>
+      <div class="item" id="item-6">Box - 6</div>
+      <div class="item" id="item-7">Box - 7</div>
+      <div class="item" id="item-8">Box - 8</div>
+</section>
+
+Css :
+
+/* Reset CSS */
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Parent Properties */
+section{
+  border: 2px solid black;
+  background-color: bisque;
+  height: 500px;
+  
+  /* Initializing the Container as a Flex Box */
+  display: flex;  
+
+  /* Leaves Gap between Elements of 16px */
+  gap: 1rem;      /*Both Row and Column Gap*/
+  /* row-gap: 20px; */  
+  /* column-gap: 20px; */
+
+  /* Wraps all the Items inside the Flex container */
+  flex-wrap: wrap;
+  
+  /* Direction of Elements */
+  flex-direction: row;
+  flex-direction: row-reverse;
+  flex-direction: column;
+  flex-direction: column-reverse;
+
+  /* ShortHand for Direction AND Wrap */
+  flex-flow: row wrap;
+
+  justify-content: flex-start;    /*  Start   Example : |1 2 3 4            |*/
+  justify-content: center;        /*  Center  Exmaple : |      1 2 3 4      |*/
+  justify-content: flex-end;       /*  End    Example : |            1 2 3 4|*/
+  justify-content: space-between;  /*         Example : |1     2     3     4|*/
+  justify-content: space-evenly;    /*        Example : |   1   2   3   4   |*/
+  justify-content: space-around;    /*        Example : |   1      2      3      4   |*/
+  /* It Works on Main-Axes 
+     i.e If Direction : Row ,Then it works Horizontally
+         If Direction : Column ,Then it works Vertically */
+
+  /* Use it for Single Row */
+  align-items: center; 
+  align-items: flex-start; 
+  align-items: flex-end;
+  /* It Works on Cross-Axes 
+     i.e If Direction : Row ,Then it works Vertically
+         If Direction : Column ,Then it works Horizontally */
+
+   /* It Works for  Multiple Line to distribute the empty space
+      Use it for Multiple Rows*/
+   align-content:center;
+   align-content: flex-start;
+   align-content: flex-end;
+   align-content: space-between;
+   align-content: space-around;
+   align-content: space-evenly;
+   /* It Works on Cross-Axes 
+     i.e If Direction : Row ,Then it works Vertically
+         If Direction : Column ,Then it works Horizontally */ 
+}
+
+/* Child Properties */
+.item{
+  border: 1px solid rgb(230, 11, 11);
+  height: 100px;
+  width: 100px;
+  background-color: yellow;
+
+  /* By Default Grow = 0 (Off) i.e It will not take space according to container's Size , It only takes It's required size */
+  flex-grow: 1;
+
+  /* By Default Shrink = 0 (Off) i.e It will not shrink according to container's Size , It will come out of Container When Container's size is Small */
+  flex-shrink: 1; 
+}
+
+#item-4{
+  /* Higher the Order ,Later it Comes up   ByDefault order : 0 */
+  order : 1;
+  /* Here Box - 4 Will be Displayed at the Last */
+
+  flex-grow: 2;
+  /* Here Box - 4 Grows Twice the size as compared to other Boxes */
+
+  flex-shrink: 3;
+  /* Here Box - 4 Shrinks Thrice the size as compared to other boxes */
+  
+  flex-basis: 300px;
+  /* It Defines the Initial size of an Item
+     If Direction : Row , Then it set's  Width
+     If Direction : Column , Then it set's Height */
+
+  flex: 0 0 200px;
+  /* ShortHand for Grow, Shrink, Basis */
+
+  align-self: flex-start;
+  align-self: center;
+  align-self: flex-end;
+  /* We can Align Individual Items
+     It Works on Cross-Axes
+     If Direction : Row ,then it works Vertically
+     If Direction : Column , then it works Horizontally
+     Note : It Overrides Only for align-items, and it will not works for align-content */
+}
+--------------------------------------------------------------------------------------------
+Note : In Flex Box if there are 3 elements and if one of it's elements Height is more, then the next Lines elements will start after that elements height
+If we have 4 div's 1 2 3 4 then it will come one beside other 
+Here if div = 1 2 3 4 and if we move div 1 to the bottom then remaining div's will not occupy it's space
+-------------------------------------------------------------------------------------------
+* Media Query :
+
+ Html : 
+ 
+ <div class="cls" id="id-1">Box - 1</div>
+ <div class="cls" id="id-2">Box - 2</div>
+ <div class="cls" id="id-3">Box - 3</div>
+ <div class="cls" id="id-4">Box - 4</div>
+  
+
+ Css :
+
+ body {
+  background-color: bisque;
+}
+.cls {
+  height: 200px;
+  width: 200px;
+  border: 2px solid black;
+  border-radius: 5px;
+  display: none;
+}
+
+@media screen and (min-width: 400px) and (max-width: 500px) {                           #It will override the prev property when cond satisfies
+  #id-4 {
+    display: block;
+    background-color: pink;
+  }
+}
+@media screen and (min-width: 300px) and (max-width: 400px) {
+  #id-3 {
+    display: block;
+    background-color: red;
+  }
+}
+
+@media screen and (min-width: 200px) and (max-width: 300px) {
+  #id-2 {
+    display: block;
+    background-color: yellow;
+  }
+}
+
+@media screen and (max-width: 200px) {
+  #id-1 {
+    display: block;
+    background-color: orange;
+  }
+}
+  
+Website : my browser size
+          To know about the size increament and decreament of browser
+-----------------------------------------------------------------------------------------
+* Variables : 
+  Global Variables :
+
+  Html :
+  <div class="parent">
+      <div class="child"></div>
+  </div>
+ 
+  Css : 
+  :root{
+    --primary-color:red;
+    --secondary-color:blue;
+    --primary-width:800px;
+    --primary-height:800px;
+    --secondary-height:200px;
+    --secondary-width:200px;
+  }
+
+  .parent{
+    height: var(--primary-height);
+    width: var(--primary-width);
+    background-color: var(--primary-color);
+  }
+
+  .child{
+    height: var(--secondary-height);
+    width: var(--secondary-width);
+    background-color: var(--secondary-color);
+  }
+
+-----------------------------
+* calc() : 
+
+ Example 1:  Centering Box
+  Html :
+  <div class="box"></div>
+  
+  Css :
+  {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  .box{
+    height: 100px;
+    width: 100px;
+    background-color: bisque;
+    position: absolute;
+    left: calc(50% - 50px);
+    top: calc(50% - 50px)
+  }
+ -----------------------------
+Example 2 :  Fixing Size
+  Html : 
+  <header></header>
+  <section></section>
+  <footer></footer>
+
+  Css : 
+  header{
+    width: 100vw;
+    height: 100px;
+    background-color: red;
+  }
+  section{
+    width: 100vw;
+    height: calc(100vh - 100px - 100px);
+    background-color: pinks;
+  }
+  footer{
+    width: 100vw;
+    height: 100px;
+    background-color: black;
+  }
+
+-----------------------------------------------------------------------------------------
+Note :
+    /*Transform is used for hover
+      Transition can be used with Transform
+      KeyFrames can be used Directly as well as for Hover*/
+      /* website : Css Transform visulizer */
+------------------------------------------------------------------------------------------
+Transition :
+It is used to apply the effects smoothly
+
+/* 
+Transition Properties : 
+1. transition-property         : On which Properties transition should get applied (Example : transition-property : width,height  or  transition-property : all)
+2. transition-duration         : Within how many seconds transition should complete (Example - transition-duration : 2s)
+3. transition-timing-function  : (Example - transition-timing-function : ease)
+4. transition-delay            : After How many seconds Transition should start (Example -  transition-delay : 2s)
+
+Transition Timing Function Properties : 
+1.ease - slow start, fast, slow end
+2.ease-in - slow start
+3.ease-out - slow end
+4.ease-in-out - slow start, fast, slow end
+5.linear - same speed
+6.step(n)
+*/
+--------------------------------
+SHORTHAND FOR TRANSITION : 
+transition : all 2s ease 1s ;                /* transition : Property  Duration  TimingFunction  Delay*/
+----------------------------------------------------------------------------------------------------------
+
+Example : 1
+Html : 
+<div class="box">Maizoddin</div>
+
+Css : 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.box{
+  height: 200px;
+  width: 200px;
+  background-color: green;
+  margin: 200px auto;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transition-property: all;
+  transition-duration: 4s;
+  transition-timing-function:step(10);
+  transition-delay: 1s;  
+}
+  .box:hover{
+    width: 400px;
+    height: 400px;
+    background-color: red;
+    border-radius: 100%;
+    font-size: 2rem;
+    color: white;
+    text-shadow: 6px 6px 2px black ;
+  }
+
+  ------------------
+Example 2 : 
+Html : 
+<input type="text" placeholder="Name">
+
+Css : 
+ 
+input[type="text"]{
+  height: 30px;
+  width: 300px;
+
+  transition: all;
+  transition-duration: 2s;
+  transition-timing-function: ease-in-out;
+  transition-delay: 1s;
+}
+
+input::placeholder{
+ background-color: bisque;
+ color: black;
+ border: 2px solid red;
+ font-size: 1rem;
+}
+
+input:focus{
+ width: 500px;
+ height: 80px;
+ color: green;
+ background-color: orange;
+} 
+----------------------------------------
+
+Example : 3 
+
+Html : 
+<div class="box">Maizoddin</div>
+
+Css : 
+.box{
+  height: 200px;
+  width: 200px;
+  background-color: green;
+  margin: 200px auto;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transition-property: all;
+  transition-duration: 4s;
+  transition-timing-function:step(10);
+  transition-delay: 0s;  
+}
+
+  
+    @media screen and (min-width:300px) and (max-width:550px) 
+   {
+     .box{
+       background-color: pink;
+       border: 5px solid red;
+       width:400px;
+       height:400px;
+      border-radius: 100%;   }
+     
+   } 
+
+---------------------------------------------------------------------------------------------------------------------------------
+* Transform : It won't work with In-Line Elements
+  
+Rotate : It Rotates 
+/* transform: rotate(20deg);   It rotates Clock wise direction */
+/* transform: rotate(-20deg);  It rotates in Anti-Clock wise direction */
+
+Skew 
+/* transform: skewX(180deg);                                 */
+/* transform: skewY(180deg);                                */
+/* transform: skew(20deg,20deg);                           */
+  
+Scale : It Increases the Size 
+/* transform: scaleX(2);                                    It Increases Width */
+/* transform: scaleY(3);                                    It increases Height */
+/* transform: scale(1.5,1.5);                               It Increases Both width and Hieght*/
+     
+
+Translate : It moves the Element 
+/* transform: translateX(10px);                               It moves the ELement horizontally */
+/* transform: translateY(10px);                               It moves the Element Vertically */
+/* transform: translate(10px ,100px);                         It moves the item       X : 10px;   Y : 100px */
+
+transform-origin: 0%  100%;                             /*   From where the Transform should take place bydefault center but now after setting this it will start from x=0 y=100 */
+
+---------------------------
+Example : 
+Html : 
+<div class="container">
+<div class="box">Maaz</div>
+</div>
+
+Css : 
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body{
+  height: 650px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container{
+  height: 600px;
+  width: 600px;
+  background-color: bisque;
+  border: 4px solid black;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.box{
+  height: 200px;
+  width: 200px;
+  background-color: red;
+  color: white;
+  border: 2px solid green;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transition: all 2s ease-in-out;      
+}
+
+.box:hover{
+  transform: skew(20deg,20deg);   
+}
+-------------------------------------------------------------------------------------------------------------
+* Css 3D Transform :
+    /* Persepective s used to decide from how far we are veiwing that item . if perspective is less then we are close to that item */
+    /*  */
+    .child:hover{
+      transition: all 3s ease;
+      transform: perspective(800px) rotateY(180deg);
+      background-color:pink;
+    }
+
+
+    /* Important Note : We can use all the properties at single time */
+    transform: perspective(800px) rotateY(180deg) skewX(30deg) scale(1.5) translateX(30px);
+    
+------------------------------------------------------------------------------------------------------------------------------------------
+* CSS Animation and KeyFrames : 
+ 
+ 
+animation-name: myAnimate;                       /*Name of the Animation that we want to apply */
+animation-duration: 3s;                          /* Within how much time Transition should be completed */
+animation-timing-function: ease-in-out;          /* How Transition should go on (i.e Speed) */
+animation-delay: 1s;                             /* After how many seconds Transition should start*/
+animation-iteration-count: 3;                    /*How many Times iteration should be repeated (Exmaple: Infinite)*/
+animation-direction: Reverse;                    /* How the Iteration should flow (Example :  alternate)*/
+animation-fill-mode:forwards;                    /*The animation effect will be as it is after animation end*/
+
+@keyframes myAnimate 
+{
+  0%{
+    background-color: blueviolet;
+    border-radius: 17%;
+    width: 210px;
+  }
+  50%{
+    background-color: white;
+    border-radius: 34%;
+    width: 230px;
+  }
+  100%{
+    background-color: pink;
+    border-radius: 50%;
+    width: 250px;
+  } 
+}
+
+
+Example : 
+Html : 
+<div class="container">
+    <div class="box">Maaz</div>
+</div>
+
+CSS : 
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  height: 650px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container{
+  height: 600px;
+  width: 600px;
+  background-color: bisque;
+  border: 4px solid black;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.box{
+  height: 200px;
+  width: 200px;
+  background-color: red;
+  color: white;
+  border: 2px solid green;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  animation-name: myAnimate;                       /*Name of the Animation that we want to apply */
+  animation-duration: 3s;                          /* Within how much time Transition should be completed */
+  animation-timing-function: ease-in-out;          /* How Transition should go on (i.e Speed) */
+  animation-delay: 1s;                             /* After how many seconds Transition should start*/
+  animation-iteration-count: 3;                    /*How many Times iteration should be repeated (Exmaple: Infinite)*/
+  animation-direction: Reverse;                    /* How the Iteration should flow (Example :  alternate)
+                                                      Here Reverse Means : It will go from 100% to 0%*/ 
+}
+
+ @keyframes myAnimate 
+{
+  0%{
+    background-color: blueviolet;
+    border-radius: 17%;
+    width: 210px;
+  }
+  50%{
+    background-color: white;
+    border-radius: 34%;
+    width: 230px;
+  }
+  100%{
+    background-color: pink;
+    border-radius: 50%;
+    width: 250px;
+  } 
+}
+
+----------------------------------------------------------------------------------------------------------------
+ShortHand : 
+      /* animation: name   duration   timing-function   delay   iteration-count   direction; */
+      /* animation: myAnimation 5s linear 1s 5 reverse; */
+---------------------------------------------------------------------------------------------------------------
+Example : Animation with Hover 
+Html : 
+<div class="container">
+    <div class="box">Maaz</div>
+</div>
+
+CSS : 
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  height: 650px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container{
+  height: 600px;
+  width: 600px;
+  background-color: bisque;
+  border: 4px solid black;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.box{
+  height: 200px;
+  width: 200px;
+  background-color: red;
+  color: white;
+  border: 2px solid green;
+
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+}
+
+.box:hover{
+  animation: newOne 4s linear 2s 3 alternate;
+}
+
+@keyframes newOne {
+  0%{ height: 100px; background-color: purple;}
+  25%{ height: 200px; background-color: rgb(60, 0, 128);}
+  50%{ height: 300px; background-color: rgb(109, 128, 0);}
+  100%{ height: 400px; background-color: rgb(0, 70, 128);}    }
+  ---------------------------------------------------------------------------------------------------------------------
+
+*CSS GRID :
+ 
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.container{
+  background-color: bisque; 
+  
+  /* Initialize */
+  display: grid;
+  
+  /* Number of Vertical Cells */
+  grid-template-columns: repeat(3,300px) ;
+  grid-template-rows: repeat(3,1fr);
+  /* Number of Horizontal Cells */
+  grid-template-rows: repeat(3,200px) ;      /*or*/     /* grid-template-rows: 100px repeat(2,1fr);*/
+  
+  /* It is used to align the All Cells of Grid inside Contianer */
+  justify-content: center;
+  align-content: center;
+
+  place-content: center;    /*ShortHand*/
+  
+  /* It is used to align our div's inside Cells */
+  justify-items: center;
+  align-items: center;
+
+  place-items: center;      /*ShortHand*/
+
+  /* To leave gap between cells */
+  grid-gap: 10px;
+}
+
+
+#id-1{
+  /* It specifies Line number from where to where we need to merge */
+   grid-column: 1/ 3;
+    grid-row: 1/3;                  or         /*  grid-row: 1/ span 2; */
+}
+-------------------------------------------------
+Example : 
+Html :
+<div class="container">
+        <div class="items" id="item-1">Header</div>
+        <div class="items" id="item-2">Menu</div>
+        <div class="items" id="item-3">Main</div>
+        <div class="items" id="item-4">Right</div>
+        <div class="items" id="item-5">Footer</div>
+</div>
+
+Css : 
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+.container{
+  background-color: bisque;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-gap: 10px;
+
+  grid-template-rows: repeat(3,100px);
+  grid-template-columns: repeat(6,150px);
+
+  justify-content: center;
+  align-content: center;
+
+}
+.items{
+  background-color: lightblue;
+  border: 4px solid black;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+}
+#item-1{
+  grid-column: 1/-1;
+  
+}
+#item-2{           
+  grid-column: 1/3;
+}
+#item-3{
+  grid-column: 3/6;
+}
+#item-4{
+  grid-column: 6/-1;
+}
+#item-5{
+  grid-column: 1/-1;
+}
+---------------------------------------------
+Example : 
+Html : 
+<div class="container">
+<div class="items" id="item-1">Header</div>
+<div class="items" id="item-2">Menu</div>
+<div class="items" id="item-3">Main</div>
+<div class="items" id="item-4">Right</div>
+<div class="items" id="item-5">Footer</div>
+</div>
+
+Css : 
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+.container{
+  background-color: bisque;
+  width: 70vw;
+  height: 40vh;
+  display: grid;
+  grid-gap: 10px;
+
+  grid-template-areas: 
+  "header header header header header header "
+  "menu   main   main   main   right   right"
+  "menu   footer footer footer footer  footer";
+
+}
+.items{
+  background-color: lightblue;
+  border: 4px solid black;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+}
+#item-1{
+grid-area: header;
+
+}
+#item-2{           
+  grid-area: menu;
+}
+#item-3{
+ grid-area: main;
+}
+#item-4{
+grid-area: right;
+}
+#item-5{
+grid-area: footer;
+}
+-----------------------------------------------------------

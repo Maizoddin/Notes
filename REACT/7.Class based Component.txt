@@ -1,0 +1,86 @@
+CLASS BASED COMPONENT
+
+Example :
+import React from "react";
+import Child1 from "./child1";
+import Child2 from "./child2";
+
+class Parent extends React.Component {
+  constructor(props) {
+    super(props);
+    console.log("Parent Constructor");
+    this.state = {
+      info: {},
+    };
+  }
+
+  render() {
+    console.log("Parent Render");
+    return (
+      <>
+        <h1>{this.props.name}</h1>
+        <Child1 />
+        <Child2 />
+      </>
+    );
+  }
+
+  async componentDidMount() {
+    console.log("Parent DidMount");
+    const data = await fetch("https://www.swiggy.com");
+    const json = await data.json();
+    this.setState({
+      info: json,
+    });
+  }
+
+  componentDidUpdate() {
+    console.log("Parent DidUpdate");
+  }
+  componentWillUnmount() {
+    console.log("Parent WillUnmount");
+  }
+}
+export default Parent;
+
+
+==================================================================
+General Approach in React :
+1] Load the component
+2] Fetch the Data
+3] Load Again
+
+Flow of Execution :
+1] Constructor
+2] Render(Render with default data)
+3] componentDidMount (Here we call API and update the State variable with new data)
+4] Render(Render with new data)
+5] componentDidUpdate
+6] componentWillUnmount
+
+Note :
+componentDidUpdate()  : called after every update[After UI updates with new data]
+componentWillUnmount() : called after component gets removed from DOM or UI
+
+====================================================================
+* Suppose we have one parent and 2 child components :
+
+Parent Constructor
+Parent Render
+Child1 Constructor
+Child1 Render
+Child2 Constructor
+Child2 Render
+Child1 DidMount
+Child2 DidMount
+Parent DidMount
+Child1 Render
+Child1 DidUpdate
+Child2 Render
+Child2 DidUpdate
+Parent Render
+Child1 Render
+Child2 Render
+Child1 DidUpdate
+Child2 DidUpdate
+Parent DidUpdate

@@ -1,0 +1,91 @@
+DropDown.jsx
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import "../index.css";
+
+const DropDown = ({ options, selected, setSelected }) => {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (open) {
+      document.addEventListener("click", handleClickOutside, true);
+    } else {
+      document.removeEventListener("click", handleClickOutside, true);
+    }
+  }, [open]);
+
+  const handleToggle = () => {
+    setOpen((prev) => !prev);
+  };
+
+  const handleOptionSelect = (option) => {
+    setSelected(option.description);
+    setOpen(false);
+  };
+
+  const handleClickOutside = useCallback(
+    (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setOpen(false);
+      }
+    },
+    [options]
+  );
+
+  return (
+    <div ref={ref} className="dropdown">
+      <div className="header" onClick={handleToggle}>
+        {selected}
+      </div>
+      {open && (
+        <div className="options">
+          {options.map((option) => (
+            <div
+              className="option"
+              onClick={() => handleOptionSelect(option)}
+              key={option.key}
+            >
+              {option.description}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default DropDown;
+
+
+===================================================================
+
+DropDownPage.js
+
+import React, { useState, useMemo } from "react";
+import DropDown from "../components/DropDown";
+
+const DropDownPage = () => {
+  const [selectedCity, setSelectedCity] = useState("SELECT");
+  const cities = useMemo(
+    () => [
+      { key: 1, description: "BGM" },
+      { key: 2, description: "BLR" },
+      { key: 3, description: "GOA" },
+      { key: 4, description: "DELHI" },
+      { key: 5, description: "MUMBAI" },
+    ],
+    []
+  );
+  return (
+    <div>
+      City :{" "}
+      <DropDown
+        options={cities || []}
+        selected={selectedCity}
+        setSelected={setSelectedCity}
+      />
+    </div>
+  );
+};
+
+export default DropDownPage;

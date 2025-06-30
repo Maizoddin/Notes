@@ -1,0 +1,564 @@
+AOP(Aspect Oriented Programming) :
+
+Aspect :
+Module of code for a cross-cutting concern(logging, security, ..)
+
+Advice :
+What action is taken 
+
+Join Point :
+When to apply code during program execution
+
+Pointcut :
+An expression for where advice should be applied
+
+
+Advice Types :
+
+Before Advice   (@Before)
+After returning advice  [success execution]   (@AfterReturning)
+After throwing advice   [if exception throws]  (@AfterThrowing)
+After finally Advice    [finally]   (@After)
+Around advice      [Run before and After method]   (@Around)
+
+
+
+1] Add dependency :
+<dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+</dependency>
+
+2] Create Aspect
+
+@Component
+@Aspect
+public class AspectTest {
+
+    //    Match method in any class
+   @Before("execution(public void addAccount())")
+    public void verifyDetails() {
+        System.out.println("Verifying user details...");
+    } 
+
+    //    Match method of specific class
+    @Before("execution(public void com.example.bean.dao.AccountDAO.addAccount())")
+    public void verifyDetails() {
+        System.out.println("Verifying user details...");
+    } 
+
+    // WildCard match : Match method that starts with
+    @Before("execution(public void add*())")
+    public void verifyDetails(){
+        System.out.println("Verify user details...");
+    } 
+
+
+    // Match method with any return type
+    @Before("execution(* add*())")
+    public void verifyDetails(){
+      System.out.println("Verifying details...");
+   } 
+
+  // Argument Marching
+   
+    *] () - No arg
+    *] (*) - one arg of anytype
+    *] (..) - 0 to n args of any type
+   
+
+
+    // Match arg of specific type
+    @Before("execution(* com.example.bean.dao.AccountDAO.*(String))")
+    public void check(){
+        System.out.println("Checking...");
+    } 
+
+    // Match method with one arg of anytype
+    @Before("execution(* com.example.bean.dao.AccountDAO.*(*))")
+    public void checkCurrency(){
+        System.out.println("Checking currency...");
+    } 
+
+    // Match method with anynumber of args
+    @Before("execution(* com.example.bean.dao.AccountDAO.*(..))")
+    public void countingAmount(){
+        System.out.println("Counting amount...");
+    } 
+
+    // Match all methods of specified package
+    @Before("execution(* com.example.bean.dao.*.*(..))")
+    public void countingAmount(){
+        System.out.println("Counting amount...");
+    } 
+
+
+
+    // Reusing pointcut expression using @Pointcut
+
+    @Pointcut("execution(* com.example.bean.dao.*.*(..))")
+    private void forDAOPackage(){}
+
+    @Before("forDAOPackage()")
+    public void doPreProcessing(){
+        System.out.println("Performing preprocessing...");
+    } 
+
+
+
+    // Combining pointcuts using Logical Operators [&&, ||, !]
+    // Example : Apply to to all methods of package except getters() and setters()
+
+    @Pointcut("execution(* com.example.bean.dao.*.*(..))")
+    private void allMethods(){};
+
+    @Pointcut("execution(* com.example.bean.dao.*.get*(..))")
+    private void getters(){};
+
+    @Pointcut("execution(* com.example.bean.dao.*.set*(..))")
+    private void setters(){};
+
+    @Pointcut("allMethods() && !(getters() || setters())")
+    private void filteredMethods(){};
+
+    @Before("filteredMethods()")
+    public void preProcessing(){
+        System.out.println("Pre processing...");
+    }
+
+}
+
+----------------------------------------------------------------
+
+// To control the order of execution create separate Aspect in separate classes and user @Order(num)
+
+Example Code:
+
+@Component
+public class AOPExpressions {
+    @Pointcut("execution(* com.example.bean.dao.*.*(..))")
+    private void allMethods() {
+    }
+
+    @Pointcut("execution(* com.example.bean.dao.*.get*(..))")
+    private void getters() {
+    }
+
+    @Pointcut("execution(* com.example.bean.dao.*.set*(..))")
+    private void setters() {
+    }
+
+    @Pointcut("allMethods() && !(getters() || setters())")
+    public void filteredMethods() {
+    }
+}
+
+
+
+@Component
+@Aspect
+@Order(1)
+public class SecurityAspect {
+    @Before("com.example.bean.aspect.AOPExpressions.filteredMethods()")
+    public void security() {
+        System.out.println("Security Check...");
+    }
+}
+
+
+@Component
+@Aspect
+@Order(2)
+public class TransactionsAspect {
+    @Before("com.example.bean.aspect.AOPExpressions.filteredMethods()")
+    public void transactionCheck() {
+        System.out.println("Checking transaction..");
+    }
+}
+
+
+@Component
+@Aspect
+@Order(3)
+public class LogAspect {
+
+    @Before("com.example.bean.aspect.AOPExpressions.filteredMethods()")
+    public void logging() {
+        System.out.println("Logging...");
+    }
+}
+
+===========================
+Flow :
+
+1] Spring scans and registers:
+   During component scanning, Spring detects:
+    * Beans (@Component, @Service, etc.)
+    * AOP aspects (@Aspect)
+   Registers them in the ApplicationContext.
+
+2] Spring parses pointcut expressions:
+   Spring parses and understands which methods match which pointcuts (e.g., via execution(...) or @annotation(...)).
+   Associates them with their corresponding advice methods (@Before, @After, @Around, etc.).
+
+3] Spring creates proxies for target beans:
+   For beans that have matched AOP pointcuts, Spring wraps them with proxy objects (either JDK or CGLIB).
+   The proxy intercepts method calls.
+
+4] When a proxied method is called:
+   The proxy intercepts the call.
+   It checks whether the method matches any pointcut.
+   If yes, it executes the applicable advice(s) (e.g., @Before, @AfterReturning, etc.) in order.
+   Finally, it delegates the call to the actual target method.
+
+=============================
+
+Getting Method arguments :
+
+@Component
+@Aspect
+public class LogAspect {
+
+    @Before("com.example.bean.aspect.AOPExpressions.filteredMethods()")
+    public void logging(JoinPoint joinPoint) {
+        
+        //  Get Method Signature
+        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+        System.out.println(methodSignature);
+        
+        // Get Method Parameters
+        Object[] args = joinPoint.getArgs();
+        for(Object arg:args){
+            System.out.println(arg);
+        }
+        
+        System.out.println("Logging...");
+    }
+}
+
+
+
+=============================
+
+@AfterReturning
+
+Full Flow:
+1. At Startup Time (ApplicationContext load time)
+   This is one-time setup, not per method call.
+   * Spring scans your beans (@Component, @Aspect, etc.).
+   * It finds aspects with advices like @AfterReturning, @Before, etc.
+   * It evaluates pointcut expressions (execution(...)) and maps which advice applies to which methods.
+   * Then it creates a proxy object for every eligible target bean (like your DAO).
+
+2. At Runtime (when a method is called)
+   * proxy objects method gets called
+   
+   What does the proxy do?
+   Checks: Is there any advice associated with methodCall()?
+
+   It sees:
+   * @Before → Run before method.
+   * @AfterReturning → Run after method successfully returns.
+   * @AfterThrowing → Only if exception occurs.
+
+   It calls the actual method → target bean's findAccounts().
+   Captures the return value (e.g., List<Account>).
+   It now checks:
+  “Do I have any @AfterReturning for this method?”
+  Yes? → Then call the advice method and inject the return value.
+  Now the advice method executes and then control is returned back to original method
+
+
+// Note : We can use this to post-process the data, to log the data etc
+
+Example :
+@Component
+public class AOPExpressions {
+    @Pointcut("execution(* com.example.bean.dao.*.*(..))")
+    private void allMethods() {
+    }
+
+    @Pointcut("execution(* com.example.bean.dao.*.get*(..))")
+    private void getters() {
+    }
+
+    @Pointcut("execution(* com.example.bean.dao.*.set*(..))")
+    private void setters() {
+    }
+
+    @Pointcut("allMethods() && !(getters() || setters())")
+    public void filteredMethods() {
+    }
+}
+
+
+
+@Component
+@Aspect
+public class LogAspect {
+
+    @AfterReturning(
+            pointcut = "com.example.bean.aspect.AOPExpressions.filteredMethods()",
+            returning = "result"
+    )
+    public void logUsers(JoinPoint joinPoint, List<UserResponseDTO> result) {
+        System.out.println("Logging...");
+        for (UserResponseDTO user : result) {
+            System.out.println(user);
+        }
+    }
+
+    // We can also process the data and the caller method will get modified data
+}
+
+
+
+=============================
+
+@AfterThrowing
+
+* It can be used to log the exceptions.
+* It still propogates the exception to the caller method.
+
+Example :
+   @AfterThrowing(
+            pointcut = "com.example.bean.aspect.AOPExpressions.filteredMethods()",
+            throwing = "exception"
+    )
+    public void logWithdrawalException(JoinPoint joinPoint, Throwable exception) {
+        System.out.println("Logging Withdrawal Exception : " + exception.getMessage());
+    }
+
+==============================
+
+@After 
+
+* It's like finally block where it runs irrespective of failure or success.
+* It doesn't have access to result or exception.
+* We can use it for doing some cleanup or logging.
+
+Example :
+@After("com.example.bean.aspect.AOPExpressions.filteredMethods()")
+    public void logAndCleanup(JoinPoint joinPoint){
+        System.out.println("CleanUp and Logging...");
+    }
+
+
+==============================
+
+@Around
+* It is kind of combination of both @Before and @After
+* It can be used for security, logging etc
+* It can also be used for stopping the exception propogration to the caller method
+* It gives access to ProceedingJoinPoint which is a control when (or if) the target method gets executed.
+* We should call the target method manually using ProceedingJoinPoint.
+* We can either handle the exception in advice or we can re-throw it to caller method.
+
+Flow :
+1] The proxy calls the @Around advice method instead of directly calling the target method.
+
+2] Inside the advice, you control what happens:
+   * You can do something before the method executes.
+   * You call joinPoint.proceed() to manually invoke the target method.
+   * You can do something after it executes.
+   * And finally, you return the value.
+
+3] Whatever you return from your @Around advice — that is what the proxy sends back to the original caller.
+
+
+
+Example :
+    @Around("com.example.bean.aspect.AOPExpressions.filteredMethods()")
+    public Object handleWithdrawalBackgroundTask(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        long start = System.currentTimeMillis();
+        Object result = null;
+        try {
+            result = proceedingJoinPoint.proceed();
+        } catch (Throwable exception) {
+            System.out.println("Logging Exception : " + exception.getMessage());
+            throw exception;
+        }
+
+        long end = System.currentTimeMillis();
+
+        long total = (end - start) / 1000;
+
+        System.out.println("Total Time : " + total);
+        return result;
+    }
+
+
+=========================================================================================================================
+
+
+Example Code :
+
+package com.example.bean.aspect;
+
+import jakarta.servlet.http.HttpServletRequest;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+
+@Component
+@Aspect
+public class LoggingAspect {
+    @Autowired
+    HttpServletRequest request;
+
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+
+    @Pointcut("within(com.example.bean.controller..*)")
+    public void controllerPointcut() {
+    }
+
+    ;
+
+    @Before("controllerPointcut()")
+    public void logBefore(JoinPoint joinPoint) {
+        String className = joinPoint.getSignature().getDeclaringTypeName();
+        String methodName = joinPoint.getSignature().getName();
+        String arguments = Arrays.toString(joinPoint.getArgs());
+        String url = request.getRequestURL().toString();
+        String methodType = request.getMethod();
+        logger.info("-> [{}] {} | {}.{}  called with arguments : {}", methodName, url, className, methodName, arguments);
+    }
+
+    @AfterReturning(
+            pointcut = "controllerPointcut()",
+            returning = "result"
+    )
+    public void logAfterReturning(JoinPoint joinPoint, Object result) {
+        String className = joinPoint.getSignature().getDeclaringTypeName();
+        String methodName = joinPoint.getSignature().getName();
+        logger.info("<- {}.{}() returned : {}", className, methodName, result);
+    }
+
+}
+
+--------------------------------------------------------------------------------------------------------------------------------------
+Example :
+
+@Aspect
+@Component
+public class LoggingAspect {
+
+    private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+
+    // Pointcut to match the handler method inside your GlobalExceptionHandler
+    @Pointcut("execution(* com.yourpackage.GlobalExceptionHandler.handleValidation(..))")
+    public void validationExceptionHandler() {}
+
+    @AfterReturning(pointcut = "validationExceptionHandler()", returning = "response")
+    public void logValidationErrors(JoinPoint joinPoint, Object response) {
+        MethodArgumentNotValidException ex = (MethodArgumentNotValidException) joinPoint.getArgs()[0];
+
+        logger.error("Validation failed: {} errors", ex.getBindingResult().getErrorCount());
+
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            logger.error("Field: '{}', Rejected Value: '{}', Message: '{}'",
+                    error.getField(),
+                    error.getRejectedValue(),
+                    error.getDefaultMessage());
+        });
+    }
+}
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Example :
+
+package com.example.Learn.aop;
+
+import jakarta.servlet.http.HttpServletRequest;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.util.Arrays;
+
+@Component
+@Aspect
+public class LoggingAspect {
+    private final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+
+    /*
+     * Exception Logging
+     * */
+    @Pointcut("execution(* com.example.Learn.exception.GlobalExceptionHandler.*(..)")
+    public void validationExceptionHandler() {
+    }
+
+    @AfterReturning(
+            pointcut = "validationExceptionHandler()",
+            returning = "response"
+    )
+    public void logValidationErrors(JoinPoint joinPoint, Object response) {
+        MethodArgumentNotValidException exception = (MethodArgumentNotValidException) joinPoint.getArgs()[0];
+        logger.error("Validation failed : {} errors", exception.getBindingResult().getErrorCount());
+        exception.getBindingResult().getFieldErrors().forEach((error) -> {
+            logger.error("Field : '{}', Rejected Value : '{}', Message : '{}'",
+                    error.getField(),
+                    error.getRejectedValue(),
+                    error.getDefaultMessage());
+        });
+    }
+
+    /*
+     * All Request and Response Logging
+     * */
+
+    @Pointcut("execution(* com.example..*.*(..))")
+    public void applicationPackagePointcut() {
+    }
+
+
+    @Before("applicationPackagePointcut")
+    public void logRequest(JoinPoint joinPoint) {
+        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (servletRequestAttributes != null) {
+            HttpServletRequest request = servletRequestAttributes.getRequest();
+            logger.info("[Request] {} {} - args : {}", request.getMethod(), request.getRequestURI(), Arrays.toString(joinPoint.getArgs()));
+        } else {
+            logger.info("[Request] Method : {} - args : {}", joinPoint.getSignature().getName(), Arrays.toString(joinPoint.getArgs()));
+        }
+    }
+
+    @AfterReturning(
+            pointcut = "applicationPackagePointcut()",
+            returning = "response"
+    )
+    public void logResponse(JoinPoint joinPoint, Object response) {
+        logger.info("[Response] Method : {} - Result : {}", joinPoint.getSignature().getName(), response);
+    }
+
+}
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+application.properties 
+
+logging.file.name = logs/app.log
+
+==========================================================================================================================================
+
+We can also select based annotation :
+Example :
+@Pointcut("within(com.example.app..*) && @annotation(Transaction)")
+

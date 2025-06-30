@@ -1,0 +1,14 @@
+Pipe :
+Pipes are used to transform output data in the template.
+
+We can pass parameteres to pipe using :
+
+Pure Pipe :
+It runs when input value changes.
+Bydefault all pipes are pure pipes.
+
+Impure Pipe : 
+It runs whenever change detection cycle runs.
+It impacts the performance so avoid using it.
+
+

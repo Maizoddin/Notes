@@ -1,0 +1,14 @@
+abstract :
+
+1] abstract class :
+* Abstract class can have both abstract and normal methods.
+* Abstract class object creation is not allowed.
+* Abstract class should be used as parent class and must be inherited.
+* Child class must implement all the abstract methods of parent class else even child should also be made as abstract class.
+
+2] abstract method :
+* Can be created only inside abstract class.
+* Abstract method contains only declration and not body.
+  Example : abstract void display();
+* Abstract method should not be private.
+* abstract method can't be static

@@ -1,0 +1,75 @@
+Life Cycle Hooks :
+
+constructor : 
+Note : 
+* First Angular creates the object of our component class and runs the constructor.
+* When constructor runs that time all the properties will get initialized with the default value
+
+1] ngOnChanges() :
+ It runs whenever @Input properties values will changes.
+ Here we can access the changes property.
+ Example :
+   @Input() name!: string;
+   ngOnChanges(changes: SimpleChanges) {
+    console.log('Prev', changes['name'].previousValue);
+    console.log('Cur', changes['name'].currentValue);
+   }
+
+2] ngOnInit() :
+ It runs once after all the values will get initialized.
+
+3] ngDoCheck() :
+ It runs whenever change detection cycle runs.
+ Note : If any event has eventHandler attached to it then whenever that event occurs this hook runs.
+
+4] ngAfterContentInit() :
+ It runs after angular has finished projecting external content into the component's view.
+ In this hook we can access @ContentChild.
+
+5] ngAfterContentChecked() :
+  It runs every time projected content is getting checked.
+
+6] ngAfterViewInit() :
+  It is called after Angular has fully initialized a component's view and its child views 
+
+7] ngAfterViewChecked() :
+  It runs every time view is getting checked.
+
+8] ngDestroy() :
+  It runs when component gets destroyed.
+
+-----------------
+
+Flow :
+
+Parent Constructor
+Child Constructor
+Parent NgOnChanges
+Parent OnInit
+Parent DoCheck
+Parent NgAfterContentInit
+Parent NgAfterContentChecked
+
+Child NgOnChanges
+Child OnInit
+Child DoCheck
+Child NgAfterContentInit
+Child NgAfterContentChecked
+Child NgAfterViewInit
+Child NgAfterViewChecked
+Parent NgAfterViewInit
+Parent NgAfterViewChecked
+
+-------------
+
+When event happens either in parent or child
+
+App DoCheck
+App NgAfterContentChecked
+Parent DoCheck
+Parent NgAfterContentChecked
+Child DoCheck
+Child NgAfterContentChecked
+Child NgAfterViewChecked
+Parent NgAfterViewChecked
+App NgAfterViewChecked

@@ -1,0 +1,131 @@
+AsyncThunk:
+Note : In redux reducers should be 100% synchronous. so we can't handle async task of api calling inside reducers.
+
+So the other option which we have for handling asynchronous tasks of api calling without using asyncThunk is inside component:
+1] We should fetch the data from api inside the component
+2] Then we should update the state by dispatching the approapriate actions(like pending, fulfilled, rejected) manually by sending fetched data to update the state.
+3] We can't re-use this code again to fetch the same data inside other components
+4] It also creates the mess inside our components like we should call the api and render the component
+
+To simplify this process we use AsyncThunk OR Redux Toolkit Query
+Which keeps the asynchronous task of api calling away from component 
+Which also dispatches appropriate actions automatically like pending, fulfilled, rejected 
+
+
+* When we dispatch an asyncThunk, Redux-Toolkit includes a middleware that intercepts dispatched action and handles async task and dispatches 3 actions
+  i.e [pending, fulfilled, rejected]
+* We can handle this cases inside our extraReducers or we can handle it inside our components.
+* ayncThunk returns a promise so to handle it inside the component and to get the original promise we should use unwrap(), If we don't use unwrap() then the default returned promise will behave in unexpected way and it will always go inside .then() so to get the proper promise result we use unwrap().
+
+Flow:
+1] Dispatch the Thunk: You trigger the async operation by dispatching the thunk.
+2] Middleware Interception: Redux Toolkit's middleware intercepts the thunk and handles the async logic.
+3] Dispatch pending Action: Indicates the start of the async operation.
+4] Execute Async Function: The thunk performs the async operation.
+5] Dispatch fulfilled or rejected Action: Depending on the outcome, the thunk dispatches the appropriate action.
+6] Reducer Updates State: The state is updated based on the action type and payload.
+7] Component Reacts: The component re-renders based on the updated state.
+
+
+Example :(fetchUsers.js)
+
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+
+const fetchUsers = createAsyncThunk("users/fetch", async () => {
+  const response = await axios.get("http://localhost:3005/users");
+  // DEV ONLY!!!
+  await pause(1000);
+  return response.data;
+});
+
+// DEV ONLY!!!
+const pause = (duration) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, duration);
+  });
+};
+
+export { fetchUsers };
+
+----
+
+Note : Now here redux-toolkit will automatically create 3 actions for us
+       a] fetchUsers.pending    === 'users/fetch/pending'
+       b] fetchUsers.fulfilled  === 'users/fetch/fulfilled'
+       c] fetchUsers.rejected   === 'users/fetch/rejected'
+So we can use this in extraReducers
+For fulfilled case we will get the api response inside action.payload
+For rejected case we will get the error inside action.error
+
+----UsersSlice.js
+extraReducers: (builder) => {
+    builder.addCase(fetchUsers.fulfilled, (state, action) => {
+      state.data = action.payload;
+    });
+   }
+
+---custom hook to handle thunk  - [useThunk.js]
+import { useState, useCallback } from "react";
+import { useDispatch } from "react-redux";
+
+const useThunk = (thunk) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+
+  const runThunk = useCallback(
+    async (arg) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        await dispatch(thunk(arg)).unwrap();
+      } catch (error) {
+        setError(error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [dispatch, thunk]
+  );
+
+  return [isLoading, error, runThunk];
+};
+
+export { useThunk };
+
+---usersList.jsx
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { fetchUsers } from "../store/index";
+import Shimmer from "./Shimmer";
+import User from "./User";
+import { useThunk } from "../hooks/useThunk";
+function UsersList() {
+  const [isFetchUserLoading, fetchUserError, doFetchUsers] =
+    useThunk(fetchUsers);
+  const { data } = useSelector((state) => state.users);
+
+  useEffect(() => {
+    doFetchUsers();
+  }, [doFetchUsers]);
+
+  if (isFetchUserLoading) {
+    return <Shimmer quantity={5} className="h-10 w-full" />;
+  }
+  if (fetchUserError) {
+    return <h1>Error in Fetching users!!!</h1>;
+  }
+  return (
+    <div>
+      <h1>USERS LIST</h1>
+      {data.map((user) => (
+        <User key={user.id} user={user} />
+      ))}
+    </div>
+  );
+}
+
+export default UsersList;
+
+

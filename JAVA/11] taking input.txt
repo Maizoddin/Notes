@@ -1,0 +1,33 @@
+classes which are there inside java.lang can be accessed directly without using import statement.
+Example : System class
+
+
+scanner class takes data from buffer and filters it and gives it to us.
+We should pass System.in as an argument to it. System.in is an instance of InputStream, which reads raw bytes from the console and put's it into the buffer.
+
+Example :
+package backend;
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("ENTER YOU NAME AND AGE");
+        String name = scanner.nextLine();
+        int age = scanner.nextInt();
+        System.out.println("Name : "+name+"\nAge : "+age);
+    }
+}
+
+hasNext() : This methode checks whether buffer has specific value in it. if buffer is empty then waits for user to enter the value.
+
+Methods of scanner :
+next()                hasNext()
+nextLine()            hasNextLine()              
+nextInt()             hasNextInt()
+nextBoolean()         hasNextBoolean()
+nextFloat()           hasNextFloat()
+nextLong()            hasNextLong()
+...
+
+
+

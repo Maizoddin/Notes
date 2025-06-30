@@ -1,0 +1,59 @@
+// If we want to restring other developers from performing certain operations on any object then we can set the proxy and can return that proxy object
+
+
+Example :
+const user = {
+  name: "John",
+  age: 22,
+  contact: "9999999999",
+  status: "Active",
+};
+
+const userProxy = new Proxy(user, {
+  get: (target, prop) => {
+    if (prop in target) {
+      return Reflect.get(target, prop);
+    } else {
+      throw new Error("Property doesn't exist!");
+    }
+  },
+  set: (target, prop, val) => {
+    switch (prop) {
+      case "name":
+        if (typeof val === "string") {
+          return Reflect.set(target, prop, val);
+        } else {
+          throw new Error("Invalid value for name");
+        }
+        break;
+      case "age":
+        if (typeof val === "number" && val > 0) {
+          return Reflect.set(target, prop, val);
+        } else {
+          throw new Error("Invalid value for age");
+        }
+        break;
+      case "status":
+        throw new Error("Status can't be changed");
+        break;
+      default:
+        throw new Error("Invalid Property");
+        break;
+    }
+  },
+  deleteProperty: (target, prop) => {
+    if (prop in target) {
+      if (prop === "name") {
+        throw new Error("Name can't be deleted");
+      } else {
+        return Reflect.deleteProperty(target, prop);
+      }
+    } else {
+      throw new Error("Property Doesn't exist");
+    }
+  },
+});
+
+userProxy.name = "Maaz";
+delete userProxy["status"];
+console.log(userProxy.name);

@@ -1,0 +1,321 @@
+import jakarta.persistence.*;
+import java.io.Serializable;
+import java.util.Objects;
+
+@Embeddable
+public class OrderId implements Serializable {
+
+    @Column(name = "order_number") // maps to DB column
+    private Long orderNumber;
+
+    @Column(name = "product_id")   // maps to DB column
+    private Long productId;
+
+    // ✅ Required: default constructor
+    public OrderId() {}
+
+    public OrderId(Long orderNumber, Long productId) {
+        this.orderNumber = orderNumber;
+        this.productId = productId;
+    }
+
+    // ✅ Required: equals and hashCode
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof OrderId)) return false;
+        OrderId that = (OrderId) o;
+        return Objects.equals(orderNumber, that.orderNumber) &&
+               Objects.equals(productId, that.productId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orderNumber, productId);
+    }
+
+    // ✅ Getters and setters
+    public Long getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(Long orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+}
+
+
+---------------------------------------------------------
+
+import jakarta.persistence.*;
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "orders") // if your table is named `orders`
+public class Order {
+
+    @EmbeddedId
+    private OrderId id;
+
+    @Column(name = "customer_name")
+    private String customerName;
+
+    @Column(name = "order_date")
+    private LocalDate orderDate;
+
+    // ✅ Default constructor
+    public Order() {}
+
+    public Order(OrderId id, String customerName, LocalDate orderDate) {
+        this.id = id;
+        this.customerName = customerName;
+        this.orderDate = orderDate;
+    }
+
+    // ✅ Getters and setters
+    public OrderId getId() {
+        return id;
+    }
+
+    public void setId(OrderId id) {
+        this.id = id;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public LocalDate getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDate orderDate) {
+        this.orderDate = orderDate;
+    }
+}
+
+
+---------------------------------------------------------
+Notes :
+* @Embeddable is used on the key class.
+* @EmbeddedId is used in the entity to indicate a composite primary key.
+* The embedded key class must implement Serializable, and override equals() and hashCode() properly.
+
+----------------------------------------------------------
+public interface OrderRepository extends JpaRepository<Order, OrderId> {
+}
+
+----------------------------------------------------------
+Actual Flow :
+If i do 
+orderRepository.findById(new OrderId(101L, 501L));
+
+JPA uses:
+The equals() method of your OrderId class
+To compare the newly created OrderId object With existing Order entities in the persistence context (1st-level cache)
+
+This helps JPA decide:
+⚠️ Is this object already managed (i.e., present in memory / context)?
+✅ If yes → Update or skip querying DB
+❌ If not → Issue a DB query or a new insert
+
+Real example inside persistence context:
+You call em.find(Order.class, new OrderId(101L, 501L))
+JPA loops over managed entities in persistence context
+For each, it calls equals() on your OrderId
+If match found → returns cached entity, no DB hit
+Else → query the DB
+
+
+
+==============================================================
+
+Code :
+
+// === Database Schema (PostgreSQL/MySQL example) ===
+/*
+CREATE TABLE orders (
+    order_number BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
+    customer_name VARCHAR(255),
+    order_date DATE,
+    PRIMARY KEY (order_number, product_id)
+);
+*/
+
+// === OrderId.java (Embeddable Key) ===
+import jakarta.persistence.*;
+import java.io.Serializable;
+import java.util.Objects;
+
+@Embeddable
+public class OrderId implements Serializable {
+
+    @Column(name = "order_number")
+    private Long orderNumber;
+
+    @Column(name = "product_id")
+    private Long productId;
+
+    public OrderId() {}
+
+    public OrderId(Long orderNumber, Long productId) {
+        this.orderNumber = orderNumber;
+        this.productId = productId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof OrderId)) return false;
+        OrderId that = (OrderId) o;
+        return Objects.equals(orderNumber, that.orderNumber) &&
+               Objects.equals(productId, that.productId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orderNumber, productId);
+    }
+
+    public Long getOrderNumber() { return orderNumber; }
+    public void setOrderNumber(Long orderNumber) { this.orderNumber = orderNumber; }
+    public Long getProductId() { return productId; }
+    public void setProductId(Long productId) { this.productId = productId; }
+}
+
+// === Order Entity ===
+import jakarta.persistence.*;
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "orders")
+public class Order {
+
+    @EmbeddedId
+    private OrderId id;
+
+    @Column(name = "customer_name")
+    private String customerName;
+
+    @Column(name = "order_date")
+    private LocalDate orderDate;
+
+    public Order() {}
+
+    public Order(OrderId id, String customerName, LocalDate orderDate) {
+        this.id = id;
+        this.customerName = customerName;
+        this.orderDate = orderDate;
+    }
+
+    public OrderId getId() { return id; }
+    public void setId(OrderId id) { this.id = id; }
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
+    public LocalDate getOrderDate() { return orderDate; }
+    public void setOrderDate(LocalDate orderDate) { this.orderDate = orderDate; }
+}
+
+// === DTO ===
+import java.time.LocalDate;
+
+public class OrderDTO {
+    private Long orderNumber;
+    private Long productId;
+    private String customerName;
+    private LocalDate orderDate;
+
+    public Long getOrderNumber() { return orderNumber; }
+    public void setOrderNumber(Long orderNumber) { this.orderNumber = orderNumber; }
+    public Long getProductId() { return productId; }
+    public void setProductId(Long productId) { this.productId = productId; }
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
+    public LocalDate getOrderDate() { return orderDate; }
+    public void setOrderDate(LocalDate orderDate) { this.orderDate = orderDate; }
+}
+
+// === Mapper ===
+public class OrderMapper {
+    public static Order toEntity(OrderDTO dto) {
+        OrderId id = new OrderId(dto.getOrderNumber(), dto.getProductId());
+        return new Order(id, dto.getCustomerName(), dto.getOrderDate());
+    }
+
+    public static OrderDTO toDTO(Order entity) {
+        OrderDTO dto = new OrderDTO();
+        dto.setOrderNumber(entity.getId().getOrderNumber());
+        dto.setProductId(entity.getId().getProductId());
+        dto.setCustomerName(entity.getCustomerName());
+        dto.setOrderDate(entity.getOrderDate());
+        return dto;
+    }
+}
+
+// === Repository ===
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface OrderRepository extends JpaRepository<Order, OrderId> {
+}
+
+// === Service ===
+import org.springframework.stereotype.Service;
+import java.util.Optional;
+
+@Service
+public class OrderService {
+
+    private final OrderRepository repository;
+
+    public OrderService(OrderRepository repository) {
+        this.repository = repository;
+    }
+
+    public OrderDTO saveOrder(OrderDTO dto) {
+        Order order = OrderMapper.toEntity(dto);
+        return OrderMapper.toDTO(repository.save(order));
+    }
+
+    public Optional<OrderDTO> getOrder(Long orderNumber, Long productId) {
+        return repository.findById(new OrderId(orderNumber, productId))
+                         .map(OrderMapper::toDTO);
+    }
+}
+
+// === Controller ===
+import org.springframework.web.bind.annotation.*;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/orders")
+public class OrderController {
+
+    private final OrderService service;
+
+    public OrderController(OrderService service) {
+        this.service = service;
+    }
+
+    @PostMapping
+    public OrderDTO createOrder(@RequestBody OrderDTO dto) {
+        return service.saveOrder(dto);
+    }
+
+    @GetMapping("/{orderNumber}/{productId}")
+    public Optional<OrderDTO> getOrder(@PathVariable Long orderNumber, @PathVariable Long productId) {
+        return service.getOrder(orderNumber, productId);
+    }
+}

@@ -1,0 +1,148 @@
+1] Container-Presentation Pattern
+It separates application logic from the UI. This pattern divides components into two categories:
+
+Container Components: Handle the logic, state management, and data fetching.
+Presentation Components: Focus solely on displaying the UI based on props.
+
+Example
+
+Container Component:
+import React, { useState, useEffect } from "react";
+import UserList from "./UserList";
+
+const UserContainer = () => {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/users")
+      .then((response) => response.json())
+      .then((data) => setUsers(data));
+  }, []);
+
+  const handleUserClick = (userId) => {
+    alert(`User ${userId} clicked!`);
+  };
+
+  return <UserList users={users} onUserClick={handleUserClick} />;
+};
+
+export default UserContainer;
+
+--------------------------------
+
+Presentation Component:
+import React from "react";
+
+const UserList = ({ users, onUserClick }) => (
+  <ul>
+    {users.map((user) => (
+      <li key={user.id} onClick={() => onUserClick(user.id)}>
+        {user.name}
+      </li>
+    ))}
+  </ul>
+);
+
+export default UserList;
+
+=======================================================================================
+
+2] Custom-Hook Pattern
+
+Timer.jsx
+import React from "react";
+import useTimer from "./utils/useTimer";
+
+const Timer = () => {
+  const { seconds, start, stop, reset, isActive } = useTimer();
+  return (
+    <div>
+      <h1>Custom Hook Pattern</h1>
+      <h1>{seconds}</h1>
+      <button onClick={start} disabled={isActive}>
+        Start
+      </button>
+      <button onClick={stop} disabled={!isActive}>
+        Stop
+      </button>
+      <button onClick={reset} disabled={seconds === 0}>
+        Reset
+      </button>
+    </div>
+  );
+};
+
+export default Timer;
+
+
+--------------------------------
+
+useTimer.js
+import { useRef, useState } from "react";
+
+const useTimer = () => {
+  const [seconds, setSeconds] = useState(0);
+  const [isActive, setIsActive] = useState(false);
+  const timerID = useRef(null);
+  const start = () => {
+    setIsActive(true);
+    timerID.current = setInterval(
+      () => setSeconds((seconds) => seconds + 1),
+      1000
+    );
+  };
+  const stop = () => {
+    clearInterval(timerID.current);
+    setIsActive(false);
+  };
+  const reset = () => {
+    clearInterval(timerID.current);
+    setSeconds(0);
+    setIsActive(false);
+  };
+  return { seconds, start, stop, reset, isActive };
+};
+
+export default useTimer;
+
+
+=======================================================================================
+3] HOC pattern - Higher Order Component
+
+const withAuth = (WrappedComponent) => {
+  return (props) => {
+    const isAuthenticated = true; // Authentication logic here
+
+    if (isAuthenticated) {
+      return <WrappedComponent {...props} />;
+    } else {
+      return <div>Please Login</div>;
+    }
+  };
+};
+
+export default withAuth;
+--
+Profile.jsx
+
+const Profile = ({ name }) => {
+  return (
+    <div>
+      <h1>Welcome, {name}!</h1>
+      <p>This is your profile content.</p>
+    </div>
+  );
+};
+
+--
+App.jsx 
+
+const AuthProfile = withAuth(Profile); 
+
+const App = () => {
+  return (
+    <div>
+      <AuthProfile name="John Doe" />
+    </div>
+  );
+}

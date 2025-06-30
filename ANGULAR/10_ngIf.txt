@@ -1,0 +1,16 @@
+*ngIf :
+  Conditionally adds or removes elements based on a condition.
+
+Note : we can use else condition by using ng-template
+
+Example :
+
+<div *ngIf="isDisplay; else elseBlock">
+  <p>This content is displayed when isDisplay is true.</p>
+</div>
+
+<ng-template #elseBlock>
+  <p>This content is displayed when isDisplay is false.</p>
+</ng-template>
+
+ 

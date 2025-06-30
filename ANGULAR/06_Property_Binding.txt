@@ -1,0 +1,24 @@
+Property Binding [ ] :
+
+Note : One way binding from the component to the view
+
+-------
+
+Example :
+
+// app.component.ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  imageUrl = 'path/to/angular-logo.png';
+}
+
+--------
+
+<!-- app.component.html -->
+<img [src]="imageUrl" alt="Angular Logo">

@@ -1,0 +1,11 @@
+* While using CDN Links we should use React.createElement();
+* We can't write JSX because there is no bundler and transpiler to convert JSX to React.createElement()
+
+* React.createElement takes 3 arguments :
+  a] Tag name
+  b] Properties(Attributes)
+  c] Children   Or array of children
+
+* Note : 
+  1] React.createElement creates js object and render methode converts that object into HTML tag. 
+  2] If there is anything inside our root then render methode will replace that.

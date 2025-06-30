@@ -1,0 +1,101 @@
+Maven :
+Maven is a build automation tool used primarily for Java projects. It manages dependencies, builds projects, and enforces a standard directory structure.
+
+How Maven Works :
+* Reads the pom.xml configuration file.
+* Checks for dependencies in the local repository.
+* If not found, downloads them from the central repository.
+* Saves them in the local repository for future use.
+* Adds dependencies to the classpath during the build process.
+
+Advantages of Maven :
+* Standard directory structure.
+* Automatic dependency management.
+* Builds and packages projects efficiently.
+
+pom.xml
+The pom.xml file is the heart of a Maven project. It contains :
+* Project Metadata: GroupId, ArtifactId, Version (GAV).
+* Dependencies: List of libraries the project depends on.
+* Plugins: Additional tasks like generating test reports.
+
+Example :
+<groupId>com.example</groupId>
+<artifactId>myfirstapp</artifactId>
+<version>1.0.0</version>
+
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+</dependencies>
+
+<build>
+      <plugins>
+          <plugin>
+             <groupId>org.springframework.boot</groupId>
+             <artifactId>spring-boot-maven-plugin</artifactId>
+           </plugin>
+      </plugins>
+</build>
+
+
+Adding new dependency :
+<dependency>
+    <groupId>org.hibernate.orm</groupId>
+    <artifactId>hibernate-core</artifactId>
+    <version>6.1.4.Final</version>
+</dependency>
+
+Note :
+Group ID: Organization name.
+Artifact ID: Project name.
+Version: Project version.
+
+
+---------------------------------------------------------------------
+Maven Lifecycle :
+
+Phase		Description
+
+validate	Checks if the project structure is correct
+compile		Compiles source code
+test		Runs unit tests
+package		Packages code into a .jar or .war
+verify		Runs integration tests
+install		Installs the package into the local repository (~/.m2)
+deploy		Uploads the package to a remote repository
+
+
+🔹 Most Common Maven Commands
+Command	What It Does
+mvn clean	Delete target/ folder
+mvn compile	Compile the code
+mvn test	Run unit tests
+mvn package	Package code into .jar or .war
+mvn install	Install package into local repo
+mvn deploy	Deploy to remote repository
+
+---------------------------------------------------------------------
+Dependency Management in Spring Boot :
+
+Spring Boot projects require additional dependencies like Spring, Hibernate, and logging frameworks.
+
+Approaches to Managing Dependencies :
+
+Approach 1] Manual Approach :
+	* Download .jar files from individual websites.
+	* Manually add them to the classpath.
+
+Approach 2] Using Maven (Recommended)
+	* Define dependencies in pom.xml, and Maven automatically downloads them.
+
+Example of Maven dependency :
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+
+Maven fetches dependencies from the central repository and stores them locally.

@@ -1,0 +1,31 @@
+nullish collision ?? :
+It returns right hand side value if left hand side value is undefined or null
+
+or operator || :
+It returns right hand side value if left hand side value is falsy("", 0, null, undefined, false)
+
+=================================================================
+
+Centering DIV
+
+1] display : flex;
+   justify-content : center;
+   align-items : center;
+
+2] display : grid;
+   place-items : center;
+
+3] margin : auto // horizontal center
+
+4] 
+.parent{
+  position : relative;
+  height : 100vh;
+ }
+
+.child{
+ position : absolute;
+ top : 50%
+ left : 50%
+ transform : translate(-50%, -50%)
+ }

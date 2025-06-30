@@ -1,0 +1,21 @@
+<h1 class="desc" *ngIf="product">
+    {{product.description}}
+</h1>
+
+<div class="container">
+    <div class="prev">
+        <button (click)="onPrev()">Prev</button>
+    </div>
+    <div class="card" *ngIf="product">
+        <div class="image">
+            <img [src]="product.url">
+        </div>
+        <div class="details">
+            <h1>{{product.name}}</h1>
+            <h2>{{ product.price | currency : 'USD' : 'symbol'}}</h2>
+        </div>
+    </div>  
+    <div class="next">
+        <button (click)="onNext()">Next</button>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+Note :
+* @Entity annotation marks a Java class as a database entity.
+* @Table(name = "students") specifies the table name.
+* @Id and @GeneratedValue define the primary key and its auto-generation strategy.
+* Must have a no-argument constructor.
+* Fields should have getters/setters
+* Should implement toString() for debugging
+
+Example :
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "students")
+public class Student {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
+    @Column(name = "student_name", nullable = false)
+    private String name;
+
+    @Column(unique = true)
+    private String email;
+
+    public Student() {}
+
+    public Student(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
+    // Getters & Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+}
+
+
+----------------------------------------------------------------------
+
+ID Generation & Caching in Hibernate:
+
+ID Generation Flow :
+* persist(entity): Hibernate sends the entity to the database without an ID.
+* The database generates the ID (AUTO_INCREMENT).
+* Hibernate retrieves the ID and assigns it to the entity.
+
+Why Hibernate Uses ID?
+* Hibernate tracks objects in the Persistence Context (1st-level cache) using the ID.
+* First-level cache: Exists within a transaction.
+* Second-level cache: Exists across the application (e.g., Ehcache, Redis).

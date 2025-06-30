@@ -1,0 +1,323 @@
+Relational Database :
+Oracle, MySQL, SQLite, PostgreSQL etc
+
+SQL : Its a language to communicate with the database
+
+JDBC : JDBC is an API in Java that allows Java applications to interact with databases.
+Java program (In SQL Language)(Using JDBC)  -> Driver -> Database
+
+
+We should download and install driver which will be os and db specific.
+
+
+Ways to comminicate with MySQL Server :
+1] Using MySQL client
+2] Using Java program
+
+URL : https://dev.mysql.com/
+Download installer and run
+Setup environment variable path : C:\Program Files\MySQL\MySQL Server 8.0\bin
+
+Open CMD :
+mysql -u root -p
+Password : Maaz@9060
+
+=============================
+
+Good Practices :
+Use snake case (college_db, students, first_name)
+DB name : 	 lowercase, and plural
+Table name :     lowercase, and plural
+Column names :   lowercase, and singular
+
+
+===============================
+status -> Displays db details like which db is selected etc
+show databases; -> Displays all the databases.
+use dbname; -> It selects that db	
+show tables; -> Displays all tables
+create database dbname; -> Creates db
+describe tableName  | SHOW COLUMNS tableName              -> gives details about the table
+
+select * from tableName;  | select colNames from tableName;
+
+TRUNCATE TABLE tableName   -> It removes all the data from table but table remains 
+
+=======================================
+
+Data Types :
+
+INT    - > Whole numbers (IDs, count)
+
+DECIMAL(p,s) -> Precise money values (salary, balance)
+                Example : DECIMAL(10,4) = 872345.9999
+                          887.3  =  887.3000
+                Note : Slower for arithmetic operations compared to FLOAT due to the precision handling.
+
+FLOAT -> 
+
+BIGINT -> Large numbers (phone numbers, accountNumbers)
+
+---
+
+VARCHAR(n) -> Variable-length text (names, emails)
+
+CHAR(n) -> Fixed-length text (gender: 'M', 'F', 'INR' etc)
+           Note : If the string is shorter than the specified length, it is padded with spaces to reach the defined length.
+           Example : CHAR(4) = 'MALE'
+                     'M'  =   'M   '
+	   Performance: CHAR(n) can be faster for read operations because the length is fixed, which can simplify storage and retrieval.
+           Storage: Uses more storage if the actual data is shorter than the defined length.
+
+---
+BOOLEAN -> 
+         is_active BOOLEAN DEFAULT TRUE
+---
+
+DATE  -> Store only date (DOB, account opening date)
+
+DATETIME -> Store date & time (transaction timestamp)
+
+TIMESTAMP -> Auto-updating time (created_at, updated_at)
+            Use for time-sensitive data that requires time zone awareness and automatic updates.
+
+---
+ENUM -> Option to choose value
+        ENUM('deposit', 'withdrawl')
+
+
+==========================================
+CREATE TABLE customers(
+ customer_id INT PRIMARY KEY AUTO_INCREMENT,
+ full_name VARCHAR(255) NOT NULL,
+ email VARCHAR(255) UNIQUE NOT NULL,
+ phone_number BIGINT UNIQUE NOT NULL,
+ account_balance DECIMAL(10, 2) DEFAULT 0.00,
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE transactions(
+ transaction_id INT PRIMARY KEY AUTO_INCREMENT,
+ customer_id INT NOT NULL,
+ amount DECIMAL(10,2) NOT NULL,
+ transaction_type ENUM('deposit', 'withdrawl', 'transfer') NOT NULL,
+ transaction_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY (customer_id) references customers(customer_id) ON DELETE CASCADE
+);
+
+INSERT INTO customers (full_name, email, phone_number, account_balance) 
+VALUES
+('John Doe', 'john.doe@example.com', 9876543210, 5000.00),
+('Jane Smith', 'jane.smith@example.com', 9876543220, 3000.50);
+
+INSERT INTO transactions(customer_id, amount, transaction_type)
+VALUES 
+(1, 1000.00, 'deposit'),
+(2, 500.00, 'withdrawl');
+
+1] WHERE 
+SELECT * FROM transactions WHERE customer_id = 1;
+SELECT * FROM customers WHERE name != 'john';
+SELECT * FROM transactions WHERE customer_id > 3;
+
+2]  AND | OR | BETWEEN
+
+AND 
+SELECT full_name 
+FROM customers 
+WHERE customer_id > 1 AND account_balance < 10000;
+
+OR
+SELECT full_name 
+FROM customers 
+WHERE account_balance = 0 OR account_balance = 8000;
+
+
+BETWEEN 
+SELECT full_name 
+FROM customers 
+WHERE account_balance BETWEEN 1000 AND 5000;
+
+3] UPDATE
+UPDATE customers
+SET account_balance = 1000.00
+WHERE customer_id = 1;
+
+4] DELETE
+DELETE FROM customers WHERE customer_id = 1;
+
+5] ORDER BY [SORTING]
+SELECT * FROM customers ORDER BY account_balance DESC;
+
+6] GROUP BY
+SELECT customer_id, COUNT(*) AS total_transactions 
+FROM transactions 
+GROUP BY customer_id;
+
+SELECT customer_id, transaction_type, SUM(amount) AS total_amount 
+FROM transactions 
+GROUP BY customer_id, transaction_type;
+
+SELECT customer_id, transaction_type, COUNT(*) AS total_transactions, SUM(amount) AS total_amount
+FROM transactions
+GROUP BY customer_id, transaction_type ORDER BY customer_id ASC;
+
+7] DROP
+DROP TABLE table_name;
+DROP DATABASE database_name;
+
+8] AGGREGATE FUNCTIONS
+Use it with GROUP BY | SUBQUERY
+
+MAX, MIN :
+SELECT customer_id, amount 
+FROM transactions 
+WHERE amount = (SELECT MAX(amount) FROM transactions);
+
+SUM :
+SELECT customer_id, SUM(amount) AS total_amount 
+FROM transactions 
+GROUP BY customer_id;
+
+COUNT :
+SELECT customer_id, COUNT(*) AS total_transactions 
+FROM transactions 
+GROUP BY customer_id;
+
+
+9] ALTER 
+ADD COLUMN :
+ALTER TABLE orders
+ADD delivery_status ENUM('pending', 'fulfilled', 'rejected') DEFAULT 'pending';
+
+MODIFY COLUMN DATATYPE :
+ALTER TABLE orders
+MODIFY is_pending BOOLEAN DEFAULT FALSE;
+
+RENAME COLUMN :
+ALTER TABLE orders
+CHANGE is_pending is_shipped BOOLEAN DEFAULT FALSE;
+
+DELETE COLUMN :
+ALTER TABLE orders
+DROP COLUMN is_shipped;
+
+RENAME TABLE :
+ALTER TABLE orders
+RENAME TO product_orders;
+
+
+10] PATTERN MATCHINH   [% LIKE]
+SELECT * FROM customers WHERE name LIKE '%son';
+SELECT * FROM customers WHERE name LIKE 'mic%';
+
+
+==========================================
+
+NORMAL FORMS :
+1NF :
+All columns contain atomic values (no multiple values in a single column).
+Each row has a unique identifier (Primary Key).
+
+Order_ID	Customer_Name	    Items
+1		John Doe	    Pizza, Pasta
+2		Alice Smith	    Burger
+
+🚫 Problem: The Items column has multiple values in a single row.
+
+✅ Solution (1NF - Make Values Atomic):
+
+Order_ID	Customer_Name	Item
+1		John Doe	Pizza
+1		John Doe	Pasta
+2		Alice Smith	Burger
+
+---------------------
+
+2NF : (Remove Partial Dependencies)
+It is already in 1NF.
+All non-key attributes depend on the whole primary key (not just a part of it).
+
+✅ Example (Not in 2NF - Partial Dependency):
+
+Order_ID	Product_ID	Product_Name	Quantity
+1		101		Pizza		2
+2		102		Pasta		1
+
+🚫 Problem: Product_Name only depends on Product_ID, not the entire (Order_ID, Product_ID) composite key.
+
+✅ Solution (2NF - Separate Product Details):
+
+Orders Table
+Order_ID	Product_ID	Quantity
+1		101		2
+2		102		1
+
+Products Table
+Product_ID	Product_Name
+101		Pizza
+102		Pasta
+
+---------------------
+
+3NF :
+It is in 2NF.
+All non-key attributes depend only on the primary key (not on other non-key attributes).
+
+✅ Example (Not in 3NF - Transitive Dependency):
+
+Customer_ID	Name		City		Zip_Code
+1		John Doe	New York	10001
+2		Alice Smith	Los Angeles	90001
+
+🚫 Problem: City depends on Zip_Code, not directly on Customer_ID.
+
+✅ Solution (3NF - Separate City and Zip Code):
+
+Customers Table
+Customer_ID	Name		Zip_Code
+1		John Doe	10001
+2		Alice Smith	90001
+
+Zip_Code Table
+Zip_Code	City
+10001		New York
+90001		Los Angeles
+
+==========================================
+
+JOIN :
+// WHICHEVER TABLE WE MENTION FIRST WILL BE LEFT TABLE, IF WE HAVE MULTIPLE JOINS THEN THE RESULT OF FIRST JOIN WILL BE LEFT TABLE AND SO ON
+
+INNER JOIN : IT ONLY GIVES THE COMMON PART IN BOTH TABLES :
+SELECT c.customer_name, o.order_id FROM customers c INNER JOIN orders o ON c.customer_id = o.customer_id;
+
+LEFT JOIN : IT GIVES COMMON PART OF RIGHT TABLE AND EVERYTHING FROM LEFT TABLE
+                 
+RIGHT JOIN : IT GIVES COMMON PART OF LEFT TABLE AND EVERYTHING FROM RIGHT TABLE
+
+FULL OUTER JOIN : IT GIVES EVERYTHING FROM BOTH TABLES
+
+
+==========================================
+// CREATE NEW USER
+// OPEN MYSQL WORKBENK AND RUN THE 
+
+-- Drop user first if they exist
+DROP USER IF EXISTS 'maaz'@'localhost';
+
+-- Now create user with prop privileges
+CREATE USER 'maaz'@'localhost' IDENTIFIED BY 'Maaz@9060';
+
+GRANT ALL PRIVILEGES ON *.* TO 'maaz'@'localhost';
+
+
+// *.* = databases.tables
+-------------------
+
+
+CREATE DATABASE IF NOT EXISTS student_management;
+
+DROP TABLE IF EXISTS student;
+
+CREATE TABLE student(...);

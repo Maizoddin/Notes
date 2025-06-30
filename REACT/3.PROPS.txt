@@ -1,0 +1,186 @@
+
+Props :
+Props will get passed as an object.
+<RestaurantCard name="OneX" add="Bangalore" />
+
+const RestaurantCard = (prop) => {}
+
+We can de-structure it on the fly
+const RestaurantCard = ({name, add}) => {}
+
+-------------------------------------------------
+
+Default value for props :
+<Card name="john">        --- original prop
+Card = ({name, age="22"}) => {}          ---- setting default prop value while destructuring
+
+So here if any value comes as age then it will be replaced else this default value will be set
+
+
+===================================================
+
+Children prop :
+In React, the children prop is a special prop that is used to pass child elements directly into a component.
+
+Example :
+Wrapper.component.js
+import React from 'react';
+
+function Wrapper({ children }) {
+    return (
+        <div className="wrapper">
+            {children}
+        </div>
+    );
+}
+
+export default Wrapper;
+----------------------
+App.component.ts 
+import React from 'react';
+import Wrapper from './Wrapper';
+
+function App() {
+    return (
+        <Wrapper>
+            <h1>Hello, World!</h1>
+            <p>This is a paragraph inside the Wrapper component.</p>
+        </Wrapper>
+    );
+}
+
+export default App;
+----------------------
+
+Along with children we can also receive our custom props as well.
+Example :
+const Child = ({ children, ...props }) => {
+  return (
+    <div>
+      <h1>Child Component111</h1>
+      {children}
+      {props.name}
+    </div>
+  );
+};
+
+Note : we can also receive it and extract it from props object
+Example :
+const Child = ({ props }) => {
+  return (<div>{props.children}</div>)
+}
+
+===================================================
+Map :
+We can use it loop.
+Example :
+resList.map((res)=> <RestaurantCard name={res.name} key={res.id}/>)
+
+
+===================================================
+
+Inline CSS
+To give inline Css use double curly braces {{}}
+Outer is to indicate we are injecting Js and inner is for Js object
+Example : <h1 style={{color:"red"}}>Test</h1>
+
+===================================================
+
+config driven UI
+
+Changing the UI based on Data 
+Example : 
+Swiggy shows different UI to the person based on the location
+
+===================================================
+
+Named Export and Defaul Export
+
+1] Default Export :
+Export File :
+
+const App = () => {}
+export default App;
+
+OR 
+
+export default function App(){}
+
+Import File :
+import App from "./App"
+
+-----------------------
+2] Named Export :
+Export File :
+export const Comp1 = () => {}
+export const Comp2 = () => {}
+
+OR
+
+export {comp1, comp2}
+
+Import File :
+import {Comp1, Comp2} from "./App"
+
+-----------------------
+Using Both :
+export const comp1 = () => {}
+const comp2 = () => {}
+export default comp2
+
+import comp2, {comp1} from "./App"
+
+===================================================
+
+Note : Good Practice 
+To create common file inside utils for import export 
+src/
+  components/
+    Header.js
+    Footer.js
+    Body.js
+    Card.js
+  common/
+    components.js
+
+ Step1] components.js
+ // src/utils/components.js
+
+// Import all components
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import Body from '../components/Body';
+import Card from '../components/Card';
+
+// Export all components
+export { Header, Footer, Body, Card};
+
+Step2] App.js
+// src/App.js
+
+import React from 'react';
+// Import components from the common file
+import { Header, Footer, Body, Card, Input } from './utils/components';
+
+function App() {
+  return (
+    <div>
+      <Header />
+      <Body />
+      <Card />
+      <Footer />
+    </div>
+  );
+}
+
+export default App;
+
+
+===================================================
+
+Notes : To keep common file's use utils.
+use capital letter's for naming common variables [snake case].
+Example : LOGO_URL = ""
+
+===================================================
+

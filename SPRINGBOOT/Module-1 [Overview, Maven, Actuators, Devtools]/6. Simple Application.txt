@@ -1,0 +1,40 @@
+application.properties :
+team.name=MyTeam
+
+Injecting in Java Code :
+@Value("${team.name}")
+private String teamName;
+
+---------------------------------------------------------------
+
+Example code :
+
+Main Application Class :
+
+package com.example.myfirstapp;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class MyfirstappApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MyfirstappApplication.class, args);
+    }
+}
+
+----
+REST Controller :
+
+package com.example.myfirstapp.rest;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class FunRestController {
+    @GetMapping("/")
+    public String sayHello() {
+        return "Bismillahh ♥♥♥♥♥";
+    }
+}

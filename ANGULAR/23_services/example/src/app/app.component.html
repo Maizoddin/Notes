@@ -1,0 +1,10 @@
+<div>
+  <h1>Students List</h1>
+  <ul>
+    <li *ngFor="let student of students">
+      {{ student.name }}
+    </li>
+  </ul>
+  <input type="text" [(ngModel)]="name" />
+  <button (click)="addStudent()">Add Student</button>
+</div>

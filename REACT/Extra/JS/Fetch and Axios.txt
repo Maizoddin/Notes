@@ -1,0 +1,116 @@
+Fetch :::
+Best Practices:
+
+Always include the "Content-Type": "application/json" in header when sending a JSON body.
+use JSON.stringify() for the request body.
+use JSON.parse() for parsing the response.
+check response.ok before calling response.json(), else throw an error
+
+Response Object properties before parsing:
+body: Contains response data.
+headers: Metadata of the response.
+ok: Boolean indicating success or failure.
+status: status code
+statusText: Provide HTTP status details.
+url: The request URL.
+
+Example :
+const fetchData = async () => {
+  try {
+	const queryParams = new URLSearchParams({
+    	    pageNo: 1,
+    	    limit: 10,
+     	 }).toString();
+
+    const url = `http://example.com/api?${queryParams}`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+	"userId": "1",
+        "applicationId": "corearch",
+        "entity": "G",
+        "authCode": "1234",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+          role:"admin",
+          arg1 :{ 
+	      loginId:"",
+	      userGroup:""
+	  }
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error, status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Data:", data);
+  } catch (error) {
+    console.log("Error:", error.message);
+  }
+};
+
+
+=================================
+
+Axios :::
+
+Advantages:
+Automatically converts the body and response data (no need for JSON.stringify() or response.json()).
+Automatically includes headers like "Content-Type": "application/json".
+Throws errors automatically for failed HTTP requests.
+Response Object: Axios returns a data property containing the response data.
+
+
+Example :
+const fetchData = async () => {
+  try {
+     
+    const response = await axios({
+      method: "POST",
+      url: "http://example.com/api",
+      headers: {
+        "userId": "1",
+        "applicationId": "corearch",
+        "entity": "G",
+        "authCode": "1234",
+      },
+      data: {
+        role:"admin",
+          arg1 :{ 
+	      loginId:"",
+	      userGroup:""
+	  }
+      },
+      params: {
+        pageNo: 1,
+        limit: 10, 
+      },
+    });
+
+    console.log("Data:", response.data);
+  } catch (error) {
+    console.log("Error:", error);
+  }
+};
+
+--------------------------
+Axios Error object :
+{
+ message : "xxxxxx"
+ status : 400
+ response : {
+   statusText : "Not Found"
+  }
+}
+
+
+
+
+
+
+
+
+

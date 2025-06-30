@@ -1,0 +1,22 @@
+@ViewChild 
+
+Note :
+* We can assign local reference to elements.
+* We can access that element in our (.ts) file using @ViewChild
+* These elements are accessible only after ngAfterViewInit hook.
+
+Example :
+
+app.html
+<input type="text" #localRef />
+<button (click)="onClick()">Change</button>
+<h1>{{ message }}</h1>
+
+app.ts
+export class AppComponent {
+  message: string = '';
+  @ViewChild('localRef') inpRef!: ElementRef;
+  onClick() {
+    this.message = this.inpRef.nativeElement.value;
+  }
+}

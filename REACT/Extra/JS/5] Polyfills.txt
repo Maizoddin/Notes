@@ -1,0 +1,185 @@
+1] map :
+
+if (!Array.prototype.map) {
+  Array.prototype.myMap = function (callback) {
+    if (typeof callback !== "function") {
+      throw new Error(`${callback} is not a function`);
+    } else {
+      const array = this;
+      const result = [];
+      for (let index in array) {
+          result.push(callback(array[index], index, array));
+      }
+      return result;
+    }
+  }
+}
+
+const nums = [2, 3, 4];
+const res = nums.map((num) => num * num);
+console.log("Result", res);
+
+------------------------------------------------------------
+
+2] filter :
+
+if (!Array.prototype.filter) {
+  Array.prototype.filter = function (callback) {
+    if (typeof callback !== "function") {
+      throw new Error(`${callback} is not a function`);
+    } else {
+      const array = this;
+      const result = [];
+      for (let index in array) {
+        if (callback(array[index], index, array)) {
+          result.push(array[index]);
+        }
+      }
+      return result;
+    }
+  };
+}
+
+const nums = [2, 3, 4, 5];
+const result = nums.filter((num) => num % 2 === 0);
+console.log("Result", result);
+
+------------------------------------------------------------
+
+3] reduce :
+
+if (!Array.prototype.reduce) {
+  Array.prototype.reduce = function () {
+    const callback = arguments[0];
+    const array = this;
+    let initialValue = arguments[1];
+
+    if (typeof callback !== "function") {
+      throw new Error(`${callback} is not a function`);
+    } else if (array.length === 0) {
+      throw new Error("Array is empty");
+    } else {
+      let index = 0;
+      if (!initialValue) {
+        initialValue = array[index];
+        index++;
+      }
+      while (index < array.length) {
+        if (index in array) {
+          initialValue = initialValue + array[index];
+        }
+        index++;
+      }
+      return initialValue;
+    }
+  };
+}
+
+const nums = [6, 8, 7];
+const result = nums.reduce((prev, cur) => prev + cur);
+console.log(result);
+
+------------------------------------------------------------
+
+4] call :::
+const person = {
+  name: "Alex",
+};
+
+function printName(message) {
+  console.log(`Hey ${this.name} ${message}`);
+}
+
+if (!Function.prototype.call) {
+  Function.prototype.call = function (context, ...args) {
+    const fn = this;
+    if (typeof fn !== "function") {
+      throw new Error("Call must be called on a function");
+    }
+    context = context || globalThis;
+    const key = Symbol();
+    context[key] = fn;
+    const result = context[key](...args);
+    delete context[key];
+    return result;
+  };
+}
+
+printName.call(person, "Hi");
+
+------------------------------------------------------------
+
+5] apply :::
+if (!Function.prototype.apply) {
+  Function.prototype.apply = function (context, args) {
+    const fn = this;
+    if (typeof fn !== "function") {
+      throw new Error("Apply must be called on a function");
+    }
+    context = context || globalThis;
+    const key = Symbol();
+    context[key] = fn;
+    const result = context[key](...args);
+    delete context[key];
+    return result;
+  };
+}
+
+printName.apply(person, ["Hi"]);
+
+------------------------------------------------------------
+
+6] bind :::
+if (!Function.prototype.bind) {
+  Function.prototype.bind = function (context, ...args) {
+    const fn = this;
+    if (typeof this !== "function") {
+      throw new Error("Bind must be called on a function");
+    }
+    context = context || globalThis;
+    return function (...newArgs) {
+      const key = Symbol();
+      context[key] = fn;
+      const result = context[key](...args, ...newArgs);
+      delete context[key];
+      return result;
+    };
+  };
+}
+
+const newFn = printName.bind(person, "Hi");
+newFn();
+
+
+------------------------------------------------------------
+
+7] Promise.all([]) :
+   Working : Returns an array of result's of all promises.
+             It wait's for all the promises to execute and then returns the result.
+	     If any one promise gets rejected then it throws error immediately and result will be an error. it won't wait for other promises.
+
+
+
+------------------------------------------------------------
+
+8] Promise.allSetteled([]) :
+   Working : Returns and array of result's of all promises.
+	     Even if any one promise gets rejected then it still waits for other promises to get setteled.
+             Result = [{status:"fulfilled", value:""},{status:"rejected", value:""},{}]
+
+
+------------------------------------------------------------
+
+9] Promise.race([])  :
+   Working : It returns the result of first setteled promise.(It can be result or error)
+	     It waits only for the first promise.
+
+
+
+------------------------------------------------------------
+
+10] Promise.any([]) :
+    Working : It returns the result of first resolved promise.
+	      It wait's until any one promise gets successfully resolved.
+              If all promise's gets rejected then it returns an array of errors.
+

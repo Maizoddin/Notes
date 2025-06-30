@@ -1,0 +1,75 @@
+Constructor :
+* Costructor should have same name as that of class.
+* Constructor should not have return type.
+* Constructor should be non-static because it's an instance method.
+* When there is no constructor created then compiler will create default constructor.
+* Constructor can be overloaded.
+* Constructor can't be final, abstract, static.
+* Canstructor can have access specified but it's good to use public access specifier so it can be called from anywhere when an object is created.
+
+Example :
+package frontend;
+
+public class Dashboard {
+    String userName;
+    int accountBalance;
+    boolean isUserActive;
+
+     public Dashboard(String name, int balance, boolean isActive) {
+        userName = name;
+        accountBalance = balance;
+        isUserActive = isActive;
+        displayDashBoard();
+    }
+    private void displayDashBoard() {
+        System.out.println("Name : " + userName + "\nBalance : " + accountBalance + "\nisActive : " + isUserActive);
+        RuleSet ruleSet = new RuleSet();
+        ruleSet.display();
+    }
+
+}
+
+=====================================================================
+
+Singleton Design pattern : Only one instance of that class should be created.
+
+Steps :
+1] Class should contain private static reference variable of same class type.
+2] Class should have private constructor.
+3] Class should have public static methode to create and return object reference.
+
+Example :
+Dashboard.java
+public class Dashboard {
+    String userName;
+    int accountBalance;
+    boolean isUserActive;
+
+    //    SINGLETON DESIGN PATTERN
+
+    private static Dashboard dashboardInstance;
+
+    private Dashboard(String name, int balance, boolean isActive) {
+        userName = name;
+        accountBalance = balance;
+        isUserActive = isActive;
+    }
+
+    public static Dashboard getDashboardInstance(String name, int balance, boolean isActive) {
+        if (dashboardInstance == null) {
+            dashboardInstance = new Dashboard(name, balance, isActive);
+            return dashboardInstance;
+        }else {
+            return null;
+        }
+    }
+
+}
+
+----
+Main.java
+public class Main {
+    public static void main(String[] args) {
+        Dashboard dashboard = Dashboard.getDashboardInstance("Maizoddin", 10000000, true);
+    }
+}

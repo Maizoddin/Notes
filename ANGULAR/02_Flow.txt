@@ -1,0 +1,6 @@
+Flow :
+
+1] angular.json - it asks to run index.html and main.ts files
+2] main.ts - it asks to bootstrap AppModule
+3] app.module.ts - it asks to bootstrap AppComponent
+4] index.html - it uses the selector of AppComponent

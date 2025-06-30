@@ -1,0 +1,117 @@
+Primitive Data Types 
+
+1] boolean
+Size: ~1 bit
+Range: true or false
+Description: Stores true or false values.
+
+2] byte
+Size: 1 byte
+Range: -128 to 127
+Description: A small integer, useful for saving memory.
+
+3]char
+Size: 2 bytes
+Range: 0 to 65,535 (Unsigned Unicode)
+Description: Stores a single character (supports Unicode).
+
+4] short
+Size: 2 bytes
+Range: -32,768 to 32,767
+Description: A slightly larger integer than byte.
+
+5] int
+Size: 4 bytes
+Range: -2,147,483,648 to 2,147,483,647
+Description: The most commonly used integer data type.
+
+6] float
+Size: 4 bytes
+Range: 1.4E-45 to 3.4028235E+38 (approx.)
+Description: For smaller decimal values (less precision).
+
+7] long
+Size: 8 bytes
+Range: -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
+Description: For larger integer values.
+
+8] double
+Size: 8 bytes
+Range: 4.9E-324 to 1.7976931348623157E+308 (approx.)
+Description: For high-precision decimal values.
+
+
+------------------------------------------------------------
+
+Non-Primitive Data Types
+
+1] String message = "Hello, World!";
+
+2] int[] numbers = {1, 2, 3, 4, 5};
+
+3] class Person {
+    String name;
+    int age;
+   }
+
+   Person person = new Person();
+
+4] interface Animal {
+    void sound();
+  }
+
+  class Dog implements Animal {
+     public void sound() {
+        System.out.println("Bark");
+    }
+  }
+
+--------------------------------------------------------------
+
+Differences :
+
+Primitive Types(Value type) :
+* Stores actual value
+* Cannot be null
+
+Non-Primitive Types(Reference type) :
+* It Stores reference (memory address)
+* Can be null
+
+
+Note : In java int and boolean are not compatable.
+Example :
+4<5<6 = error 
+
+--------------------------------------------------------------
+
+ByDefault 
+Integer Literals are of type int
+Real Literals are of type double
+
+For float numbers always use f suffix else it will assume it as of type double and gives warning for conversion.
+Example : float num = 2.3f;
+--------------------------------------------------------------
+
+
+Examples :
+1]
+char s = 'a';
+int code = (int)s;
+
+2]
+int num = 78;
+char c = (char)num;
+
+3] 
+int num = 24;
+int ans = num / 10;
+Note : Answer will be 2, because if both the numbers are integer then answer will be integer only and if any one number is float then it will be float.
+
+
+================================================================
+
+Note :
+Local variables can't be accessed without initialization.
+instance variable's are initialized with default value.
+

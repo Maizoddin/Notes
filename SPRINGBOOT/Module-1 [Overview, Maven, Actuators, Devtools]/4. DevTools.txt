@@ -1,0 +1,14 @@
+Spring Boot DevTools :
+Spring Boot DevTools enables automatic application restart when files are modified.
+
+Steps to Enable DevTools :
+1] Add the dependency:
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-devtools</artifactId>
+</dependency>
+
+2] In IntelliJ:
+	Go to Settings -> Build, Execution, Deployment -> Compiler -> enable Build project automatically.
+	Go to Settings -> Advanced Settings -> enable Allow auto-make to start even if the application is running.
+

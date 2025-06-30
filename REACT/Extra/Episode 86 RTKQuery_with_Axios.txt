@@ -1,0 +1,44 @@
+import { createApi } from "@reduxjs/toolkit/query/react";
+import axios from "axios";
+
+const axiosBaseQuery = ({ baseUrl }) => {
+  return async ({ url, method, data }) => {
+    try {
+      const result = await axios({
+        url: `${baseUrl}/${url}`,
+        method,
+        data,
+      });
+      return { data: result.data };
+    } catch (error) {
+      return {
+        error: {
+          status: error.response?.status,
+          data: error.response?.data || error.message,
+        },
+      };
+    }
+  };
+};
+
+const productsApi = createApi({
+  reducerPath: "products",
+  baseQuery: axiosBaseQuery({
+    baseUrl: "http://localhost:3001",
+  }),
+  endpoints: (builder) => {
+    return {
+      fetchProducts: builder.query({
+        query: (args = "") => {
+          return {
+            url: "products",
+            method: "GET",
+          };
+        },
+      }),
+    };
+  },
+});
+
+export default productsApi;
+export const { useFetchProductsQuery } = productsApi;

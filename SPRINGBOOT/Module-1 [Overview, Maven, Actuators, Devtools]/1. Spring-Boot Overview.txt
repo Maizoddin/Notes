@@ -1,0 +1,62 @@
+Spring Boot :
+Spring Boot is a framework built on top of the Spring framework that simplifies the development of Java applications. 
+
+Advantages of Spring Boot ::
+* Embedded Server: Comes with built-in servers like Tomcat, Jetty, or Undertow, eliminating the need for manual server setup.
+* No XML Configuration: Uses annotations and Java-based configuration instead of XML.
+* Faster Development: Provides a wide range of annotations and starters to speed up development.
+* Supports easy dependency management using Maven or Gradle.
+
+---------------------------------------------------------------------------------------------------
+
+Spring Initializr :
+Spring Initializr is a web-based tool to bootstrap Spring Boot projects. It generates a project structure with the required dependencies.
+Website: https://start.spring.io/
+
+Steps to Create a Project:
+* Go to https://start.spring.io/.
+* Select project metadata (e.g., Maven, Java, Spring Boot version).
+* Add dependencies (e.g., Spring Web, Spring Data JPA, etc.).
+* Generate and download the project.
+
+---------------------------------------------------------------------------------------------------
+
+Running a Spring Boot Application using Terminal:
+
+Option 1] Using JAR File:
+	* Go to project directory and open terminal
+	* Build the project: mvn package
+	* Run the JAR: java -jar target/projectName.jar
+
+Option 2] Using Maven:
+	* Run the project directly: mvn spring-boot:run
+
+Note : By default, the application runs on localhost:8080
+
+---------------------------------------------------------------------------------------------------
+
+Project Structure :
+
+src
+├── main
+│   ├── java              # Contains Java source code
+│   └── resources         # Contains configuration files (e.g., application.properties)
+└── test
+    └── java              # Contains unit tests
+pom.xml                   # Maven configuration file
+target                    # Contains compiled code and JAR/WAR files
+
+---------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,26 @@
+What is Lazy Initialization?
+* By default, Spring eagerly initializes all beans at startup.
+* Using @Lazy defers the creation of a bean until it is first requested.
+
+Ways to enable Lazy Initialization
+1] At Bean Level :
+@Lazy
+@Component
+public class SwimCoach implements Coach { }
+
+2] Global Setting (Recommended)
+application.properties file
+spring.main.lazy-initialization=true
+
+Note : Lazy is useful only for singleton scope, because prototype scope will create instance only when requested so already lazy is applied there.
+
+Note : While receiving lazy beans also we can use @Lazy.
+Example :
+Public class Hotel{
+ public Hotel(@Lazy Order order){}
+}
+
+Note :
+IF we use @Lazy while injecting then it injects the proxy object of that type
+IF we use @Lazy on bean then it will create instance only when its being used and not when injected.
+

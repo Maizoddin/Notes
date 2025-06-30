@@ -1,0 +1,4 @@
+npm install formik
+npm install yup
+
+yup : its used for form validation

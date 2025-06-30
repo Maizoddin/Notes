@@ -1,0 +1,65 @@
+With ResponseBody we tell that the return type of the function is the type that api will return
+If we dont add @ResponseBody the it will try to find the view with that name [jsp]
+
+RestController is a combination of @Controller + @ResponseBody
+
+---
+
+@RequestParams	:
+@RequestParam is a Spring annotation used to extract query parameters from the URL into controller method arguments.
+
+URL : GET /search?category=books&sort=price
+
+Code:
+@GetMapping("/search")
+public String searchProducts(
+    @RequestParam("category") String cat,
+    @RequestParam("sort") String sortBy
+) {
+    return "Category: " + cat + ", Sorted by: " + sortBy;
+}
+
+
+Exmaple :
+@GetMapping("/greet")
+public String greetUser(
+    @RequestParam(name = "name", defaultValue = "Guest") String name
+) {
+    return "Hello, " + name;
+}
+
+
+By default, Spring's @RequestParam has: required = true
+If the request parameter is missing, Spring throws a MissingServletRequestParameterException.
+
+We can either give required = false OR can give defaultValue
+
+@GetMapping("/search")
+public String searchProducts(
+    @RequestParam(name = "category", required = false) String category
+) {
+    if (category == null) {
+        return "Showing all products";
+    }
+    return "Searching in category: " + category;
+}
+
+-----
+
+@PathVariable
+@PathVariable is always required 
+
+
+Code :
+@GetMapping("/products/{category}/{id}")
+public String getProductDetails(
+    @PathVariable("category") String cat,
+    @PathVariable("id") int productId
+) {
+    return "Product ID: " + productId + ", Category: " + cat;
+}
+
+
+------------
+
+Note : If we have a bean which is autoconfigured using [Component or ...] and same bean if we configure manually by creating function and returning object of it then the manual configuration will take priority.

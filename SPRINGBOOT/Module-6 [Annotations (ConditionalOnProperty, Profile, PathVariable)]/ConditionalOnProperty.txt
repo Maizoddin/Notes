@@ -1,0 +1,31 @@
+@ConditionalOnProperty :
+
+* It creates bean on the condition.
+* It checks the property in application.properties
+* While injecting we should use @Autowired(required = false), so we should either use setter injection or field injection because if we use constructor injection then constructor will ignore @Autowired(required = false) and thinks like its required.
+
+Example :
+
+@Component
+@ConditionalOnProperty(name = "mySqlConnection.enabled", havingValue = "true", matchIfMissing = false)
+public class MySQLConnection {
+    public MySQLConnection() {
+        System.out.println("MySQLConnection");
+    }
+}
+
+application.properties  :
+mySqlConnection.enabled = true
+
+@Component
+public class User {
+    @Autowired(required = false)
+    MySQLConnection mySQLConnection;
+    private User(){
+        System.out.println("User");
+    }
+}
+
+
+Example UseCase :
+We want to create only one bean either MySQL or NoSQL

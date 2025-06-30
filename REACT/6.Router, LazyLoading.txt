@@ -1,0 +1,283 @@
+React Router :-
+
+npm install react-router-dom
+
+import {createBrowserRouter, RouterProvider} from "react-router-dom";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      { index:true, element: <Body /> },
+      { path: "/about", element: <About /> },
+      { path: "/contact", element: <Contact /> },
+       ],
+    errorElement: <Error />,
+  }	
+]);
+
+root.render(<RouterProvider router={router} />)
+
+============
+
+import { Outlet } from "react-router-dom";
+
+const App = () => {
+  return (
+    <div className="app">
+      <Header />
+      <Outlet/>
+      <Footer />
+    </div>
+  );
+};
+
+===========
+
+Error:
+
+import { useRouteError } from "react-router-dom"
+
+const err = useRouteError()
+err.status
+err.statusText
+
+============
+Link :
+
+import { Link } from "react-router-dom"
+<li className="nav-item">
+    <Link to="/contact">Contact Us</Link>
+</li>
+
+Note : If we use <a href=""> then it will reload the entire page but if we use <Link to=""></Link> then only the portion of that page will get updated it won't reload the entire page.
+
+===============
+Navigating programatically:
+Note : We can use it inside js code
+
+import {useNavigate} from "react-router-dom"
+
+const navigate = useNavigate()
+function handleClick(){navigate("/products")}
+
+<button onClick={handleClick}>Click</button>
+
+* Optional Parameter:
+  navigate('/products', { replace: true });
+
+* To navigate conditionally inside jsx 
+import { Navigate } from 'react-router-dom'
+<Navigate to="/login" replace/>
+
+Note : The replace prop prevents the new entry from being added to the browser's history stack. It replaces the current entry, meaning if the user clicks the "back" button, they won't go back to the previous page.
+
+=======================
+Dynamic Routing(Route Parameters) :
+
+inside router configuration add parameter with :
+{
+  path:"/restaurant/:resId",
+  element : <Restaurant/>
+}
+
+<link to={"restaurant/"+info.id} key="idx"><Restaurant data={info}/></link>
+
+Retrieving :
+import { useParams } from "react-router-dom"
+const {resId} = useParams()
+
+============================
+Query Parameters :
+Query parameters are used to pass additional information to the server in a key-value pair format. They are typically used to filter or customize the response from the server.
+
+Example URL : http://example.com/courses?category=tech&course=react&sort=latest
+
+const router = createBrowserRouter([{
+ path:'courses',
+ element:<Courses/>
+}])
+
+<Link to = "/courses?category=tech&course=react&sort=latest">Courses</Link>
+
+Retrieving :
+import { useSearchParams } from 'react-router-dom';
+
+function SearchPage() {
+  const [searchParams] = useSearchParams();
+  const category = searchParams.get('category');
+  const course = searchParams.get('course');
+
+  return <div></div>;
+}
+
+============================
+useNavigation :::
+const navigation = useNavigation();
+navigation.state == "loading" || "idle" || "submitting"	
+============================
+Loader :::
+We can use it when we want data before our component loads and routing happens
+Loader function receives 2 parameters
+1] params 
+2] request
+
+example : 
+{
+ path:"/details",
+ element:</EventDetails>,
+ loader: ProductLoader
+},
+
+const loadUsers = async ({params, request}) => {}
+
+--------------------------
+Sharing loader data ::
+We can add loader in parent and then both child can access loader data but we should provide id to loader and we should use useRouteLoaderData
+path:"/events"
+id:"event-details"
+children:[
+{
+ index:true,
+ element:</EventDetails>
+},
+{
+ path:"edit",
+ element:<EventEditForm/>
+}
+]
+
+data = useRouteLoaderData("event-details")
+============================
+Complete Location/Path information
+Retrieving :
+import { useLocation } from "react-router-dom";
+
+const location = useLocation();
+   // location : {pathname:'/courses/', search:'?category=tech&course=react&sort=latest'}
+
+// To get path name
+console.log(location.pathname)
+
+// To get queryParameters pass this to URLSearchParams class and call the get methode of that classes object by passing key
+const searchParams = new URLSearchParams(location.search)
+const course = searchParams.get('course')
+===========================
+
+Note :
+1]Relative path :
+  It will append to currently active path
+2]Absolute Path:
+  It will append to the root
+
+==========================
+
+Client Side and Server side rendering
+Client side rendering :
+Pages will be rendered on the client side
+Search engine optimization is impacted badly
+Used when there is lot of user interaction involved and site contains most dynamic content
+Server side rendering : 
+Pages will be rendered on the server side and the complete readymade page will be sent to client side 
+Improves the search engine optimization because all the keywords which user searches will already be rendered on the server and sent as a page to client so browser can easily find those keywords.(Search engines can easily crawl the fully rendered HTML content.)
+Fast initial loading
+Mostly prefered when pages contains static content
+=============================
+
+Lazy loading :
+
+* We use lazy() function and <Suspense /> component along with fallback.
+* So it will load the code of our module or component on-demand so when the user goes to that URL our component's code won't be there it will take some mili seconds to download so till that we should show the fallback component.
+
+To use lazy loading avoid importing component in a normal way.
+Example :
+import React, { Suspense, lazy } from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+
+const Hotels = lazy(() => import("./Hotels"));
+const router = createBrowserRouter([
+  {
+    path: "",
+    element: <App />,
+  },
+  {
+    path: "/hotels",
+    element: (
+      <Suspense fallback={<h1>Loading...</h1>}>
+        <Hotels />
+      </Suspense>
+    ),
+  },
+]);
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<RouterProvider router={router} />);
+
+Note : In fallback we can also call component.
+Example :
+    <Suspense fallback={<LoadingSpinnerComponent />}>
+        <Hotels />
+    </Suspense>
+--------------------------------
+
+Lazy loading inside component for inner component
+Example :
+
+import React, { Suspense, lazy } from 'react';
+const MyLazyComponent = lazy(() => import('./LazyComponent'));
+
+function App() {
+  return (
+    <div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <MyLazyComponent />
+      </Suspense>
+    </div>
+  );
+}
+
+export default App;
+=====================================================
+Good Practice::
+
+Create AppRouter.jsx
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import BankList from "./components/BankList";
+import UserList from "./components/UserList";
+import Body from "./components/Body";
+
+const router = createBrowserRouter([
+  {
+    path: "",
+    element: <Body />,
+    children: [
+      {
+        path: "/banks",
+        element: <BankList />,
+      },
+      {
+        path: "/users",
+        element: <UserList />,
+      },
+    ],
+  },
+]);
+
+const AppRouter = () => {
+  return <RouterProvider router={router} />;
+};
+
+export default AppRouter;
+
+
+Now inside App.jsx call this 
+const App = () => {
+  return (
+    <div>
+      <AppRouter/>
+    </div>
+  )
+}

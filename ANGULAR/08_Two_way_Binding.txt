@@ -1,0 +1,25 @@
+Two Way Data Binding  [(ngModel)]  :
+
+Note : import FormsModule in imports of module
+
+----------
+
+Example :
+
+// app.component.ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
+})
+export class AppComponent {
+  message: string = '';
+}
+
+-----------
+
+<!-- app.component.html -->
+<input type="text" [(ngModel)]="message" />
+<h1>Your Message is : {{ message }}</h1>

@@ -1,0 +1,17 @@
+ReadWriteLock :
+
+ReadWriteLock lock = new ReentrantReadWriteLock();
+
+Important :
+1] Multiple threads can hold the read lock simultaneously.
+2] Only one thread can hold the write lock at a time.
+3] If a thread has a read lock, no thread can acquire a write lock until all read locks are released.
+4] If a thread has a write lock, no other thread (reader or writer) can proceed.
+
+Example :
+
+ReadWriteLock lock = new ReentrantReadWriteLock();
+lock.readLock().lock();
+lock.readLock().unlock();
+lock.writeLock().lock();
+lock.writeLock().unlock();

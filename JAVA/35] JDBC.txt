@@ -1,0 +1,115 @@
+JDBC (Java Database Connectivity) :
+
+* JDBC (Java Database Connectivity) is a Java API used to connect and execute queries with databases.
+* When using MySQL Client, it directly communicates with the MySQL Server.
+  MySQL Client → MySQL Server
+* When using JDBC, we need a driver to communicate with MySQL Server.
+  Java Application → JDBC → Driver → MySQL Server → Database
+* Since JDBC is database-independent, it requires DB-specific drivers (e.g., MySQL, Oracle, PostgreSQL).
+
+Setting Up JDBC in IntelliJ :
+
+Step 1: Add JDBC Library to Project
+Inside IntelliJ: Project Structure → Libraries → Java → Select MySQL JDBC JAR file → Apply
+
+-----------------------------------
+JDBC provides DriverManager class to manage database connections.
+DriverManager class has getConnection(url, username, password) static method, which returns Connection(interface) object.
+
+Connection connection = DriverManager.getConnection(url, username, password);
+url → JDBC connection string (e.g., "jdbc:mysql://localhost:3306/dbname")
+username → MySQL username
+password → MySQL password
+Throws: SQLException if connection fails
+
+
+* JDBC provides three ways to execute SQL queries:
+
+Statement Type			Method			Returns
+
+Select Queries			executeQuery()		ResultSet
+Insert, Update, Delete		executeUpdate()		int (rows affected)
+Any Query (Generic)		execute()		boolean (success/failure)
+
+PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+// In query we can set dynamic parameters which follows 1-based indexing.
+
+preparedStatement.setString(1, "John Doe");  // 1-based index
+preparedStatement.setInt(2, 25);
+preparedStatement.setBoolean(3, true);
+
+------------------------------------------------
+Fetching Data (ResultSet)
+
+*ResultSet allows iteration over query results.
+It has methods like:
+.next() → Moves to the next row
+.getInt(columnIndex/columnName)
+.getString(columnIndex/columnName)
+
+Code :
+ResultSet resultSet = preparedStatement.executeQuery();
+while (resultSet.next()) {
+    System.out.println("ID: " + resultSet.getInt("id"));
+    System.out.println("Name: " + resultSet.getString("name"));
+}
+
+
+---------------------------------------------------
+Example :
+import java.sql.*;
+
+public class JDBCExample {
+    public static void main(String[] args) {
+        // Database credentials
+        String URL = "jdbc:mysql://localhost:3306/bank";
+        String USERNAME = "root";
+        String PASSWORD = "Maaz@9060";
+
+        try {
+            // 1. Establish Connection
+            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            System.out.println("Database Connected Successfully!");
+
+            // 2. Insert Data
+            insertUser(connection, "JohnDoe", true);
+
+            // 3. Fetch and Display Data
+            fetchUsers(connection);
+
+            // 4. Close Connection
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Insert User
+    private static void insertUser(Connection connection, String userName, boolean isActive) throws SQLException {
+        String query = "INSERT INTO users (user_name, is_active) VALUES (?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, userName);
+            preparedStatement.setBoolean(2, isActive);
+            int rows = preparedStatement.executeUpdate();
+            if (rows > 0) {
+                System.out.println("User Inserted Successfully!");
+            }
+        }
+    }
+
+    // Fetch Users
+    private static void fetchUsers(Connection connection) throws SQLException {
+        String query = "SELECT * FROM users";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            System.out.println("\nUser Records:");
+            while (resultSet.next()) {
+                System.out.println("ID: " + resultSet.getInt("id") + 
+                                   ", Name: " + resultSet.getString("user_name") + 
+                                   ", Active: " + resultSet.getBoolean("is_active"));
+            }
+        }
+    }
+}
+

@@ -1,0 +1,141 @@
+Lock :
+
+1] Optimistic Locking :
+* Mechanism: 
+  Uses a version column (@Version) to detect conflicts.
+* Best For: 
+  High-concurrency systems with rare conflicts (e.g., e-commerce).
+* Create Extra column in DB with name version and use @Version in Entity.
+
+EXAMPLE :
+Scenario: Movie Ticket Booking
+10 users try to book the last seat.
+Only the first user succeeds; others get an error.
+
+CODE :
+@Entity
+public class Seat {
+    @Id
+    private Long id;
+    
+    private String status; // "FREE" or "BOOKED"
+    
+    @Version
+    private Long version; // Auto-incremented on update
+}
+
+@Service
+public class BookingService {
+    @Transactional
+    public BookingResult bookSeat(Long seatId) {
+        try {
+            Seat seat = seatRepository.findById(seatId).orElseThrow();
+            if ("FREE".equals(seat.getStatus())) {
+                seat.setStatus("BOOKED");
+                seatRepository.save(seat); // Auto-checks version
+                return BookingResult.SUCCESS;
+            }
+            return BookingResult.FAILED;
+        } catch (OptimisticLockException ex) {
+            return BookingResult.RETRY;
+        }
+    }
+}
+
+How It Works:
+* User A reads seat (version=1).
+* User B reads seat (version=1).
+* User A books the seat → version becomes 2.
+* User B tries to book → OptimisticLockException because version changed.
+-----------------------------------------------------------------------------------------------------------------
+
+2] Use Pessimistic Locking when:
+* Data consistency is critical.
+* Conflicts are frequent.
+  Example: Ticket booking, stock trading, Bank Transactions.
+* Use @Lock(LockModeType.PESSIMISTIC_WRITE)  on Query.
+
+Scenario : Two ATMs try to withdraw from the same account.
+
+Code :
+public interface AccountRepository extends JpaRepository<Account, Long> {
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT a FROM Account a WHERE a.id = :id")
+    Account findByIdWithLock(Long id);
+}
+
+@Service
+public class ATMService {
+    @Transactional
+    public void withdraw(Long accountId, double amount) {
+        Account account = accountRepository.findByIdWithLock(accountId);
+        if (account.getBalance() >= amount) {
+            account.setBalance(account.getBalance() - amount);
+            accountRepository.save(account);
+        }
+    }
+}
+
+-------------------------------------------------------------------------------------------------------------------
+
+### Real-World Scenario: Ticket Booking
+
+Situation 1:
+5 users see seat "FREE".
+All try to book.
+Only 1 should win.
+
+** With Optimistic Lock
+All load the seat.
+All check if "FREE".
+One succeeds in update (due to version).
+Others get OptimisticLockException.
+
+** With Pessimistic Lock
+First user gets lock.
+Others wait (or fail immediately depending on timeout).
+Safe but reduces concurrency.
+
+-----------------------------------------
+
+Situation 2:
+Two users try to withdraw ₹500 from ₹700 at same time.
+
+** With Optimistic Lock:
+Both read ₹700.
+Both try to update to ₹200.
+One fails (version mismatch), needs retry.
+
+** With Pessimistic Lock:
+First user locks and reads.
+Second waits.
+Prevents even reading.
+
+-----------------------------------------
+In a bus booking app like RedBus, where multiple users may try to book the same seat simultaneously, and where booking involves multiple steps (like collecting details, payment, then confirming booking) — pessimistic locking is preferred to ensure data consistency and avoid overbooking.
+
+Why Use Pessimistic Locking Here?
+Because optimistic locking may fail in high-contention scenarios (e.g., multiple users booking the same seat), and payment gateway delays can cause version mismatches. In contrast, pessimistic locking locks the seat record immediately, preventing others from modifying or even reading it (depending on lock type) until the transaction completes.
+
+🔄 Realistic Booking Flow
+Let’s break it down step-by-step with locking and database layers:
+
+1. User selects seat and clicks "Book"
+At this point, a service method is triggered.
+The seat is fetched using SELECT ... FOR UPDATE (pessimistic write lock).
+This lock prevents others from reading/updating that seat until the transaction is committed or rolled back.
+
+2. Seat is temporarily reserved
+You mark the seat as TEMPORARILY_HELD (or keep as "FREE" but held logically).
+This change is still in DB transaction buffer, not yet visible to others unless committed.
+
+3. User redirected to Payment Gateway
+Depending on implementation, you may:
+a) keep the transaction open (not ideal due to long duration)
+b) store reservation in a cache/temporary table with TTL (ideal)
+c) finalize payment outside transaction and return after payment for confirmation
+
+4. After payment confirmation
+You complete the booking: set status = BOOKED, release lock (commit).
+If payment fails or times out: roll back or expire reservation.
+

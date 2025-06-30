@@ -1,0 +1,88 @@
+
+1. What is a Proxy?
+A proxy is an intermediary object that wraps around a target object to control or enhance its behavior. Proxies are used to add functionality (e.g., logging, transactions) without modifying the original code.
+
+
+2. Why Proxies are Used in Spring Boot
+Spring uses proxies to implement cross-cutting concerns (AOP - Aspect-Oriented Programming) such as:
+@Transactional – Start, commit, rollback transactions
+@Async – Run methods asynchronously
+@Cacheable – Cache method results
+
+
+3. How Proxies Work in Spring Boot
+Spring uses two types of proxies:
+
+a. JDK Dynamic Proxies
+Mechanism: Creates a proxy at runtime using Java’s java.lang.reflect.Proxy.
+Requirement: The target class must implement an interface.
+
+Example:
+
+public interface UserService {
+    void saveUser(User user);
+}
+
+@Service
+public class UserServiceImpl implements UserService {
+    @Transactional
+    public void saveUser(User user) { ... }
+}
+
+b. CGLIB Proxies
+Mechanism: Generates a subclass of the target class at runtime (no interface needed).
+Used When: The target class does not implement an interface.
+
+Example:
+@Service
+public class UserService {
+    @Transactional
+    public void saveUser(User user) { ... }
+}
+
+
+
+4. When Does Spring Boot Use Proxies?
+Common Scenarios
+
+a] Transactional Methods (@Transactional):
+The proxy starts a transaction before the method and commits/rolls back after.
+
+b] Aspect-Oriented Programming (AOP):
+Proxies apply advice (e.g., @Before, @Around) to methods.
+
+c] Async Methods (@Async):
+Proxies execute methods in a separate thread pool.
+
+d] Caching (@Cacheable):
+Proxies check the cache before invoking the method.
+
+*Real Example: @Transactional
+When you annotate a method with @Transactional:
+ a] Spring creates a proxy of your service bean.
+ b] When the method is called:
+    The proxy starts a transaction.
+    Calls the actual method.
+    Then commits or rolls back based on the outcome.
+
+
+
+5. How Proxies are Created
+Step-by-Step Flow
+
+a] Proxy Creation:
+At startup, Spring identifies beans that need proxying (e.g., due to @Transactional).
+Decides between JDK proxy or CGLIB based on whether the class implements an interface.
+
+b] Method Interception:
+When a method is called on the proxy, the proxy intercepts the call.
+Applies cross-cutting logic (e.g., starts a transaction).
+Delegates the call to the target object (actual service class).
+
+c] Post-Processing:
+After the target method completes, the proxy executes post-logic (e.g., commits the transaction).
+
+Rules :
+If a method inside the same class calls a @Transactional or @Async method, the proxy is bypassed, and the annotation won't work.
+Method should be public 
+

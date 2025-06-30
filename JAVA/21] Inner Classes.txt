@@ -1,0 +1,41 @@
+Instance Class :
+
+class Outer {
+    int outerX = 10;
+
+    class Inner {
+        void innerMethod() {
+            System.out.println("Outer x: " + outerX); // Accessing outer class member
+        }
+    }
+}
+
+public class InnerInstanceClassExample {
+    public static void main(String[] args) {
+        // 1. Create an instance of the outer class
+        Outer outer = new Outer();
+
+        // 2. Use the outer class instance to create the inner class instance
+        Outer.Inner inner = outer.new Inner();
+
+        // Now you can use the inner class object
+        inner.innerMethod();
+    }
+}
+
+---------------------
+
+Static class :
+
+class OuterClass {
+    static int outerStaticVariable = 10;
+
+    static class StaticNestedClass {
+        void nestedMethod() {
+            System.out.println("Outer static variable: " + outerStaticVariable);
+        }
+    }
+}
+
+OuterClass.StaticNestedClass nestedObject = new OuterClass.StaticNestedClass();
+nestedObject.nestedMethod();

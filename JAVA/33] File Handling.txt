@@ -1,0 +1,35 @@
+FileReader/FileWriter  = text files
+FileInputStream/FileOutputStream = binary files.
+BufferedReader/BufferedWriter = efficient text file handling.
+
+
+
+Example :
+    public void readData() {
+        try {
+            FileReader fileReader = new FileReader("./maaz.txt");
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                System.out.println(line);
+                line = bufferedReader.readLine();
+            }
+            bufferedReader.close();
+
+        } catch (IOException e) {
+            System.out.println("Something went wrong");
+        }
+    }
+
+    public void writeData() {
+        try {
+            FileWriter fileWriter = new FileWriter("./maaz.txt", true);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            String content = "Learning File Handling";
+            bufferedWriter.newLine();
+            bufferedWriter.write(content);
+            bufferedWriter.close();
+        } catch (IOException e) {
+            System.out.println("Something went wrong");
+        }
+    }

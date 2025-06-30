@@ -1,0 +1,122 @@
+WHEN WE ARE USING APPLICATION.PROPERTIES THEN SPRING BOOT ASSUMES THAT WE ARE CONNECTING TO ONLY ONE DB SO IT AUTOMATICALLY INJECTS ALL THE DEFAULT REQUIRED DEPENDENCIES(EXAMPLE : DIALECT).
+BUT IF WE ARE CONNECTING TO MULTIPLE DB's THEN WE SHOULD CREATE DATASOURCE BEAN USING AUTOCONFIGURATION CLASS FOR EACH DB DETAILS AND SHOULD PROVIDE ALL THE DETAILS.
+
+DETAILS WILL BE USED TO CREATE ENTITYMANAGER_FACTORY.
+
+Application.properties -> EntityManagerFactory -> EntityManager[Session]
+
+EntityManager has PersistanceContext which holds the entity.
+PersistanceContext acts as first level cache.
+It holds the list of entities that enityManager is interacting with. and it also manages the lifecycle of entity.
+
+Dialect converts JPQL to SQL
+
+ENTITY MANAGER IS AN INTERFACE WHICH HAS FOLLOWING METHODS :
+PERSIST, MERGE, FIND, REMOVE, CREATEQUERY
+
+HIBERNATE PROVIDE IMPLEMENTATION FOR THESE METHODES.
+IT'S CALLED SESSION IN HIBERNATE SO SESSIONIMPL CLASS PROVIDES IMPLEMENTATION.
+
+JPAREPOSITORY PROVIDES A WRAPPER WHICH PROVIDES SOME PREDEFINED METHODS BUT IT INTERNALLY USES ENTITY MANAGER.
+METHODS LIKE : SAVE(), FINDBYID, DELETEBYID, [BATCH METHODS LIKE : SAVEALL, FINDALL, DELETEALL] etc 
+AND WE CAN ADD CUSTOM METHODS INSIDE THE INTERFACE WHICH IS EXTENDING JPA REPOSITOTY, WE CAN USE NATIVE SQL USING @QUERY ANNOTATION.
+
+EXAMPLE :
+@Query("SELECT u FROM User u WHERE u.email LIKE %:email%")
+List<User> searchByEmail(@Param("email") String email);
+
+IF WE USE ENTITYMANAGER THEN WE SHOULD INJECT ENTITYMANAGER BEAN USING @PersistanceContext and WE SHOULD ALSO USE @Transactional WHILE DOING CREATE, UPDATE, DELETE
+
+Note : EACH HTTP REQUEST GETS NEW PERSISTENCE CONTEXT
+
+@Transactional :
+What it will do?
+entityManager.getTransaction().begin();
+entityManager.flush();
+entityManager.getTransaction().commit();
+
+Manual Process:
+
+@AutoWired
+public EntityManagerFactory entityManagerFactory;
+public EntityManager entityManager = entityManagerFactory.createEntityManager();
+entityManager.getTransaction().begin();     // Start transaction
+entityManager.persist(user);                // Register and mark for INSERT
+entityManager.getTransaction().commit();    // Flushes and commits to DB
+entityManager.close();                      // Closes the persistence context
+
+Example:
+EntityManager em = emf.createEntityManager();
+EntityTransaction tx = em.getTransaction();
+
+try {
+    tx.begin();                // begin transaction
+    em.persist(user);         // do operation
+    tx.commit();              // commit transaction
+} catch (Exception e) {
+    tx.rollback();            // rollback if error
+} finally {
+    em.close();               // always close EM
+}
+
+
+
+Think of flush() as:
+“Send the changes to the database now, but I’m not done yet.”
+
+🔸 commit() — Finalizes and makes changes permanent
+Internally does a flush(), then commits the DB transaction.
+After commit, the changes are permanent in the DB and can’t be rolled back.
+It closes the DB transaction, not the EntityManager.
+
+🧠 Think of commit() as:
+“I’m done. Lock in all my changes.”
+
+Example :
+em.getTransaction().begin();
+user.setName("John");
+em.persist(user);
+em.flush();  // INSERT happens now
+
+user.setName("Johnny");
+em.flush();  // UPDATE happens now
+
+em.getTransaction().rollback(); // 🧨 Everything rolled back — no data saved
+
+// But if you'd used commit(), the data would be permanently saved.
+
+
+// If we do flush or commit and if persistanceContext is already in synch with db and there is nothing to update then it won't do query to db.
+
+EVEN THOUGH @REPOSITORY IS SINGLETON SO ONLY ONE INSTANCE OF OUR BEAN IS CREATED AND ONLY ONE INSTANCE OF ENTITYMANAGER IS INJECTED BUT IN ACTUAL IT INJECTS THE PROXY ENTITYMANAGER WHICH THEN DELEGATES IT TO THE ORIGINAL NEW ONE EACH TIME. SO @PersistanceContext injects proxy of EntityManager.
+i.e EACH HTTP REQUEST => NEW ENTITYMANAGER INSTANCE => NEW PERSISTANCE CONTEXT
+
+===================
+1st LEVEL CACHING :
+
+HTTP CALL -> ENTITYMANAGER -> PERSISTANCECONTEXT -> DB
+
+===================
+
+2nd LEVEL CACHING :
+
+1st HTTP CALL ->  ENTITYMANAGER -> PERSISTANCECONTEXT[LEVEL-1 CACHING] ->
+
+                                                                             LEVEL-2 CACHING  -> DB
+
+
+2nd HTTP CALL ->  ENTITYMANAGER -> PERSISTANCECONTEXT[LEVEL-1 CACHING] ->
+
+
+
+
+
+
+
+
+
+
+
+
+
+

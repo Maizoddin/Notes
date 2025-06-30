@@ -1,0 +1,70 @@
+in js when callStack gets empty then first micro task queue's  tasks will get pushed into call stack and then it once it gets empty then Callback Queue's tasks will get pushed into callStack.
+This process will be handled by Event Loop
+
+1] CallStack => sysnchronous tasks
+
+2] Micro Task Queue => Promise.then()/.catch()/.finally(), MutationObserver,queueMicrotask
+   a] Promise.resolve().then(() => console.log('Promise resolved'));
+   b] const observer = new MutationObserver(() => console.log('Mutation observed'));
+      observer.observe(document.body, { childList: true });
+      document.body.appendChild(document.createElement('div'));
+   c] queueMicrotask(() => console.log('Microtask queued'));
+
+3] Callback Queue => setTimeout, setInterval, I/O Callbacks, UI Rendering Callbacks , Event Listeners
+
+
+Example :
+console.log(1)
+setTimeout(()=>console.log(3),0)
+Promise.resolve().then(()=>console.log(2))
+console.log(4)
+
+Output :
+1
+4
+2
+3
+
+
+Order of Execution:
+Synchronous code → Microtasks (e.g., Promises) → Callback Queue (e.g., setTimeout).
+
+
+WebAPI's :
+1. Timer APIs
+Examples: setTimeout, setInterval
+2. Fetch APIs
+Example: fetch
+3. DOM Manipulation APIs
+Example: document.querySelector, document.createElement
+4. Web Storage API
+Examples: localStorage, sessionStorage
+etc...
+
+
+JavaScript Calls a Web API::::
+
+When you call a function like setTimeout or fetch, it is handed off to the browser's Web API system.
+Browser Handles the Task:
+
+The browser performs the task in the background (e.g., waiting for a timer to expire or fetching data from the network).
+Send Results to the Appropriate Queue:
+
+Once the task is done:
+Timer callbacks (setTimeout) go to the Callback Queue.
+Promise-related tasks (fetch.then) go to the Microtask Queue.
+Event Loop Executes the Task:
+
+The Event Loop ensures tasks from these queues are executed in the right order.
+
+
+
+
+
+
+
+
+
+
+
+

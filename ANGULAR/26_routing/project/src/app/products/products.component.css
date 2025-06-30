@@ -1,0 +1,16 @@
+.container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 10px 150px;
+  }
+  h1{
+      text-align: center;
+      margin-top: 40px;
+      color: orange;
+  }
+  .space{
+      height: 10vh;
+      width: 100vw;
+  }

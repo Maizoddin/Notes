@@ -1,0 +1,79 @@
+Concurrency Problems :
+Problems arising when multiple transactions access the same data simultaneously.
+
+1] Dirty Read
+Definition: Reading uncommitted data from another transaction that may roll back.
+
+Scenario:
+Banking App: Transaction A updates a balance but hasn’t committed. Transaction B reads the uncommitted balance. If Transaction A rolls back, Transaction B uses invalid data.
+
+Code Example:
+// Transaction 1 (Uncommitted)
+@Transactional
+public void updateBalance(Long accountId, double amount) {
+    Account account = accountRepo.findById(accountId).orElseThrow();
+    account.setBalance(account.getBalance() + amount); // Not committed yet
+    // Throws exception, causing rollback
+}
+
+// Transaction 2 (Reads Uncommitted Data)
+@Transactional(isolation = Isolation.READ_UNCOMMITTED)
+public double getBalance(Long accountId) {
+    return accountRepo.findById(accountId).getBalance(); // Reads invalid data
+}
+
+
+SQL :
+T1: UPDATE account SET balance = 500 WHERE id = 1;  -- No commit 
+T2: SELECT balance FROM account WHERE id = 1;  -- Dirty read if T1 hasn't committed
+T1: ROLLBACK;
+
+---------------------------------------------------------------------------------------------------------------------------
+
+2] Non-Repeatable Read :
+Definition: A transaction reads the same row twice but sees different values due to an update by another transaction.
+
+SQL :
+T1: SELECT balance FROM account WHERE id = 1;  -- 1000
+T2: UPDATE account SET balance = 800 WHERE id = 1;
+    COMMIT;
+T1: SELECT balance FROM account WHERE id = 1;  -- 800 (changed)
+
+------------------------------------------------------------------------------------------------------------
+
+3] Phantom Read :
+Definition: A transaction re-executes a query and gets new rows added by another committed transaction.
+
+Scenario:
+User Management: Transaction A queries users (100 rows). Transaction B adds a new user. Transaction A re-queries and sees 101 rows.
+
+Code :
+@Transactional(isolation = Isolation.REPEATABLE_READ)
+public List<User> getUsers() {
+    List<User> firstRead = userRepo.findAll(); // 100 users
+    // Transaction B inserts a new user
+    List<User> secondRead = userRepo.findAll(); // 101 users
+    return secondRead;
+}
+
+SQL :
+T1: SELECT * FROM bookings WHERE seat = 'FREE';
+T2: INSERT INTO bookings(seat) VALUES('FREE'); -- same seat now appears
+    COMMIT;
+T1: SELECT * FROM bookings WHERE seat = 'FREE';  -- phantom row appears
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

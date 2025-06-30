@@ -1,0 +1,20 @@
+How to create Component ?
+
+To create component use @Component decorator
+
+// example-component.component.ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-example-component',
+  templateUrl: './example-component.component.html',
+  styleUrls: ['./example-component.component.css']
+})
+export class ExampleComponent {
+  // Component logic goes here
+}
+
+----------------------
+
+Now Add this component in module.ts
+Add it inside declarations

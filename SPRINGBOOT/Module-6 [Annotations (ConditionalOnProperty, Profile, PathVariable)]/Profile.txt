@@ -1,0 +1,96 @@
+@Profile :
+It is used to conditionally enable or disable beans based on the active environment profile.
+It tells Spring:
+"Only load this bean if a specific profile is active."
+It's typically used when you want different beans for different environments — like dev, qa, prod.
+It also loads the appropriate application.properties based on the active profile.
+
+Configurations can be :
+URL and Port Number
+Connection timeout values
+Request timeout values
+Throttle values
+Retry values
+
+
+profiling : In spring boot profiling means environment
+
+So we can have multiple application.properties based on different profiles.
+Example : 
+application-development.proporties
+spring.datasource.url = "";
+spring.datasource.username = "";
+spring.datasource.password = "";
+
+application-production.properties
+spring.datasource.url = "";
+spring.datasource.username = "";
+spring.datasource.password = "";
+
+
+Now to set the profile -
+application.properties
+spring.profiles.active = development
+
+
+@Component
+public class DatabaseConnection {
+
+    @Value("${spring.datasource.username}")
+    private String dbUsername;
+
+    public DatabaseConnection () {
+        System.out.println("Database Username: " + dbUsername);
+    }
+}
+
+
+If there is no any profile set then it refers to default profile and refers application.properties.
+If lets say profile is development and then application-development.properties takes the priority over application.properties.
+if any property is not present in the active environment then it checks in the default application.properties.
+
+
+How to set profile dynamically?
+1] Run command :
+mvn spring-boot:run -Dspring-boot.run.profiles = prod
+
+2] *[Recommended] Add profiles id in pom.xml and while running just mention the id so it will pick the appropriate profile
+
+pom.xml
+<profiles>
+ <profile>
+   <id>dev</id>
+   <properties>
+     <spring-boot.run.profiles> development </spring-boot.run.profiles>
+   </properties>
+  </profile>
+
+   <profile>
+   <id>prod</id>
+   <properties>
+     <spring-boot.run.profiles> production </spring-boot.run.profiles>
+   </properties>
+  </profile>
+</profiles>
+
+command :
+mvn spring-boot:run -Pprod
+
+
+-----------------------
+application-production.properties
+spring.datasource.username = abc
+
+------------------------
+
+Now lets come to @Profile :
+It tells spring to create a bean only when specified profile is active
+
+Example :
+@Component
+@Profile(value = "production")
+public class Order {
+    public Order(@Value("${spring.datasource.username}") String username) {
+        System.out.println("Order : " + username);
+    }
+}

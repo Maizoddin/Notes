@@ -1,0 +1,169 @@
+Basics :
+
+Advantages :
+Saves thread creation time by reusing existing threads.
+Reduces overhead of thread lifecycle management.
+Increase performance  by minimizing context switching(More threads means more context switching and during context switching CPU will be idle)
+
+
+Thread Pool Execution Process:
+We can specify a minimum and maximum number of threads in the pool and define the queue size.
+The pool initially creates the minimum number of threads and assigns tasks to them.
+If additional tasks arrive, they are placed in the queue.
+If the queue is full and the number of threads is less than the maximum, new threads are created.
+If the maximum thread limit is reached, additional tasks are rejected based on the rejection policy.
+
+Hierarchy of Executor Framework:
+Executor (Interface) - Contains the execute(Runnable command) method, which accepts only Runnable tasks.
+ExecutorService (Interface) - Extends Executor, providing additional methods:
+		submit() (accepts both Runnable and Callable)(returns Future), invokeAll(), invokeAny()
+		shutdown(), shutdownNow(),isShutdown(), isTerminated(), awaitTermination(time),
+ThreadPoolExecutor (Class) - Implements ExecutorService.
+Executors (Factory Class) - Provides built-in thread pool implementations like [newFixedThreadPool, newSingleThreadExecutor] etc.
+
+ThreadPoolExecutor Class:
+
+ThreadPoolExecutor Constructor Parameters:
+ThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory, RejectedExecutionHandler handler)
+
+1] corePoolSize - Minimum number of threads always present in the pool.
+2] maximumPoolSize - Maximum number of threads allowed.
+3] keepAliveTime :  Idle time before threads beyond corePoolSize are terminated.
+                    (if allowCoreThreadTimeOut is enabled).
+4] TimeUnit : Defines the time unit for keepAliveTime.
+5] blockingQueue :  Queue where tasks are stored if all core threads are busy.
+6] ThreadFactory : Used to create new threads (can be customized)..
+7] rejectedExecutionHandler :  Defines behavior when a task cannot be executed.
+
+Default Rejected Execution Handlers:
+AbortPolicy - Throws an exception for rejected tasks.
+CallerRunsPolicy - The task runs on the caller thread (e.g., main thread).
+DiscardPolicy - Silently ignores rejected tasks.
+DiscardOldestPolicy - Removes the oldest task from the queue and adds the new one.
+
+
+ThreadPoolExecutor state :
+Running - Accepts new tasks and executes queued tasks.
+ShutDown - Stops accepting new tasks but processes pending ones (shutdown() method used).
+Terminated - Final state where all tasks have completed (isTerminated() used to check).
+
+Example Code :
+class Test {
+    public static void main(String[] args) {
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(2, 4, 4, TimeUnit.SECONDS, new ArrayBlockingQueue<>(2), new CustomThreadFactory(), new CustomRejectedExecutionHandler());
+        executor.allowCoreThreadTimeOut(true);
+        for (int taskId = 1; taskId <= 8; taskId++) {
+            int id = taskId;
+            Future<String> future = executor.submit(() -> {
+                try {
+                    System.out.println("TaskId : " + id + " - " + "Thread : " + Thread.currentThread().getName());
+                    Thread.sleep(1000);
+                    return "Completed TaskID : " + id;
+                } catch (InterruptedException e) {
+                    return "Task Interrupted";
+                }
+            });
+
+        }
+        executor.shutdown();
+    }
+}
+
+
+class CustomThreadFactory implements ThreadFactory {
+    public Thread newThread(Runnable task) {
+        Thread thread = new Thread(task);
+        thread.setPriority(Thread.NORM_PRIORITY);
+        return thread;
+    }
+}
+
+class CustomRejectedExecutionHandler implements RejectedExecutionHandler {
+    public void rejectedExecution(Runnable task, ThreadPoolExecutor executor) {
+        System.err.println("RejectedTask : " + task.toString() + " - " + "Thread - " + Thread.currentThread().getName());
+    }
+}
+
+
+====================================
+ExecutorService Methods :
+
+1] submit(Runnable/Callable)
+Accepts both Runnable and Callable, returns Future.
+
+2] shutdown()
+Stops accepting new tasks but completes the pending ones.
+
+3] shutdownNow()
+Attempts to stop all running tasks and returns a list of tasks awaiting execution.
+List<Runnable> pendingTasks = executor.shutdownNow();
+
+4] isShutdown()
+Checks if shutdown() has been called.
+
+5] isTerminated()
+Checks if all tasks have finished execution.
+
+6] awaitTermination(long timeout, TimeUnit unit)
+For specified time it blocks the caller thread and returns true (if all tasks are finished) else false.
+It throws InterruptedException
+
+
+7] invokeAll(Collection<Callable>)
+ * Executes all callables and returns a list of futures.
+ * While using invokeAll, it expects all tasks to return Future and if any task doesn't return Future then program will be hung there itself because it keeps on waiting for Future for that task. 
+ * So if we want to use RejectedExecutionHandler then we can use CallerRunsPolicy.
+ * It throws InterruptedException | ExecutionException so use try catch
+Code :
+ List<Callable<String>> tasks = getCallables();
+ List<Future<String>> futures = new ArrayList<>();
+        try {
+            futures = executor.invokeAll(tasks);
+        } catch (InterruptedException  e) {
+            System.out.println("Interrupted");
+        }
+
+ for(Future<String> future : futures){
+            try{
+                String res = future.get();
+                System.out.println(res);
+            }catch (InterruptedException | ExecutionException | RejectedExecutionException e){
+                System.out.println();
+            }
+        }
+
+private static List<Callable<String>> getCallables() {
+        List<Callable<String>> tasks = new ArrayList<>();
+        for (int id = 1; id <= 8; id++) {
+            int taskId = id;
+            Callable<String> task = () -> {
+                try {
+                    Thread.sleep(1000);
+                    System.out.println("TaskID : " + taskId + " - " + Thread.currentThread().getName());
+                    return "Task-" + taskId + " successful";
+                } catch (InterruptedException e) {
+                    return "Task-" + taskId + " failed";
+                }
+            };
+            tasks.add(task);
+        }
+        return tasks;
+    }
+
+8] invokeAny(Collection<Callable>)
+* Executes all callables and returns the result of the first completed task.
+* can throw InterruptedException | ExecutionException | RejectedExecutionException
+* And if exception comes then it wont return result
+
+Code :
+       try{
+            String res = executor.invokeAny(tasks);
+            System.out.println("Res"+res);
+        }catch (InterruptedException | ExecutionException | RejectedExecutionException e){
+            System.out.println(e);
+        }
+
+
+Important :
+Always remember to shut down ExecutorService instances when you're finished with them to avoid resource leaks and prevent your programs from hanging.
+

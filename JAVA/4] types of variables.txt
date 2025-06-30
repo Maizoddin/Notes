@@ -1,0 +1,52 @@
+Types of variables :
+
+Based on scope :
+1] instance variable - (Variable inside class without static keyword)
+2] static variable - (Varibale inside class with static keyword)
+3] local variable - (Variable created inside the method)
+
+Based on data :
+1] Value type variable (Primitive type) (can't be null)
+2] Reference type variable  (Non-primitive type)(can be null)
+
+Note : 
+Instance and static variable's will get assigned with default value based on type :
+Example :
+String s;   	  // null
+int num; 	  // 0
+float balance;    // 0.0
+boolean isActive  // false
+
+Local variable's are blank bydefault.
+
+--------------------------------------
+
+Example :
+
+class User {
+
+    //    instance variables
+    int accountNumber;
+    String userName;
+
+    //    static variable
+    static String bank;
+
+    //    static method
+    static void setBank(String bankName) {
+        bank = bankName;
+    }
+
+    //    instance method
+    void setDetails(int accNo, String name) {
+        accountNumber = accNo;
+        userName = name;
+        
+        //    local variable
+        boolean isActive = true;
+    }
+}
+
+
+============================================================
+

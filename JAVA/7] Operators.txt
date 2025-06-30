@@ -1,0 +1,46 @@
+Operators :
+
+Unary Operatos : 
+++
+--
+!     (Operand must be of type boolean)
+
+Arithmatic Operators :
+*,  /,  %
++,  -
+
+Bitwise Operators :
+<<
+>>
+&
+| 
+^  (XOR)
+~  (NOT)
+
+Relations Operators :
+==, !=, >, <, >=, <=
+
+Logical Operators :
+Note : ((Operand must be of type boolean))
+&&
+||
+!
+
+Ternary Operators :
+? :
+
+
+instanceof :
+Example : 	
+obj instanceof String
+
+Note :
+In java we can't typecast or compare int and boolean.
+
+========================================================
+
+\n newLine
+\b backspace
+\t tab
+\" \"   To print ""
+

@@ -1,0 +1,80 @@
+Authentication vs Authorization :::
+
+Authentication: Identifying who you are.
+Example: Login with { username, password }.
+
+Authorization: Determining what you can access.
+Example: Accessing certain resources or performing actions.
+
+-------------------------------------------------------------------------
+
+Security Best Practices :::
+* Always use HTTPS to secure data transmission.
+* Encrypt and store passwords in the database using strong hashing algorithms like bcrypt.
+* Access tokens should have a short lifespan (e.g., 15 minutes to 1 day).
+* Refresh tokens should have a longer lifespan (e.g., 7 to 30 days).
+* Never include sensitive information (e.g., passwords) in JWTs. Only use non-sensitive claims like { userId, userName, email }.
+
+-------------------------------------------------------------------------
+
+A. Signup Process
+1] Client sends { userName, password } to the server.
+2] Server:
+   * Encrypts the password.
+   * Stores { userName, enc_password } in the database.
+3] Generates access_token and refresh_token.
+4] Stores the refresh_token in the database.
+5] Sends the access_token in the response and stores the refresh_token in an HTTP-only-cookie.
+
+
+B. Login Process
+1] Client sends { userName, password } to the server.
+2] Server:
+   * Finds the user by userName from DB.
+     * If the user doesn’t exist, return 401 Unauthorized with { error: "Invalid username" }.
+   * Decrypts the stored enc_password from the database.
+   * Compares the decrypted password with the password sent in the request.
+     * If they don’t match, return 401 Unauthorized with { error: "Invalid password" }.
+3] Generates access_token and refresh_token.
+4] Stores the refresh_token in the database.
+5] Sends the access_token in the response and stores the refresh_token in an HTTP-only cookie.
+
+
+
+C. Securing API Endpoints
+1] Client sends the access_token in the headers when making API requests.
+2] Server:
+   * Verifies if the token is present.
+     * If missing,  client should navigate to login.
+   * Verifies the token:
+     * If valid, processes the request and returns the response.
+     * If invalid: {status :401, statusText : "Invalid Token"}
+          client navigate to login
+     * If expired, {status : 401, statusText : "Token Expired"}
+           client calls  /api/refresh_token endpoint.
+           once refresh token successful, call the original request
+    
+
+
+D. Refresh Token Workflow
+1] Client sends the refresh_token (stored in the HTTP-only cookie) to /api/refresh_token.
+2] Server:
+   * Verifies the refresh_token.
+     * If invalid, expired, or missing:
+       * Return an error and instruct the client to clear the cookie and navigate to login.
+     * If valid:
+       * Checks if the refresh_token matches the one stored in the database:
+         * If it doesn’t match, return an error and redirect the client to login.
+       * If it matches, generate a new access_token and refresh_token.
+         * Update the refresh_token in the database.
+         * Update the refresh_token in the client-side HTTP-only cookie.
+         * Send the new access_token in the response.
+  Note : We can generate new refresh_Token on every refresh_Token request or we can omit it
+
+
+E. Logout Process
+1] Client-side:
+   * Clear the access_token from local storage or memory.
+2] Server-side:
+   * Remove the refresh_token from the database.
+   * Clear the refresh_token from the client-side HTTP-only cookie.

@@ -1,0 +1,70 @@
+In ManyToMany relationship always save from owning side.[which has join column]
+And use cascade on the owning side
+
+Lets say we have Student Entity with List of Courses
+And Courses Entity with List of Students
+
+And we want to Create Student with List of Courses
+And we want to Create Course with List of Students
+
+Then we can't define cascade on both the entities because it will cause the circular reference problem.
+Instead what we should do is Always save from owning side.
+
+Example :
+Student.java
+
+ @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "student_course",
+            joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id")
+    )
+  private Set<Course> courses = new HashSet<>();
+
+
+Course.java
+
+    @ManyToMany(mappedBy = "courses", fetch = FetchType.LAZY)
+    private Set<Student> students = new HashSet<>();
+
+Saving from owning side :
+1] Creating New Student with New Courses
+@Transactional
+public Student createStudentWithCourses(String name, List<String> courseTitles) {
+    Student student = new Student(name);
+    
+    for (String title : courseTitles) {
+        Course course = new Course(title);
+        student.getCourses().add(course);  // Add to owner side
+        course.getStudents().add(student);  // Maintain bidirectional
+    }
+    
+    // Only save student - courses cascade automatically
+    return studentRepository.save(student);
+}
+
+2] Creating New Course with New Students
+@Transactional
+public Course createCourseWithStudents(String title, List<String> studentNames) {
+    Course course = new Course(title);
+    List<Student> students = new ArrayList<>();
+    
+    for (String name : studentNames) {
+        Student student = new Student(name);
+        student.getCourses().add(course);  // Add to owner side
+        course.getStudents().add(student);  // Maintain bidirectional
+        students.add(student);
+    }
+    
+    // Save all students - course cascades through them
+    studentRepository.saveAll(students);
+    return course;
+}
+
+Important :
+If we try to save from inverse side then it will create the course in Course table but won't create Students and won't update the join table
+
+Note :
+In industry instead of ManyToMany relationship a new separate entity is being created and maintained for join table and being used for OneToMany and ManyToOne.
+
+

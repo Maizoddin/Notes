@@ -1,0 +1,14 @@
+Custom Component Scanning :
+By default, component scanning happens in the main package and its sub-packages. 
+
+To scan other packages:
+@SpringBootApplication(scanBasePackages = {"com.example.package1", "com.example.package2"})
+
+-------------------------------------------------------------------------------------------
+
+@SpringBootApplication :
+The @SpringBootApplication annotation is a combination of:
+
+1] @EnableAutoConfiguration: Enables Spring Boot’s auto-configuration.
+2] @ComponentScan: Scans for components, configurations, and services.
+3] @Configuration: Indicates that the class can be used as a source of bean definitions.

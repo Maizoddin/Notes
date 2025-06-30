@@ -1,0 +1,89 @@
+npm init : It will create package.json
+
+npm install
+It will install all dependencies(packages) specified in our package.json
+
+Note : So don't push node_modules to git because we can regenerate it.
+
+* Types of dependencies : 
+  1] Normal [RunTime] dependency :- We need this during run time and also in production
+  2] Dev [Devlopment] dependency   :- It is required only during the development
+                                      Ex : npm install -D nodemon
+  * We can install package's globally which will be available system wide
+    npm install -g name
+
+  Note :
+  Whenever we want to install any package from npm look for the details such as
+  Unpacked Size, Issues, Pull Requests, Total Files
+----------------------------------------------------------------------
+* bundler
+  # It is a tool or software package that is used to combine multiple files and dependencies from a project into a single, optimized file (or multiple files) for deployment in a web application. 
+  # The primary goal of a bundler is to improve the performance and efficiency of web applications.
+
+  Example:
+   parcel, webpack, vite
+   npm install -D parcel
+
+   # create-react-app uses webpack as a bundler
+===============================================================
+* SEMANTIC VERSIONING : 
+
+ 1.2.3
+ MAJOR.MINOR.PATCH
+
+ tilde ~ 
+ Allows updates to most recent patch version
+ Example : It can update till 1.2.9
+
+ caret ^
+ Allows updates to most recent minor or patch version. 
+ Example : It can update till 1.9.9
+=====================================================================
+* --save-exact 
+ It won't add ^ or ~
+ Example : npm install --save-exact faker
+
+Here we can also specify version
+ It will install the package with exact specified version with no ^ or ~
+ This ensures that future installs will use exact version 5.5.3 of faker without updating to any newer versions.
+ Example : npm install --save-exact faker@6.6
+===============================================================
+
+* Transitive Dependency
+  We need parcel -> parcel need other dependencies -> ..... -> ...
+  So we can say Transitive Dependency as Dependency Tree
+
+==================================================================
+PACKAGE.JSON and PACKAGE-LOCK.JSON ::::
+
+ package.json - It contains the meta data of our project like project name, package version etc.
+
+ package-lock.json - It contains the dependency tree of our node modules
+                     i.e : In package.json it only contains the main packages and in package-lock.json it contains all the main dependencies and their sub dependencies
+Note : Package-lock-json  maintains the exact original version ,
+       # so even if our dependency versions gets updated in package.json then
+         we can find the original starting version in package-lock-json.
+       # so when i use npm init it will install the exact version which is specified 
+         in package-lock.json
+
+      Note : If I dont have package-lock.json and if i type npm intall to install dependencies mentioned in package.json then it might install the updates version of packages based on the sign ^ or ~ but if we have package-lock.json then npm will install the exact version whihc is mentioned in package-lock.json.[i.e It locks down that version] 
+
+=================================================================
+NPM and NPX ::::
+
+npm :  npm installs packages either locally within a project or globally on the system
+npx : npx allows you to run packages from the npm registry without having to install    them locally
+
+Note : When we install any package globally then it wont get added in package.json
+=====================================================================
+*Uninstalling packages
+npm uninstall <package-name>
+npm uninstall -g <package-name>
+npm uninstall -D <package-name>
+
+*To uninstall and also update the package.json
+npm uninstall --save <package-name>
+npm uninstall --save-D <package-name>
+
+*To install multiple packages at the same time
+npm install axios faker react-redux @reduxjs/toolkit

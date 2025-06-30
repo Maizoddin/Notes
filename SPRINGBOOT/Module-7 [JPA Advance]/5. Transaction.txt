@@ -1,0 +1,70 @@
+@Transaction  ::::
+
+What @Transactional Does?
+* It provides ACID property.
+* It ensures that all database operations within a method either:
+  * Complete successfully together (COMMIT),
+  * Or fail completely (ROLLBACK).
+* Used in Service layer methods that involve multiple database operations.
+
+--------------------------------------
+
+LifeCycle :
+BEGIN TRANSACTION
+    ↓
+Execute method
+    ↓
+If success → COMMIT
+If exception → ROLLBACK
+
+--------------------------------------
+
+Under the Hood :
+* It uses AOP (Aspect-Oriented Programming).
+* It uses @Around and selects all methods annotated with @Transaction.  
+  Example : @Pointcut("within(com.example.proj..*) && @annotation(Transaction)")
+
+Code :
+@Service
+public class TransferService {
+
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @Transactional
+    public void transfer(Long fromId, Long toId, double amount) {
+        Account from = accountRepository.findById(fromId).orElseThrow();
+        Account to = accountRepository.findById(toId).orElseThrow();
+
+        if (from.getBalance() < amount) {
+            throw new IllegalArgumentException("Insufficient funds");
+        }
+
+        from.setBalance(from.getBalance() - amount);
+        to.setBalance(to.getBalance() + amount);
+
+        accountRepository.save(from);
+        accountRepository.save(to);
+    }
+}
+
+
+@Around("transactions()")
+public Object handleTransactions(...) {
+  BEGIN();
+  try { 
+    proceed(); 
+    COMMIT; 
+   } catch(e) { 
+     ROLLBACK; 
+     }
+}
+
+
+--------------------------------------
+
+FLOW :
+After each sql query it Hibernate flushes the query to "DB Transaction Buffer".
+
+JPA Hibernate Code -> Persistence Context -> flush -> DB Transaction Buffer -> Commit -> DB
+							                    -> Rollback -> Discard

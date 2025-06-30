@@ -1,0 +1,20 @@
+
+executor framework
+thread pool
+collection framework
+stream api
+generics
+
+
+
+Executor interface with execute methode
+
+ExecutorService interface with more methods(submit, awaitTerminatin, shutDown etc) extends Executor
+
+ThreadPoolExecutor class implements both
+
+
+min size, max size, queue size
+
+It creates min threads and assigns one task to each thread and remaining tasks goes to queue and if new task comes and both are full then it will be rejected and if any thread becomes idle it picks the task from queue.
+

@@ -1,0 +1,70 @@
+Functional interface :
+It contains only one abstract method.
+@FunctionalInterface is used.
+
+Example :
+@FunctionalInterface
+interface Demo {
+    void authenticateUser();
+}
+
+Let's imagine we want to call the interface method only once and after that we don't have any requirement of it. then still we have to go through the below steps to call the method.
+   - Create a class that implements the abstract method
+   - Override the abstract method
+   - Create an object of the class 
+   - Call the method with the object
+
+To overcome the above lengthy process we have below solutions.
+
+Solution 1] we can create the class and object at the same time.
+  	 // It will create an anonymous class internally which implements that interface and creates object of that class.
+
+Example :
+
+@FunctionalInterface
+interface Auth {
+    void authenticateUser();
+}
+
+public class Test {
+    public static void main(String args[]) {
+
+        Auth obj = new Auth() {
+            public void authenticateUser() {
+                System.out.println("User Authentication Code");
+            }
+        };
+
+        obj.authenticateUser();
+
+    }
+}
+
+
+===================================================================
+
+Solution 2] Lambda Expression :
+It can only be used only when an interface has only one abstract method. [Let's say FunctionalInterface].
+
+Auth obj = () -> System.out.println("User Authentication Code");
+obj.authenticateUser();
+
+OR
+Auth obj = () -> {
+  System.out.println("User Authentication Code");
+ };
+obj.authenticateUser();
+
+Note : 
+Even the lambda expression behind the scene uses the solution 1(Anonymous class).
+and it also knows for which method the provided code is. (HOW : because there is only one method in FunctionalInterface).
+
+Example 2 :
+@FunctionalInterface
+interface AuthService{
+    boolean authenticate(String password);
+}
+
+AuthService authAPI = (String password) -> true;
+
+authAPI.authenticate("pwd");

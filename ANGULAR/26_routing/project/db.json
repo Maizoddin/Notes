@@ -1,0 +1,67 @@
+{
+  "courses": [
+    {
+      "id": 1,
+      "name": "React JS",
+      "price": 200,
+      "url": "../../assets/images/react.png",
+      "description": "The Complete 2024 React JS Bootcamp"
+    },
+    {
+      "id": 2,
+      "name": "Angular JS",
+      "price": 300,
+      "url": "../../assets/images/angular.png",
+      "description": "The Complete 2024 Angular JS Bootcamp"
+    },
+    {
+      "id": 3,
+      "name": "Vue Js",
+      "price": 500,
+      "url": "../../assets/images/vue.png",
+      "description": "The Complete 2024 Vue JS Bootcamp"
+    },
+    {
+      "id": 4,
+      "name": "Express JS",
+      "price": 250,
+      "url": "../../assets/images/express.png",
+      "description": "The Complete 2024 Express JS Bootcamp"
+    },
+    {
+      "id": 5,
+      "name": "Node JS",
+      "price": 299,
+      "url": "../../assets/images/node.png",
+      "description": "The Complete 2024 Node JS Bootcamp"
+    },
+    {
+      "id": 6,
+      "name": "MongoDB",
+      "price": 400,
+      "url": "../../assets/images/mongo.jpg",
+      "description": "The Complete 2024 MongoDB JS Bootcamp"
+    },
+    {
+      "id": 7,
+      "name": "GIT",
+      "price": 100,
+      "url": "../../assets/images/git.png",
+      "description": "The Complete 2024 GIT Bootcamp"
+    },
+    {
+      "id": 8,
+      "name": "Javascript",
+      "price": 450,
+      "url": "../../assets/images/js.png",
+      "description": "The Complete 2024 Javascript Bootcamp"
+    },
+    {
+      "id": 9,
+      "name": "Java",
+      "price": 550,
+      "url": "../../assets/images/java.jpg",
+      "description": "The Complete 2024 Java Bootcamp"
+    }
+  ]
+}

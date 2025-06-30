@@ -1,0 +1,234 @@
+Redux-ToolKit
+
+* In redux-toolkit even if we give multiple reducers of multiple slices the configureStore() merges them and make's it as one big reducer.
+* Here while changing the state of the store we don't need to manually re-write all the unchanged properties to construct the new state and return it. We can just write the value we want to change and internally redux-toolkit uses immer libarary which does the job for us.
+Example : state.counter ++
+* Here redux-toolkit will automatically create actions based on the reducer functions names.
+
+Important Note[Rendering] ::::
+* Once the state of store changes then only the components which are subscribed to the store and using that slice's perticular data will get re-rendered.
+Example :
+* If we have cartSlice and authSlice then once the data in the authSlice changes then the components which are using authSlice data will get re-rendered and not all the components which are subscibed to the store.
+* If we are updating one variable value of our slice then only components which are using that variable's value will get re-rendered. and not all the other components which are using that slice's different peice of data.
+* The component which dispatches action does not get re-rendered once the store data changes, only the component which are using that value will get re-rendered.
+
+======================================================
+
+Note :
+ * Create folder named as store
+ * inside that create index.js to configure store
+ * create separate files for separate slices 
+
+// COMMAND TO INSTALLL REDUX-TOOLKIT 
+npm install @reduxjs/toolkit 
+npm install react-redux
+
+--------------------------------------------------------------
+
+//CREATING SLICE
+counterSlice.js
+
+ const intialCounterState = {
+    count: 0,
+    showCount: true,
+ };
+
+  const counterSlice = createSlice({
+      name: "counter",
+      initialState: intialCounterState,
+      reducers: {
+        increment: (state, action) => {
+          state.count += 1;
+        },
+        decrement: (state, action) => {
+          state.count -= 1;
+        },
+      },
+    });
+
+export const counterSliceReducer = counterSlice.reducer;
+export const {increament, decreament} = counterSlice.actions;
+
+---------------------------------------------------------------
+
+// CREATING STORE
+index.js
+
+const store = configureStore({
+    reducer : {
+        counter : counterSliceReducers 
+    }
+})
+
+export default store
+
+----------------------------------------------------------------
+
+// DISPATCHING ACTIONS INSIDE COMPONENTS 
+
+import {useDispatch} from "react-redux"
+import {increament, decrement} from "./store/counterSlice"
+const dispatch = useDispatch()
+const onIncrementClick = () => {
+     dispatch(increment())
+}
+
+-------------------------------------------------------------------
+
+// Note : If we pass something in action while dispatching then that we can recieve inside payload parameter of reducer function.
+Example : dispatch(increase({num:5}))
+          // We can access it as "action.payload.num"
+
+// ACCESSING STORE VALUE INSIDE COMPONENT
+
+import {useSelector} from "react-redux";
+
+const count = useSelector((store) => store.counter.count) 
+
+// when we use useSelector it will automatically subscibe to store
+
+===============================================================================
+Flow Example :
+onClick of addToCart it will dispatch an action and that action will call the appropriate reducer function and reducer function will upate the data in the store.
+
+=============================================================================
+
+State :
+* In redux inside our reducer function we had to manually return new state everytime.
+* In redux-toolkit we can just mutate our state and immer will create and compare original and old state and return's new one.
+* But if our state is non iterable(i.e just varaible) and not (object or array) then we must return new state because immer works only for iterables.
+* State of slice can be anything, it can be object, string or anything
+* If it's an object then inside our reducer function the state parameter refers to the reference of that state object so we can write directly like
+Example : state.obj.name = "updated",
+but if its string or number then we should return it because here we won't be having any reference to update original state and immer won't handle it so we should return like
+Example : return "updated"  or  return action.payload
+
+* If our state is just a variable then inside component while using that state value we can write like 
+Example : const name = useSelector((store)=>store.infoSliceState);
+
+If its object then we can use like 
+Example : const name = useSelector((store)=>store.infoSliceState.name)
+
+* Even if our state is object or array and if we return something from reducer function then that will replace our original state.
+
+==================================================
+
+Folder Structure :
+store :
+  slices -
+     cartSlice.js
+  actions -
+    action.js
+  thunks -
+     fetchUsers.js
+  apis
+     albumsApi.js  
+  index.js
+
+Note : Import all the things in index.js and then re-export from here.
+       Don't mix both default and named exports its better to use named export only.
+
+Example :
+index.js
+import {movieReducer} from "./slices/movieSlice";
+import {musicReducer} from "./slices/musicSlice";
+
+export {movieReducer, musicReducer}
+
+Note :
+* To refer to store data use the name which is specified inside configureStore
+* To refer to actions use the name which is specified inside createSlice
+
+* Different ways of refering to the action
+  Example : 
+
+ import { createSlice, nanoid } from "@reduxjs/toolkit"
+ const carSlice = createSlice({
+  name: "car",
+  initialState: {
+    data: [],
+  },
+  reducers: {
+    addCar: (state, action) => {
+      state.data.push({
+        name: action.payload.name,
+        cost: action.payload.cost,
+      });
+    },
+  },
+});
+
+--
+  1] using string : here we can refere the name which is specified inside the slice
+  addCase("car/addCar")
+  2] using the slice name 
+    addCase(carSlice.actions.addCar)
+
+   
+    OR directly we can import that action and we can use
+    import {addCar} from './carSlice'
+    addCase(addCar)
+
+Note : When we dispatch an synchronous action it returns an object which we will receive inside our reducer function's action parameter
+       {type: 'users/add', payload: 'Myra'}
+
+===================================================
+extraReducers :
+It acts as a reducer which we can execute on dispatch of action of some other slice or custom actions.
+
+Example : 
+case : movieSlice has reset reducer, so now when that action dispatches I want to change the state of musicSlice so inside musicSlice we can use extraReducers.
+Code :
+import { createSlice } from "@reduxjs/toolkit";
+import movieSlice from "./movieSlice";
+
+const musicSlice = createSlice({
+  name: "music",
+  initialState: ["Rabata", "Ek mulakat", "sanam re"],
+  reducers: {
+    addMusic: (state, action) => {
+      state.push(action.payload);
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(movieSlice.actions.reset, (state, action) => []);
+  },
+});
+
+export const { addMusic } = musicSlice.actions;
+export default musicSlice;
+
+
+=========================================================================
+Important Note!!!!
+It's not a good practice for one slice to depend on other slice's action so we should create manual Actions which we can store and use separately as common.
+
+actions.js
+import { createAction } from "@reduxjs/toolkit";
+export const reset = createAction("store/reset");
+
+musicSlice.js
+import { createSlice } from "@reduxjs/toolkit";
+import { reset } from "./actions";
+const musicSlice = createSlice({
+  name: "music",
+  initialState: ["Rabata", "Ek mulakat", "sanam re"],
+  extraReducers: (builder) => {
+    builder.addCase(reset, (state, action) => []);
+  },
+});
+
+export default musicSlice;
+
+movieSlice.js
+import { createSlice } from "@reduxjs/toolkit";
+import { reset } from "./actions";
+const movieSlice = createSlice({
+  name: "movie",
+  initialState: ["DDJL", "Krish", "Do no 1"],
+  extraReducers: (builder) => {
+    builder.addCase(reset, (state, action) => []);
+  },
+});
+
+export default movieSlice;

@@ -1,0 +1,34 @@
+
+Initialization block :
+Initialization block code will get added at the top of the constructor.
+
+Static block :
+Static block belongs to class.
+Executed only once when the class gets loaded.
+It can access only static members.
+
+Example :
+public class Test {
+    public static void main(String[] args) {
+        System.out.println("Main Function");
+        Child child = new Child();
+    }
+}
+
+class Child {
+
+    //    Constructor
+    public Child() {
+        System.out.println("Constructor");
+    }
+
+    //    Initialization block
+    {
+        System.out.println("Initialization Block");
+    }
+
+    //    Static block
+    static {
+        System.out.println("Static Block");
+    }
+}

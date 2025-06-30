@@ -1,0 +1,313 @@
+@Async ::::
+* The @Async annotation enables asynchronous execution of methods. When applied, the method runs in a separate thread, allowing the main thread to continue processing without waiting for the method's completion.
+* This is particularly useful for tasks like sending emails, making external API calls.
+
+Important :
+It makes use of Proxy.
+Spring boot creates the proxy object of the bean which has @Async, When we call the method from caller class it goes to proxy and then it creates the separate thread using ThreadPoolTaskExecutor and then proxy calls the actual target object method.
+
+Rules for Using @Async ::
+* Public Methods Only: @Async works only on public methods.
+* Self-Invocation: Methods in the same class can’t call @Async methods directly (use proxies).
+* Return Type: Must be void, Future<T>, or CompletableFuture<T>.
+* Enable Async: Add @EnableAsync to a configuration class.
+
+By default, Spring uses SimpleAsyncTaskExecutor, which doesn't reuse threads. For better performance and control, define a custom ThreadPoolTaskExecutor.
+SimpleAsyncTaskExecutor :
+corePoolSize : 8
+maxPoolsize : Integer.MAX_VALUE [2147483647]
+queueCapacity : Integer.MAX_VALUE [2147483647]
+
+
+@Configuration
+@EnableAsync
+public class AsyncConfig implements AsyncConfigurer {
+
+    @Bean(name = "asyncTaskExecutor")
+    public ThreadPoolTaskExecutor asyncTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(10);      
+        executor.setMaxPoolSize(20);     
+        executor.setQueueCapacity(200);  
+        executor.setThreadNamePrefix("Async-");
+        executor.initialize();
+        return executor;
+    }
+
+    @Override
+    public Executor getAsyncExecutor() {
+        return asyncTaskExecutor();  
+    }
+
+    @Override
+    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+        return new CustomAsyncExceptionHandler();
+    }
+}
+
+public class CustomAsyncExceptionHandler implements AsyncUncaughtExceptionHandler {  
+    @Override  
+    public void handleUncaughtException(Throwable ex, Method method, Object... params) {  
+        System.err.println("Async method " + method.getName() + " failed: " + ex.getMessage());  
+    }  
+}  
+
+Problem: Asynchronous methods (annotated with @Async) run in separate threads. Exceptions thrown in these methods are not propagated to the caller, leading to silent failures if unhandled.
+Solution: By implementing AsyncUncaughtExceptionHandler, you define a global handler to catch all uncaught exceptions from @Async methods which has return type void. This avoids repetitive try-catch blocks in every async method.
+
+
+For Future<T> or CompletableFuture<T> return types, Handle exceptions using try-catch or exceptionally:
+When the method returns Future<T> or CompletableFuture<T> Spring does not use AsyncUncaughtExceptionHandler for these cases. so we  must handle them explicitly using:
+ try-catch inside the async method 
+ OR
+ .exceptionally(...) on the caller side
+
+Code :
+
+Example with try-catch:
+@Async
+public CompletableFuture<String> process() {
+    try {
+        // your async logic
+        return CompletableFuture.completedFuture("Done");
+    } catch (Exception ex) {
+        return CompletableFuture.failedFuture(ex);
+    }
+}
+
+OR 
+
+Example with .exceptionally(...) on caller side:
+service.process()
+    .exceptionally(ex -> {
+        // handle the exception
+        System.out.println("Async error: " + ex.getMessage());
+        return "Fallback";
+    });
+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+@Async with @Transactional :
+
+Key Considerations ::
+* Transaction Propagation: Async methods don’t inherit the caller’s transaction.
+  The transactional context is not propagated to the new thread.
+  Changes made in the @Async method won't be part of the original transaction.
+* New Transaction: Use @Transactional on the async method if needed.
+
+@Service  
+public class UserService {  
+    @Autowired  
+    private UserRepository userRepository;  
+    @Autowired  
+    private AuditService auditService;  
+
+    @Transactional  
+    public User registerUser(User user) {  
+        User savedUser = userRepository.save(user);  
+        auditService.logRegistration(savedUser); // Async call  
+        return savedUser;  
+    }  
+}  
+
+@Service  
+public class AuditService {  
+    @Async("asyncTaskExecutor")  
+    @Transactional(propagation = Propagation.REQUIRES_NEW)  // New transaction  
+    public void logRegistration(User user) {  
+        auditRepository.save(new AuditLog("User registered: " + user.getEmail()));  
+    }  
+}  
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+Example 1] Combining results from multiple external APIs asynchronously :
+Step 1: Define the Async Configuration
+
+@Configuration
+@EnableAsync
+public class AsyncConfig implements AsyncConfigurer {
+
+    @Bean(name = "asyncTaskExecutor")
+    public ThreadPoolTaskExecutor asyncTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(10);      
+        executor.setMaxPoolSize(20);     
+        executor.setQueueCapacity(200);  
+        executor.setThreadNamePrefix("Async-");
+        executor.initialize();
+        return executor;
+    }
+
+    @Override
+    public Executor getAsyncExecutor() {
+        return asyncTaskExecutor();  
+    }
+
+    @Override
+    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+        return new CustomAsyncExceptionHandler();
+    }
+}
+
+public class CustomAsyncExceptionHandler implements AsyncUncaughtExceptionHandler {  
+    @Override  
+    public void handleUncaughtException(Throwable ex, Method method, Object... params) {  
+        System.err.println("Async method " + method.getName() + " failed: " + ex.getMessage());  
+    }  
+}  
+
+
+Step 2: Create a Service to Call External APIs 
+
+@Service
+public class ApiService {
+
+    // Simulate calling an external user API
+    @Async("apiTaskExecutor")
+    public CompletableFuture<User> fetchUserData(String userId) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                // Simulate API delay (e.g., REST call)
+                Thread.sleep(500);
+                return new User(userId, "User " + userId);
+            } catch (InterruptedException e) {
+                throw new RuntimeException("User API failed for ID: " + userId, e);
+            }
+        });
+    }
+
+    // Simulate calling an external product API
+    @Async("apiTaskExecutor")
+    public CompletableFuture<Product> fetchProductData(String productId) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Thread.sleep(800);
+                return new Product(productId, "Product " + productId, 99.99);
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Product API failed for ID: " + productId, e);
+            }
+        });
+    }
+
+    // Simulate calling an external inventory API
+    @Async("apiTaskExecutor")
+    public CompletableFuture<Inventory> fetchInventoryData(String productId) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Thread.sleep(300);
+                return new Inventory(productId, 100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Inventory API failed for ID: " + productId, e);
+            }
+        });
+    }
+}
+
+
+Step 3: Combine Results Asynchronously
+@Service
+public class AggregationService {
+
+    @Autowired
+    private ApiService apiService;
+
+    public CompletableFuture<CombinedResult> combineResults(String userId, String productId) {
+        // Call all APIs asynchronously
+        CompletableFuture<User> userFuture = apiService.fetchUserData(userId);
+        CompletableFuture<Product> productFuture = apiService.fetchProductData(productId);
+        CompletableFuture<Inventory> inventoryFuture = apiService.fetchInventoryData(productId);
+
+        // Combine results when all complete
+        return CompletableFuture.allOf(userFuture, productFuture, inventoryFuture)
+                .thenApplyAsync(ignored -> {
+                    // Extract results (or handle exceptions)
+                    User user = userFuture.exceptionally(ex -> {
+                        System.err.println("User API failed: " + ex.getMessage());
+                        return new User(userId, "Fallback User"); // Fallback value
+                    }).join();
+
+                    Product product = productFuture.exceptionally(ex -> {
+                        System.err.println("Product API failed: " + ex.getMessage());
+                        return new Product(productId, "Fallback Product", 0.0);
+                    }).join();
+
+                    Inventory inventory = inventoryFuture.exceptionally(ex -> {
+                        System.err.println("Inventory API failed: " + ex.getMessage());
+                        return new Inventory(productId, 0);
+                    }).join();
+
+                    return new CombinedResult(user, product, inventory);
+                });
+    }
+}
+
+
+Step 4: Define Response Models
+
+@Data @AllArgsConstructor
+public class User {
+    private String id;
+    private String name;
+}
+
+@Data @AllArgsConstructor
+public class Product {
+    private String id;
+    private String name;
+    private double price;
+}
+
+@Data @AllArgsConstructor
+public class Inventory {
+    private String productId;
+    private int stock;
+}
+
+@Data @AllArgsConstructor
+public class CombinedResult {
+    private User user;
+    private Product product;
+    private Inventory inventory;
+}
+
+
+Step 5: Expose an API Endpoint
+@RestController
+public class ApiController {
+
+    @Autowired
+    private AggregationService aggregationService;
+
+    @GetMapping("/aggregate")
+    public CompletableFuture<CombinedResult> getAggregatedData(
+            @RequestParam String userId, 
+            @RequestParam String productId) {
+        return aggregationService.combineResults(userId, productId);
+    }
+}
+
+
+Important :
+Why Return CompletableFuture<CombinedResult>?
+When you return a CompletableFuture from a Spring MVC controller:
+
+1] Spring Automatically Waits for Completion:
+Spring subscribes to the CompletableFuture and blocks the HTTP response thread until the future completes. However, the asynchronous processing itself (API calls) happens on your custom thread pool (apiTaskExecutor), so the main servlet thread isn’t blocked.
+
+2] Non-Blocking IO:
+While the CompletableFuture is processing, the servlet thread is released to handle other requests. Only when the future resolves does Spring:
+Serialize the final CombinedResult to JSON.
+Send the response to the client.
+The client does NOT receive a CompletableFuture. It receives a standard HTTP response with the resolved CombinedResult as JSON.
+
+Key Advantages of Returning CompletableFuture
+Servlet Thread Efficiency:
+The main thread is freed up immediately, allowing it to handle other requests while the async tasks run on your custom thread pool.
+
+How Spring Handles This Internally
+When you return CompletableFuture<CombinedResult>, Spring:
+Registers a callback on the CompletableFuture.
+Releases the HTTP servlet thread.
+When the future completes, Spring uses the TaskExecutor to serialize the result and send the response.

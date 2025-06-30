@@ -1,0 +1,44 @@
+Event has 3 phases :
+
+Capture   (Top to Bottom)
+Target
+Bubble    (Bottom to Top)
+
+
+By Default all the eventListner function will be executed during bubble phase and if we want to execute our event listner during capture then pass 3rd argument as true.
+
+Example :
+document.addEventListner("click", handleClick, true)
+
+
+In React we use onClickCapture event instead of onClick event 
+Example : 
+   <div
+      onClickCapture={handleDivCapture} // Capture phase
+      onClick={handleDivBubble}        // Bubble phase
+    >
+   	 <button onClick={handleButtonClick}>Click Me</button>
+    </div>
+
+==================================
+stopPropogation :::
+We can stop event bubbling up by using stopPropogation
+
+Example :
+function handleChildClick(event) {
+  event.stopPropagation();
+  // Your event handling logic here
+  console.log("Child clicked!");
+}
+
+const childElement = document.getElementById("child");
+childElement.addEventListener("click", handleChildClick);
+
+=======================================
+Event Deligation ::
+Rather than attaching event to each child we can attach only one single event to parent so whenever child is clicked or event occurs so we can easily catch it in parent because it will definately bubble up.
+Example : Rather than attaching an event to all the 20 cards we can attach one 1 single event to parent container and we can easily identity where the event occures by using ::: event.target
+
+========================================
+pointer-events : none        ::
+If we add this class to any child element then it will bypass the events on itself and it will be bubbled up to parent element so the event.target will show as parent only

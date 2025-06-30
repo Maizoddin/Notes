@@ -1,0 +1,21 @@
+Access Modifiers :
+
+1] public
+2] private
+3] protected
+4] default
+
+We can use it on class, methods, variables.
+
+Class :
+Outer class can either be public or default.
+Only one class can be public in a file.
+Inner class can be anything.
+The name of the file should be name of public class.
+Public class can be accessed from outside the package.
+default class can only be accessed only from same package.
+
+public : Public members are accessible from any class of any package.
+private : Private members cannot be accessed from outside the class body.
+protected : Protected members are accessible from any class of the same package and child class of other packages.
+default : Default members are accessible only from the classes of same package.

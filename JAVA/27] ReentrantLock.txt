@@ -1,0 +1,86 @@
+Reentrant Lock :
+* It allows to create manual lock.
+* Methods : lock, unlock, tryLock, tryLock(time)
+
+Example :
+ReentrantLock lock = new ReentrantLock();
+lock.lock();
+lock.unlock();
+lock.tryLock();
+lock.tryLock(1000, TimeUnit.SECONDS);
+
+
+
+
+1] lock :
+   It acquires the lock if available, else thread goes to "blocked" state.
+
+2] unlock :
+   It releases the lock if acquired by itself, else throws error if tries to release without acquiring.
+
+3] tryLock :
+   It acquires lock and returns true on successful acquire, else returns false and does not enters the blocked state.
+   We can perform ulternate tasks.
+
+
+4] tryLock(time) :
+   Here if lock is not available then it doesn't immediately returns false instead it tries for specified time and then returns result.
+
+
+Code :
+package frontend;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+public class Test {
+    public static void main(String[] args) {
+        ReentrantLock lock = new ReentrantLock();
+        Bank bank = new Bank(lock);
+
+        Thread t1 = new Thread(() -> {
+            int count;
+            for (count = 1; count <= 500; count++) {
+                bank.withdraw(count);
+            }
+        }, "Thread-1");
+
+        Thread t2 = new Thread(() -> {
+            int count;
+            for (count = 1; count <= 500; count++) {
+                bank.withdraw(count);
+            }
+        }, "Thread-2");
+        t1.start();
+        t2.start();
+    }
+}
+
+class Bank {
+    private final ReentrantLock lock;
+
+    public Bank(ReentrantLock lock) {
+        this.lock = lock;
+    }
+
+    public void withdraw(int count) {
+        try {
+            if (lock.tryLock()) {
+                try {
+                    Thread.sleep(1000);
+                    System.out.println(Thread.currentThread().getName() + " - " + count);
+                } catch (InterruptedException e) {
+                    System.out.println("Something went wrong");
+                } finally {
+                    lock.unlock();
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Something went wrong");
+        }
+    }
+}
+==========================================================================================================================================
+
+
+
+

@@ -1,0 +1,17 @@
+port
+protocol
+	https : 443
+	http : 80
+domain 
+	example.com
+	toplevel domain : .com
+	second level : example
+
+subdomain
+	subdomain : prefix to the domain
+	Example : blog.example.com
+		  Subdomain: blog
+		  Domain: example.com
+
+origin 
+	Origin includes the protocol, domain, and port.

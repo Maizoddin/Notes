@@ -1,0 +1,40 @@
+Wrapper Classes :
+It is a way to use primitive data types(int, float, boolean etc) as objects.
+It allows to store null.
+It allows to call methods on those objects.
+
+Primitive Data Type      Wrapper Class
+byte                     Byte
+char                     Character
+short                    Short
+int                      Integer
+long                     Long
+float                    Float
+double                   Double
+boolean                  Boolean
+
+
+Boxing :
+Integer num = Integer.valueOf(10);  ||  Integer num = new Integer(10);
+
+Auto Boxing :
+Integer num = 10;
+
+Unboxing :
+int n = num.intValue();
+
+Auto Unboxing :
+int n = num;
+
+Note : 
+* While using wrapper classes use .equals operator to compare values.
+  Example : boolean ans = num1.equals(num2);
+* In case of same value if we use new keyword then different object will get created, else it will  use the same object because of caching mechanism.
+* reference variable will be stored in stack and the object will be stored in heap.
+* In case of string it will store values in string pool inside heap. but if we use new keyword then it will store separate object in heap.
+
+
+
+
+
+

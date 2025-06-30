@@ -1,0 +1,315 @@
+1. What is Event-Driven Architecture (EDA)?
+Event-Driven Architecture is a software design pattern where components communicate by emitting and reacting to events.
+
+Key Concepts:
+* Producer: Publishes events when something notable occurs.
+* Consumer: Subscribes to and reacts to events.
+* Event Bus/Channel: Mediates event routing between producers and consumers.
+
+Benefits:
+* Decoupling: Producers and consumers operate independently.
+* Scalability: Asynchronous processing improves performance.
+* Extensibility: Add new consumers without modifying producers
+* Scale across microservices
+* Handle side-effects like sending emails, logging, triggering workflows
+
+Important Note :
+For simple applications we can use "ApplicationEventPublisher".
+But in real world large applications "Kafka" is being used.
+
+Example:
+You place an order → an OrderPlacedEvent is published.
+Different parts of the system react:
+ * Email service sends confirmation.
+ * Inventory service updates stock.
+
+Types of Events :
+a. Standard Application Events
+   ContextRefreshedEvent: Fired when the ApplicationContext is initialized.
+   ContextClosedEvent: Fired when the context is shut down.
+
+b. Transactional Events
+
+
+
+a. Standard Application Events :
+Spring has a built-in ApplicationEventPublisher. You:
+* Publish an event.
+* Listen for that event and take action.
+
+How It Works ?
+* Spring manages an internal event bus.
+* You publish an event using ApplicationEventPublisher.
+* Listeners (annotated with @EventListener, @TransactionalEventListener) get called asynchronously or synchronously.
+
+Basic Spring Boot Event Example :
+Step 1: Create a Custom Event 
+
+public class OrderPlacedEvent {
+    private final String orderId;
+    public OrderPlacedEvent(String orderId) {
+        this.orderId = orderId;
+    }
+    public String getOrderId() { return orderId; }
+}
+
+
+Step 2: Create an Event Listener
+@Component
+public class EmailService {
+
+    @EventListener
+    public void handleOrderPlaced(OrderPlacedEvent event) {
+        System.out.println("📧 Sending confirmation email for order: " + event.getOrderId());
+    }
+}
+
+
+Step 3: Publish Event
+@Service
+public class OrderService {
+
+    private final ApplicationEventPublisher publisher;
+
+    public OrderService(ApplicationEventPublisher publisher) {
+        this.publisher = publisher;
+    }
+
+    public void placeOrder(String orderId) {
+        // business logic like saving to DB
+        System.out.println("✅ Order placed: " + orderId);
+
+        // publish event
+        publisher.publishEvent(new OrderPlacedEvent(orderId));
+    }
+}
+
+
+
+Important :
+* By default, Spring events are synchronous — listener runs in the same thread.
+* To make them asynchronous, just enable async and annotate.
+* @EventListener is triggered immediately on publishEvent()
+* @TransactionalEventListener is triggered after TX commit (AFTER_COMMIT)
+
+
+Code :
+@Async
+@EventListener
+public void handleAsync(OrderPlacedEvent event) {
+    // will run in separate thread
+}
+
+
+
+
+
+b. Transactional Events
+Spring provides @TransactionalEventListener which ensures the event is triggered only after the transaction commits.
+
+Phases of @TransactionalEventListener
+ AFTER_COMMIT (default): Execute after successful commit.
+ AFTER_ROLLBACK: Execute if the transaction rolls back.
+ AFTER_COMPLETION: Execute after commit or rollback.
+ BEFORE_COMMIT: Execute before commit (use cautiously).
+
+Example :
+@Service
+public class UserService {
+    @Autowired private ApplicationEventPublisher publisher;
+    @Autowired private UserRepository repository;
+
+    @Transactional
+    public void registerUser(User user) {
+        repository.save(user);
+        // Event is queued until the transaction commits
+        publisher.publishEvent(new UserRegisteredEvent(user.getEmail()));
+    }
+}
+
+// Listener tied to transaction outcome
+@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+public void handleUserRegistered(UserRegisteredEvent event) {
+    emailService.sendWelcomeEmail(event.getEmail());
+}
+
+
+
+-----------------------------------------------------------------------------------
+
+Example Code : Food ordering application
+
+Step 1: Entity Classes ::
+
+Order.java
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String customerEmail;
+    private String items;
+    private OrderStatus status;
+}
+
+public enum OrderStatus {
+    PLACED, PROCESSING, DELIVERED, CANCELLED
+}
+
+Invoice.java
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Invoice {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private Long orderId;
+    private String customerEmail;
+    private LocalDateTime generatedAt;
+}
+
+Step 2: Event Classes
+OrderPlacedEvent.java
+
+public class OrderPlacedEvent  {
+    private final Order order;
+    public OrderPlacedEvent(Order order) {
+        this.order = order;
+    }
+    public Order getOrder() { return order; }
+}
+
+OrderStatusUpdatedEvent.java
+public class OrderStatusUpdatedEvent  {
+    private final Long orderId;
+    private final OrderStatus newStatus;
+    public OrderStatusUpdatedEvent(Long orderId, OrderStatus newStatus) {
+        this.orderId = orderId;
+        this.newStatus = newStatus;
+    }
+    // Getters omitted for brevity
+}
+
+
+Step 3: Service Layer with Transactional Events
+OrderService.java
+@Service
+@RequiredArgsConstructor
+public class OrderService {
+    private final OrderRepository orderRepository;
+    private final ApplicationEventPublisher eventPublisher;
+
+    @Transactional
+    public Order placeOrder(Order order) {
+        order.setStatus(OrderStatus.PLACED);
+        Order savedOrder = orderRepository.save(order);
+        // Publish event after saving the order
+        eventPublisher.publishEvent(new OrderPlacedEvent(savedOrder));
+        return savedOrder;
+    }
+
+    @Transactional
+    public Order updateOrderStatus(Long orderId, OrderStatus newStatus) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+        OrderStatus oldStatus = order.getStatus();
+        order.setStatus(newStatus);
+        Order updatedOrder = orderRepository.save(order);
+        
+        if (newStatus == OrderStatus.DELIVERED) {
+            // Publish event only if status is updated to DELIVERED
+            eventPublisher.publishEvent(new OrderStatusUpdatedEvent(orderId, newStatus));
+        }
+        return updatedOrder;
+    }
+}
+
+
+Step 4: Transactional Event Listeners
+InvoiceService.java (Generates Invoice on Delivery)
+
+@Service
+@RequiredArgsConstructor
+public class InvoiceService {
+    private final InvoiceRepository invoiceRepository;
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void generateInvoiceOnDelivery(OrderStatusUpdatedEvent event) {
+        if (event.getNewStatus() == OrderStatus.DELIVERED) {
+            Invoice invoice = new Invoice();
+            invoice.setOrderId(event.getOrderId());
+            invoice.setCustomerEmail("customer@example.com"); // Fetch from DB in real app
+            invoice.setGeneratedAt(LocalDateTime.now());
+            invoiceRepository.save(invoice);
+            System.out.println("Invoice generated for order: " + event.getOrderId());
+        }
+    }
+}
+
+NotificationService.java (Async Notifications)
+@Service
+@RequiredArgsConstructor
+public class NotificationService {
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void sendDeliveryNotification(OrderStatusUpdatedEvent event) {
+        if (event.getNewStatus() == OrderStatus.DELIVERED) {
+            // Simulate sending email
+            System.out.println("Sending delivery confirmation to customer for order: " + event.getOrderId());
+        }
+    }
+}
+
+Step 5: Test the Flow
+OrderController.java
+
+@RestController
+@RequiredArgsConstructor
+public class OrderController {
+    private final OrderService orderService;
+
+    @PostMapping("/orders")
+    public Order placeOrder(@RequestBody Order order) {
+        return orderService.placeOrder(order);
+    }
+
+    @PutMapping("/orders/{orderId}/status")
+    public Order updateStatus(@PathVariable Long orderId, @RequestParam OrderStatus status) {
+        return orderService.updateOrderStatus(orderId, status);
+    }
+}
+
+
+Step 8: Run and Test
+A] Place an Order:
+POST /orders
+Body: { "customerEmail": "user@example.com", "items": "Pizza, Coke", "status": "PLACED" }
+      * The OrderPlacedEvent is published but not processed until transaction commits.
+
+B] Update Status to DELIVERED:
+PUT /orders/1/status?status=DELIVERED
+    * After transaction commit:
+      InvoiceService generates an invoice.
+      NotificationService sends an email asynchronously.
+
+--------------------------------------------------------------------------------------------------------------------
+
+Key Internals Explained
+Transactional Event Queuing:
+* When updateOrderStatus is called, the OrderStatusUpdatedEvent is bound to the transaction via Spring’s TransactionSynchronizationManager.
+* Events are stored in a thread-local queue until the transaction commits.
+
+
+
+
+
+
+
+

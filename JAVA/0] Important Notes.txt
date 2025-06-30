@@ -1,0 +1,115 @@
+* In java Object class is parent class of all java objects.
+* In one java file there should be only one public class.
+* Constructor is the only thing that won't get inherited in java.
+* Class which contains main method should be public class(Good Practice).
+* In class always use private modifier for variables. and use getter and setter for accessing it.
+* classes with same name is not allowed inside same package.
+
+* Inside the same class static method can call non-static method by creating object.
+* Inside the same class static method can call static method directly.
+
+* Inside the class non-static method call both static and non-static directly.
+
+
+* class extends class
+  class implements interface
+  interface extends interface
+
+------------------------
+
+Date Time
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class Test {
+    public static void main(String[] args) {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("ss-mm-hh - dd-MM-yyyy");
+        System.out.println(dateTimeFormatter.format(now));
+    }
+}
+
+-----------------------------
+Upcasting is allowed in java:
+If child class has inherited parent class then
+
+Parent p1= new Child();
+// But it can only access methods of Parent and overridden methods of Child.
+
+Child c1 = (Child)p1;
+// Now it can access both parent and child class methods.
+
+Example :
+public class Test {
+    public static void main(String[] args) {
+
+        Parent p1 = new Child();
+        p1.f1();  // Child F1
+        p1.f2();  // Parent F2
+
+        Child c1 = (Child) p1;
+        c1.f1();    // Child F1
+        c1.f2();    // Parent F2
+        c1.f3();    // Child F3
+
+    }
+}
+
+class Parent {
+    void f1() {
+        System.out.println("Parent F1");
+    }
+
+    void f2() {
+        System.out.println("Parent F2");
+    }
+}
+
+class Child extends Parent {
+    void f1() {
+        System.out.println("Child F1");
+    }
+
+    void f3() {
+        System.out.println("Child F3");
+    }
+} 
+
+------------------------------
+
+In java the class which doesn't have any parent class has Object class as its parent class so evert class object has access to all the object class methods like toString(), equals(), getClass() etc. so in our class we can  override these methods and can give our own implementation.
+
+================================
+
+Method Hiding :
+Static method will get hidden. and depending on the reference type it will call the method.
+Example :
+
+class Parent{
+    public static void s(){
+        System.out.println("Parent static method");
+    }
+    public void i(){
+        System.out.println("Parent Instance Method");
+    }
+}
+
+
+class Child extends Parent{
+    public static void s(){
+        System.out.println("Child Static Methode");
+    }
+    public void i(){
+        System.out.println("Child Instance Methode");
+    }
+}
+
+
+Parent p = new Child();
+        p.i();
+        p.s();
+
+// Child Instance Methode
+// Parent static method
+

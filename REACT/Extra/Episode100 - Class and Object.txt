@@ -1,0 +1,90 @@
+JS
+1] Don't use function keywords inside the class to create methodes
+2] Don't use let,const,var inside the class but we can use it inside the function
+3] Use new keyword to create object of the class
+4] From inside methodes if we want to create class level variable then use this.varName = value
+
+Example :
+ class Test{
+    id=3;
+    constructor(name){
+        this.name=name
+      }
+    dummy(){
+        this.add = "Bgm"
+        console.log("Test",this.name,this.id, this.add)
+      }
+  }
+
+const obj = new Test("Test")
+obj.dummy()
+
+5] Use extends to inherit parent class
+6] super() : we can use this call parent class constructor
+Example :
+class Parent{
+    constructor(parentName){
+        this.parentName = parentName
+    }
+}
+
+class Child extends Parent{
+    constructor(name){
+        super(name)
+    }
+    
+    callParent(){
+        console.log(`Hey ${this.parentName}`)
+    }
+}
+
+const obj = new Child("John")
+obj.callParent()
+
+=================================================================================
+TS
+1] Don't use function keywords inside the class 
+2] Don't use let,const,var inside the class but we can use inside the function
+3] Use new keyword to create object of that class
+4] In ts its always better that first we declare the variable on the top and then we use it  OR direcly we can use access specifier while receiving in the constructor.
+
+Example
+ class Test{
+    name:string;
+    id:number;
+    constructor(name:string, private age:number){ 
+         this.name = name 
+         this.id = 0
+    }
+    greet(){
+        this.id =3
+        console.log("Test",this.id, this.name, this.age)
+    }
+}
+
+const obj = new Test()
+obj.greet()
+
+Its good practice to create variable on top and assign the value in the constructor and later we can change it.
+
+5] To inherit parent class use extends
+6] super() : we can use this call parent class constructor
+Example :
+class Parent{
+    parentName:string;
+    constructor(name:string){
+        this.parentName = name
+    }
+}
+
+class Child extends Parent{
+    constructor(name:string){
+        super(name)
+    }
+    callParent(){
+        console.log(`Hey ${this.parentName}`)
+    }
+}
+
+const obj = new Child("John")
+obj.callParent()

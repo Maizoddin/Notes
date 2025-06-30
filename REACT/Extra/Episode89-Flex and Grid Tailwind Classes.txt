@@ -1,0 +1,28 @@
+Tailwind Responsiveness
+It's mobile first utility framework, so default classes will be applied to mobile devices (i.e 0-639px)
+
+sm - 640px
+md -768
+lg - 1024
+xl - 1280
+
+Flex ::::
+flex
+flex-row
+flex-wrap
+justify-between   [justify-content][horizontal]
+items-center      [align-items][vertical]
+flex-1
+
+Grid :::::
+grid
+grid-col-3
+grid-row-3
+gap-2   gap-x-2   gap-y-2
+align-content: center;  [vertically]
+justify-content: center;  [horizontal]
+place-content-center;  [both horizontal and  vertical]
+
+
+
+

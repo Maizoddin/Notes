@@ -1,0 +1,423 @@
+RTK Query::
+Note :
+* Here we don't have to mentain the slice manually.
+ Advantages :
+  1] It will create and maintain the slice 
+  2] It provides isLoading(isFetching), isError, data states 
+  3] It provides hooks
+
+Steps:
+1] create a new file that will create the API
+
+2] create new API using createApi
+
+3] add reducerPath
+   this will be used to store data related to this api inside our store
+
+4] add baseQuery
+  rtk query by default uses fetch function so here we should give base url and even we can override the default fetch function
+
+5]  Add end points
+
+6] export all the hooks
+
+7] add reducer, middleware,setupListeners inside store
+
+// ALBUMS API
+// FETCH : http://localhost:3005/albums?userId=user.id
+// ADD : http://localhost:3005/albums
+// DELETE : http:localhost:3005/albums/album.id
+
+Important :query must receive only one parameter.
+
+Example :
+albumsApi.js:::::::
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { faker } from "@faker-js/faker";
+
+const albumsApi = createApi({
+  reducerPath: "albums",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:3005",
+    fetchFn: async (...arg) => {
+      await pause(500);
+      return fetch(...arg);
+    },
+  }),
+  endpoints: (builder) => {
+    return {
+      fetchAlbums: builder.query({
+        query: (user) => {
+          return {
+            url: "/albums",
+            params: {
+              userId: user.id,
+            },
+            method: "GET",
+          };
+        },
+        providesTags: (result, error, user) => {
+          let tags = [{ type: "userAlbum", id: user.id }];
+          result.map((album) => tags.push({ type: "album", id: album.id }));
+          return tags;
+        },
+      }),
+      addAlbum: builder.mutation({
+        query: (user) => {
+          return {
+            url: "/albums",
+            body: {
+              title: faker.commerce.productName(),
+              userId: user.id,
+            },
+            method: "POST",
+          };
+        },
+        invalidatesTags: (result, error, user) => {
+          return [{ type: "userAlbum", id: user.id }];
+        },
+      }),
+      deleteAlbum: builder.mutation({
+        query: (album) => {
+          return {
+            url: `/albums/${album.id}`,
+            method: "DELETE",
+          };
+        },
+        invalidatesTags: (result, error, album) => {
+          return [{ type: "album", id: album.id }];
+        },
+      }),
+    };
+  },
+});
+
+export { albumsApi };
+export const {
+  useFetchAlbumsQuery,
+  useAddAlbumMutation,
+  useDeleteAlbumMutation,
+} = albumsApi;
+
+const pause = (duration) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, duration);
+  });
+};
+-----------
+index.js:::
+import { configureStore } from "@reduxjs/toolkit";
+import { usersReducer } from "./slices/usersSlice";
+
+import { fetchUsers } from "./thunks/fetchUsers";
+import { addUser } from "./thunks/addUser";
+import { deleteUser } from "./thunks/deleteUser";
+import { albumsApi } from "./apis/albumsApi";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import { photosApi } from "./apis/photosApi";
+
+const store = configureStore({
+  reducer: {
+    users: usersReducer,
+    [albumsApi.reducerPath]: albumsApi.reducer,
+    [photosApi.reducerPath]: photosApi.reducer,
+  },
+  middleware: (getDefaultMiddleware) => {
+    return getDefaultMiddleware()
+      .concat(albumsApi.middleware)
+      .concat(photosApi.middleware);
+  },
+});
+
+setupListeners(store.dispatch);
+// Automatic Refetching: By calling setupListeners, you're       
+// instructing Redux Toolkit Query to monitor the application's  
+// focus and network connectivity.
+
+export { store, fetchUsers, addUser, deleteUser };
+export * from "./apis/albumsApi";
+
+--------------------------------
+albumsList.jsx
+  const { data: albums, isFetching: isFetchingAlbums,isError: isFetchingAlbumsError} = useFetchAlbumsQuery(user);
+  
+  const [addAlbum, { isLoading: isAddingAlbum, isError: isAddingAlbumError }] =useAddAlbumMutation();
+  const handleAddAlbum =() => {
+        addAlbum(user) 
+  };
+============================================
+Note : 
+Returned Properties from Query and Mutation Hooks
+
+Query Hooks :::
+1] data: The data returned from the query.
+2] error: Any error that occurred during the request.
+3] isLoading: Boolean indicating if the request is in progress.
+4] isFetching: Boolean indicating if the data is currently being fetched.
+5] isSuccess: Boolean indicating if the request was successful.
+6] isError: Boolean indicating if there was an error.
+7] refetch: Function to manually refetch the data.
+
+Mutation Hooks :::
+1] trigger: A function to trigger the mutation (named based on the mutation, e.g., deleteUser).
+2] isLoading: Boolean indicating if the mutation request is in progress.
+3] isSuccess: Boolean indicating if the mutation was successful.
+4] isError: Boolean indicating if there was an error during the mutation.
+5] error: Any error that occurred during the mutation.
+6] data: The data returned from the mutation (if any)
+===========================================
+Note :
+RTK Query does caching for us for fetch queries. so even if we call useFetchAlbumsQuery 2 times it makes only 1 network call.
+but if we want to make 2 times then we can use refetch()
+
+  const { refetch } = useFetchAlbumsQuery(user);
+  refetch()
+
+But for mutation if we call useAddAlbumMutation() 2 times it will make 2 different network calls.
+=====================================================
+If we don't want our query to call the api on the first render and we only want it to call api based on some condition then we can add skip option.
+Example :
+const { data } = useFetchProductsQuery( debouncedSearchQuery ? debouncedSearchQuery : undefined, { skip: !debouncedSearchQuery });
+
+====================================================
+
+Caching configuration in component while calling hook
+1] const { data: users, isSuccess: fetchUsersSuccess } = useFetchUsersQuery(undefined, {refetchOnReconnect:true, refetchOnFocus:true, pollingInterval:3000});
+
+----------------
+
+Caching Configurations in API file:
+1] refetchOnMountOrArgChange 
+	default false
+        Example : refetchOnMountOrArgChange :true
+2] keepUnusedDataFor
+	default 60
+        but we can give it in seconds
+        Example : keepUnusedDataFor: 120
+
+We can either give it on globale api level or for individual api
+
+
+Api level ::
+const api = createApi({
+  reducerPath: 'api',
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://api.example.com' }),
+  endpoints: (builder) => ({
+   fetchAlbums: builder.query({
+        query: (user) => {
+          return {
+            url: "/albums",
+            params: {
+              userId: user.id,
+            },
+            method: "GET",
+          };
+        },
+        providesTags: (result, error, user) => {
+          let tags = [{ type: "userAlbum", id: user.id }];
+          result.map((album) => tags.push({ type: "album", id: album.id }));
+          return tags;
+        },
+        keepUnusedDataFor: 20,
+      	refetchOnMountOrArgChange :true
+      }),
+  }),
+});
+
+Global level ::
+const api = createApi({
+  reducerPath: 'api',
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://api.example.com' }),
+  keepUnusedDataFor: 60,
+  refetchOnMountOrArgChange :true
+  endpoints: (builder) => ({
+    // Endpoint definitions
+  }),
+});
+===========
+* We can give polling to our api query 
+  It keeps fetching data after that interval regularly.
+  specify time in mili seconds.
+  Pass this option while calling query hook.
+
+  Example:
+    const {data,error,isFetching, isError, isSuccess} = 
+    useFetchUsersQuery(bankId, {pollingInterval:3000});
+
+===========
+Transform response before storing it inside store
+Example:
+
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
+const firebaseApi = createApi({
+  reducerPath: 'firebaseApi',
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://your-firebase-project.firebaseapp.com/' }),
+  endpoints: (builder) => ({
+    signIn: builder.mutation({
+      query: (credentials) => ({
+        url: '/auth/signInWithEmailAndPassword.json',
+        method: 'POST',
+        body: JSON.stringify(credentials),
+      }),
+      transformResponse: (response) => {
+        // Handle response and extract relevant data
+        return response.data;
+      },
+    }),
+    signOut: builder.mutation({
+      query: () => ({
+        url: '/auth/signOut.json',
+        method: 'POST',
+      }),
+      transformResponse: (response) => {
+        // Handle response and update authentication state
+        return response.data;
+      },
+    }),
+    // ... other endpoints for sign-up, profile update, etc.
+  }),
+});
+   
+   ================
+
+   Note :
+   Scenario : If using pagination and deleted record from some page(let's say pageNo:3) so we should invalidate tags for all the pages from current page till end page.
+   Here we can create tag by using pageNo 
+   Example : 
+   const { data: users, isFetching, isError } = useFetchUsersQuery({ bankId, page });
+   
+      invalidatesTags: (result, error, {bankId, page}) => {
+      const tags = [];
+      for (let i = page; i <= totalPages; i++) {
+        tags.push({ type: "bankUsers", id: `${bankId}-${i}` });
+      }
+      return tags;
+     }
+===============================================
+
+Invalidate the cache of other API ::
+Code :  dispatch(bankApi.util.invalidateTags([{type:"banks", id:"LIST"}]))
+
+Example :
+import { useDeleteUserMutation } from '../store/api/userApi'
+import { bankApi } from '../store/api/bankApi';
+import { useDispatch } from 'react-redux';
+
+const User = ({user}) => {
+  const dispatch = useDispatch()
+  const [deleteUser, {isLoading}] = useDeleteUserMutation();
+  const handleDeleteUser = async () => {
+    try {
+      await deleteUser(user.id)
+      
+      dispatch(bankApi.util.invalidatesTags([{type:"banks", id:"LIST"}]))  
+    } catch (error) {
+      console.log("Delete User Failed!")
+    }
+  }
+  return (
+    <div>
+      <span>{user.name}</span>
+      <button onClick={handleDeleteUser}>Delete</button>
+    </div>
+  )
+}
+
+export default User
+
+
+So here we have two different state slices banks and users and from user we are invalidating the cache data of banks state.
+so when we invalidate the cache data of banks it will be set to cache:stale so next time when we naviagate to banks page it will refetch because when it look for the cache it will be stale.
+
+
+dispatch(banksApi.util.invalidateTags({type:"", id:""}))
+
+==============================================================
+Important :
+In RTKQuery when we add invadlidateTags then it runs irrespective of whether our api query was successful or Failed so it's good practice to add conditional validation
+Example :
+
+ deleteUser: builder.mutation({
+        query: (userId) => {
+          return {
+            url: `/userss/${userId}`,
+            method: "DELETE",
+          };
+        },
+       
+        invalidatesTags: (response, error) => {
+          const tags = [];
+          if (!error) {
+            tags.push({ type: "users", id: "LIST" });
+          }
+          return tags;
+        },
+      }),
+
+==========================================
+Optimistic Update:
+Note : optimistic updates are a way to update the UI immediately before the server confirms the change. This creates a fast, responsive user experience since the UI feels instant, even though the server request is still in progress. If the server response fails, RTK Query can revert the change automatically, restoring the previous state.
+
+Example : 
+Like button when we like a post so we can increase the count immediately for better user experience because network call may take some time
+
+Implementation :
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
+const userApi = createApi({
+  reducerPath: "users",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:4000",
+  }),
+  endpoints: (builder) => {
+    return {
+      fetchUsers: builder.query({
+        query: () => {
+          return {
+            url: "/users",
+            method: "GET",
+          };
+        },
+        providesTags: (response, error) => {
+          return [{ type: "users", id: "LIST" }];
+        },
+      }),
+      deleteUser: builder.mutation({
+        query: (userId) => {
+          return {
+            url: `/users/${userId}`,
+            method: "DELETE",
+          };
+        },
+        onQueryStarted: async (userId, { dispatch, queryFulfilled }) => {
+          const patchResult = dispatch(
+            userApi.util.updateQueryData("fetchUsers", undefined, (draft) => {
+              return draft.filter((user) => user.id != userId);
+            })
+          );
+          try {
+            await queryFulfilled;
+          } catch (error) {
+            patchResult.undo();
+          }
+        },
+        invalidatesTags: (response, error) => {
+          const tags = [];
+          if (!error) {
+            tags.push({ type: "users", id: "LIST" });
+          }
+
+          return tags;
+        },
+      }),
+    };
+  },
+});
+
+export const { useFetchUsersQuery, useDeleteUserMutation } = userApi;
+export { userApi };
+
+Note: 
+So here on click of delete before our network call gets executed completely we are updating the state and showing it in UI.
+So in draft it takes the current state and return new state.

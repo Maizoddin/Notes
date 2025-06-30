@@ -1,0 +1,137 @@
+Exception :
+* It is an unexpected event that interrupts the normal execution flow of the program.
+* The top lines in an exception message provide the exact error details, while the bottom lines show the call hierarchy (i.e., where the error originated from).
+* Java has several predefined exception classes that represent different types of errors. The JVM identifies an error and throws the appropriate Exception class object.
+[Example : ArithmeticException, NullPointerException]
+
+* To handle exception we can write multiple catch blocks and the top catch block should be specific and bottom can be generic.
+
+Throwable is the parent class.
+Hirarchy :
+                                          Throwable
+                                             |
+                                       Error   Exception
+                                                  
+                                           
+                                           Exception
+                                               |
+                      IOException   ClassNotFoundException   RuntimeException
+
+
+                                           RuntimeException
+                                                  |
+               NullPointerException    ArithmeticException   ArrayIndexOutOfBoundsException
+
+
+java.lang.Throwable
+├── java.lang.Error
+│   ├── OutOfMemoryError
+│   ├── StackOverflowError
+│   ├── VirtualMachineError
+│   ├── AssertionError
+│   └── ...
+│
+└── java.lang.Exception
+    ├── java.lang.RuntimeException
+    │   ├── NullPointerException
+    │   ├── ArrayIndexOutOfBoundsException
+    │   ├── ArithmeticException
+    │   ├── ClassCastException
+    │   ├── IllegalArgumentException
+    │   │   ├── NumberFormatException
+    │   ├── ConcurrentModificationException
+    │   └── ...
+    │
+    ├── IOException
+    │   ├── FileNotFoundException
+    │   ├── EOFException
+    │   └── ...
+    │
+    ├── SQLException
+    ├── InterruptedException
+    ├── ParseException
+    └── ...
+
+* Checked Exception :
+  IOException, SQLException, ClassNotFoundException 
+  This will give compile time error if not handeled with catch
+  
+* Unchecked Exception :
+  Runtime Exception 
+  This will give run time error if not handeled with catch
+ 
+* finally will always execute.
+  Example :
+       try {
+            System.out.println("Enter First Number : ");
+            int num1 = scanner.nextInt();
+            System.out.println("Enter Second Number : ");
+            int num2 = scanner.nextInt();
+            int result = num1 / num2;
+            System.out.println("Result : "+result);
+        } catch (ArithmeticException e) {
+            System.out.println("Please enter number other than zero " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Something went wrong");
+        } finally {
+            System.out.println("CleanUP");
+        }
+
+=================================================================================
+
+throw :
+Note : We can throw only the objects of Throwable class or it's decendent classes.
+Reason :
+1] Changing the exception message OR manually occuring.
+   Example :
+	   if(num2 == 0){
+                throw new ArithmeticException("Cannot divide number by zero");
+            }
+
+
+=====================================================================================
+User defined exception :
+* User defined exception should be a child class of any exception class.
+* If a user-defined exception extends RuntimeException class or any of it's decendent classes then, it becomes an unchecked exception. Otherwise it will become checked exception.
+
+Example :
+
+class InsufficientBalanceException extends RuntimeException {
+    public InsufficientBalanceException(String message) {
+        super(message);
+    }
+}
+
+public class BankAccount {
+    private double balance = 1000;
+
+    public void withdraw(double amount) {
+        if (amount > balance) {
+            throw new InsufficientBalanceException("Insufficient balance");
+        }
+        balance -= amount;
+        System.out.println("Withdrawal successful. Remaining balance: " + balance);
+    }
+
+    public static void main(String[] args) {
+        BankAccount account = new BankAccount();
+        account.withdraw(1500); // Will throw InsufficientBalanceException
+    }
+}
+
+
+==========================================================================================
+
+throws :
+* The throws keyword is used when a method does not want to handle an exception but wants to pass it to the caller.
+* If the caller also does not handle it, the exception propagates further up.
+
+Example :
+public void withdrawAmount(int amount) throws InsufficientBalanceException {
+    if (amount > balance) {
+        throw new InsufficientBalanceException("Insufficient balance");
+    }
+}
+
+
+So here now caller should handle it.

@@ -1,0 +1,90 @@
+
+JSX (java script xml) 
+JSX is html-like syntax
+
+=========================
+
+Babel is a Transpiler
+Babel converts JSX to react element(Object)
+<h1 id="head">Hello World</h1>   =>  React.createElement("h1",{id:"head"},"Hello World"})
+And render methode will convert that object into HTML element
+
+=========================
+1] JSX uses camelCase 
+ <h1 className = "head"> Hello </h1>
+
+=========================
+
+Functional Component :
+
+Note : 1] Component name should start with capital letter
+       2] It should return only one element
+       3] While rendering use <>
+       4] Use {} to write Javascript inside JSX
+
+=========================
+Component composition
+
+Component inside another component
+
+Example : 
+
+const Title = () => <h1>Numbers List</h1>;
+
+const FunctionalComponent = () => (
+  <>
+    <Title />
+    <ul>
+      <li>One</li>
+      <li>Two</li>
+      <li>Three</li>
+    </ul>
+  </>
+);
+
+=========================
+
+* Ways to call Functional Component
+
+const Title = () => {
+  return (
+    <>
+      <h1>Title Component</h1>
+    </>
+  );
+};
+
+const Parent = () => {
+  return (
+    <>
+      <Title />
+      <Title></Title>
+      {Title()}
+    </>
+  );
+};
+===============================
+
+If we want to render element then we can write   -->   root.render(heading)
+But while rendering component we should use <>   -->   root.render(<Title/>)
+
+=========================
+
+<noscript>  [It will show only when js is turned off]
+
+<html>
+  <head>
+    <title>Episode-1</title>
+  </head>
+  <body>
+    <noscript>
+      <strong>Please Enable JavaScript</strong>
+    </noscript>
+    <div id="root">
+      <h1>Not Rendered</h1>
+    </div>
+    <script type="module" src="App.js"></script>
+  </body>
+</html>
+
+======================================

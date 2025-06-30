@@ -1,0 +1,37 @@
+1] Download Starter Project
+   Required dependencies:
+   * Spring Data JPA
+   * MySQL Driver (or your database driver)
+
+2] Configure Database Connection in `application.properties`
+     spring.datasource.url=jdbc:mysql://localhost:3306/student_management
+     spring.datasource.username=your_username         [Example : maaz]
+     spring.datasource.password=your_password         [Example : Maaz@9060]
+
+3] Choose Database Access Approach
+   Option 1: EntityManager (Low-level JPA)
+             * Provides fine-grained control over transactions, caching, and entity lifecycle
+             * Manual transaction management
+
+   Option 2: Spring Data JPA (`JpaRepository`)
+             * Higher-level abstraction over JPA, reducing boilerplate code.
+             * Automatic transaction management
+             * Provides CRUD operations, pagination, and sorting.
+
+4] Mapping Java Classes to Database Tables
+   * Create entity classes with JPA annotations
+     Use `@Entity`, `@Table`, `@Column`, etc.
+   
+  
+6] Repository Layer/ DAO Layer
+   * Create DAO interface
+   * Implement DAO class with @Repository
+   * `@Transactional` annotation for managing database transactions.
+
+7] Service Layer
+   * Create service interface
+   * Implement service with @Service
+
+8] Controller Layer
+   * Create @RestController with endpoints
+   * Uses `@RestController`, `@RequestMapping`, `@GetMapping`, etc.

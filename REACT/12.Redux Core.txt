@@ -1,0 +1,124 @@
+Note : 
+1] There should be only one store.
+2] Components should never directly mutate the store data.
+
+Flow ::::
+* Components subscribe's to the store so once the store data changes components will get notified.
+* Components cannot manipulate the store data directly.
+* To manipulate the data, store has "reducer".
+  reducer always receive's 2 parameters (old state and dispatched action) and returns new updated state.
+  We should not mutate the state directly instead we should return a new state
+* Components dispatches an actions and that action describe's which kind of operation to be performed by reducer.
+  action contains 2 things i.e type and payload.
+* once the reducer manipulates the store data all the components which are subscribed to the that part of the store will get notified and then components will get re-rendered.
+
+React-Redux:
+* This library converts all the redux state to react state so that components can re-render whenever state changes
+* It provides 
+  useSelector() : Which is used to select the state from store
+  useDispatch() : Which is used to dispatch actions
+
+==========================================================================================
+
+CORE REDUX :::
+
+// COMMAND TO INSTALLL REDUX
+npm install redux 
+npm install react-redux
+
+// IMPORTING REDUX
+import {createStore} from "redux"
+
+
+// CREATING REDUCER 
+const reducer = (state = {counter : 0, showCounter : true}, action) => {
+    if (action.type == "increament"){
+    return {counter : state.counter + 1, , showCounter : true}
+    }else if(action.type == "decrement"){
+        return {counter : state.counter - 1, , showCounter : true}
+    }else if(action.type == "add"){
+        return {counter : state.counter + action.num, showCounter : true}
+    }else if(action.type == "toggle"){
+        return {counter :state.counter, showCounter: !state.showCounter}
+    }
+}
+
+// CREATING STORE
+const store = createStore(reducer);
+
+// DISPATCHING ACTION FROM INSIDE COMPONENTS
+  const dispatch = useDispatch()
+
+  const incrementCounterClickHandler= () => {
+     dispatch({type:"increment"})
+   }
+
+// USING STORE VALUE IN COMPONENT
+const counter = useSelector((store)=>store.counter)
+
+// PROVIDING STORE TO OUR APP
+  <Provider store={store}>
+    <App />
+  </Provider>
+
+
+=========================================================================================
+Another approach of writing the same code :
+
+counter folder
+counterActions.js
+const increment = () => {
+ return {type:"increment"} 
+}
+----------------------------
+reducers folder
+counter.js
+const counterReducer = (state={},action) => {
+  if(...){...}
+}
+
+points.js
+const pointsReducer = (state={}, action) => {
+}
+
+root.js
+import { combineReducers } from 'redux';
+const rootReducer = combineReducers({
+  counter: counterReducer,
+  points: pointsReducer,
+});
+
+export default rootReducer;
+
+-------------------------------
+index.js
+const store = createStore(rootReducer);
+
+-------------------------------
+Component.js
+import increment from 'actions.js'
+import {useDispatch} from 'react-redux'
+
+const dispatch = useDispatch()
+
+const handleClick = () => {
+  dispatch(increment()) 
+}
+
+=========================================================================================
+
+Disadvantages :
+* We should create actions manually.
+* Here even if we want to change just one single value from state then still we should write all the unchanged values of the state object along with the new updated value and returns that object inside reducer as a new state.
+Example : if(action.type == "add"){
+             return {counter : state.counter + action.num, showCounter : true}
+          }
+* As our app grows reducer function will become lengthy with multiple if else conditions.
+
+=========================================================================================
+
+Solution :
+Redux-toolkit : 
+* Provides Immer Library : Which allows us to write mutating logic inside reducers. It doesn't actually mutate the state but it uses the Immer library, which detects changes between current state and old state and returns a brand new state by creating it.
+* It creates actions automatically based on reducers.
+* No need of multiple if-else

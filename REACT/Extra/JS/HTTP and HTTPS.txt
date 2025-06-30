@@ -1,0 +1,14 @@
+HTTP :
+Hyper Text Transfer Protocol
+Default Port 80
+Data is sent in plain text
+Faster because no encryption
+
+HTTPS :
+Hyper Text Transfer Protocol Secure
+Default Port 443
+Data is sent in encrypted format
+Little slower because of encryption
+
+Note : Always use HTTPS
+

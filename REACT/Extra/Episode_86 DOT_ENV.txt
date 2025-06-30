@@ -1,0 +1,18 @@
+1] Create .env file in the root directory (outside src)
+2] Create variable in it to store sensitive information like API_KEY, DB_URL etc
+   Note : For react always use REACT_APP prefix for variables
+   Example :
+        REACT_APP_API_KEY = "your_api_key"
+	REACT_APP_DATABASE_URL = "your_database_url"
+3] Add it in .gitignore
+   Example :
+            .gitignore
+                 .env
+4] It's only for development and for production it will be set differently there
+5] Install 
+   npm install dotenv
+6] jsx
+   import dotenv from 'dotenv';    // For React don't install and import, React has built in support for it
+   const apiKey = process.env.REACT_APP_API_KEY;
+   const databaseUrl = process.env.REACT_APP_DATABASE_URL;
+

@@ -1,0 +1,29 @@
+import React from "react";
+import { useFormikContext, getIn } from "formik";
+
+const Field = ({ name, component, as: is, children, ...props }) => {
+  // Get the context for the form
+  const { handleChange, handleBlur, values, setFieldValue } =
+    useFormikContext();
+
+  // Get the field value from the form's values
+  const fieldValue = getIn(values, name);
+
+  // Create the field object to pass to the component
+  const field = {
+    name,
+    value: fieldValue,
+    onChange: handleChange,
+    onBlur: handleBlur,
+  };
+
+  //   Default
+  return <input type="text" {...field} {...props} />;
+
+  // If using a render prop(for custom input field component)
+  if (typeof children === "function") {
+    return children({ field });
+  }
+};
+
+export default Field;

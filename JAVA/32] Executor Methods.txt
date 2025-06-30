@@ -1,0 +1,131 @@
+1. execute() Method :
+Interface: Part of the Executor interface.
+Input: Accepts only Runnable.
+Return Type: void (does not return anything).
+Use Case: Used when you want to execute a task asynchronously but don’t need to track its progress or result.
+Exception Handling: If the task throws an exception, it terminates the thread, and the exception is not propagated to the caller.
+
+------------------------------------------------------------------------------------
+
+2. submit() Method
+Interface: Part of the ExecutorService interface.
+Input: Accepts both Runnable and Callable.
+Return Type: Returns a Future object.
+For Runnable: Returns Future<?> (result is null).
+For Callable: Returns Future<T> (result is of type T).
+Use Case: Used when you want to track the progress of the task, retrieve its result, or handle exceptions.
+
+Future<?> future1 = executor.submit(() -> {
+            System.out.println("Runnable task executed");
+        });
+
+
+        Future<Integer> future2 = executor.submit(() -> {
+            System.out.println("Callable task executed");
+            return 42;
+        });
+
+------------------------------------------------------------------------------------
+
+3] Runnable
+Return Type: void (no return value).
+Exception Handling: Cannot throw checked exceptions. If an unchecked exception occurs, it will terminate the thread.
+Use Case: Suitable for tasks that perform actions but do not need to return a result.
+
+------------------------------------------------------------------------------------
+
+4] Callable
+Return Type: Can return a value of type T.
+Exception Handling: Can throw checked exceptions, which are stored in the Future object.
+Use Case: Suitable for tasks that need to return a result or handle exceptions gracefully.
+Method Signature : V call() throws Exception;
+Note : So even if we call Thread.sleep(t) inside callable then it won't give checked exception because its throwing it.
+
+------------------------------------------------------------------------------------
+
+5] Methods of Future
+A] boolean isDone():
+Returns true if the task is completed (successfully, failed, or canceled).
+
+B] boolean isCancelled():
+Returns true if the task was canceled before completion.
+
+C] boolean cancel(boolean mayInterruptIfRunning):
+Attempts to cancel the task. Returns true if successful.
+If we cancel and try to use get() on Future then it throws CancellationException.
+
+D] V get():
+Waits for the task to complete and returns the result. Blocks caller thread until done.
+Throws InterruptedException and ExecutionException.
+
+E] V get(long timeout, TimeUnit unit):
+Waits for the task to complete, but only for the specified time.
+Throws TimeoutException if the timeout is exceeded.
+
+Code :
+ ExecutorService executor = Executors.newSingleThreadExecutor();
+
+        Future<String> future = executor.submit(() -> {
+            Thread.sleep(1000); // Simulate work
+            return "Task Result";
+        });
+
+        System.out.println("Is Done? " + future.isDone()); // false
+        System.out.println("Is Cancelled? " + future.isCancelled()); // false
+
+        future.cancel(true);
+
+        // Wait for the result with a timeout
+        String result = null;
+        try {
+            result = future.get(2, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException | CancellationException e) {
+            System.out.println("Exception : " + e.getMessage());
+        }
+        System.out.println("Result: " + result);
+
+        executor.shutdown();
+
+------------------------------------------------------------------------------------
+
+6] Methods of CompletableFuture
+A] supplyAsync:
+Creates a thread and executes the task on a separate thread.
+By default, it uses ForkJoinPool, but you can pass your own executor.
+
+B] thenApply:
+Applies a function to the result of the previous async computation.
+Returns a new CompletableFuture.
+Runs synchronously in the same thread.
+
+C] thenApplyAsync:
+Similar to thenApply, but runs asynchronously in a different thread.
+
+D] thenCombine:
+Combines the results of two CompletableFuture instances.
+Returns a new CompletableFuture.
+
+E] thenAccept:
+Consumes the result of the previous task without returning a value.
+
+F] get:
+Waits for the task to complete and returns the result.
+
+Code :
+  // Example of supplyAsync and thenApply
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            System.out.println("Task is running...");
+            return "Hello";
+        }).thenApply(result -> {
+            System.out.println("Transforming result...");
+            return result + " World";
+        });
+
+        System.out.println("Result: " + future.get()); // "Hello World"
+
+        // Example of thenCombine
+        CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> "Hello");
+        CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> "World");
+        CompletableFuture<String> combined = future1.thenCombine(future2, (res1, res2) -> res1 + " " + res2);
+
+        System.out.println("Combined Result: " + combined.get()); // "Hello World"

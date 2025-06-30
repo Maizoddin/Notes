@@ -1,0 +1,121 @@
+memo :
+It prevents the renders triggered by parent component.
+It will render the component only when the props changes or internal state changes.
+It prevents the re-execution of component function
+
+Example : export default memo(Child)
+
+
+
+Don't use memo on every component because it will then have to compare the old props with new props this will impact the performance.
+Use it where it is necessary.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+useCallback()
+
+It avoids the re-creation of a function.
+It is sometimes needed if we have function as a dependency of useEffect. OR we are passing function as a prop to child component. so in these cases if function gets re-created then it will think like prop has been changed OR dependency has been changed so to avoid it we should wrap our function inside useCallback along with dependency array.
+
+Example :
+const updateName = useCallback(() => {
+ ....
+}, [])
+
+<Child updateName= {updateName}/>
+
+So if our dependency changes then our function get re-created.
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+useMemo()
+It we don't use useMemo() the on every render our function executes and computes the result.
+useMemo() prevents the execution of normal function inside the component
+
+Example : Without useMemo()
+
+import React, { useState } from 'react'
+
+const App = () => {
+  console.log("Component Rendered")
+  const [num, setNum] = useState(0)
+  const expensiveCalculation = () => {
+    console.log("Expensive Operation...");
+    return 1000
+  }
+
+  const total = expensiveCalculation()
+  return (
+    <div>
+      <button onClick={()=> setNum(num => num+1)}>Change</button>
+      <h1>Total : {total}</h1>
+    </div>
+  )
+}
+
+export default App
+
+Note here whenever my component renders our total will call the expensiveCalculation().
+==========================
+Example : with useMemo()
+import React, { useState, useMemo } from 'react'
+
+const App = () => {
+  console.log("Component Rendered")
+  const [num, setNum] = useState(0)
+  const expensiveCalculation = () => {
+    console.log("Expensive Operation...");
+    return 1000
+  }
+
+  const total = useMemo(()=>expensiveCalculation(),[])
+  return (
+    <div>
+      <button onClick={()=> setNum(num => num+1)}>Change</button>
+      <h1>Total : {total}</h1>
+    </div>
+  )
+}
+
+export default App
+
+Note : so now here even if our component re-renders our expensiveCalculation won't execute. It will call function execution only if our dependency changes.
+So here whenever our component re-renders the total will use the previos value itself it won't re-calculate it but if dependency changes then it will recall and re-recalculates the result.
+
+=================================================================
+useRef :
+
+It doesn't trigger re-render on value change.
+If we want to display value on change of input then don't use useRef
+
+To access value : refName.current.value
+
+Example :s
+import React, { useRef } from "react";
+const LoanForm = () => {
+  const name = useRef(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(name.current.value);
+    name.current.value = ""
+    name.current.focus()
+  };
+
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="name">Name :</label>
+        <input type="text" name="name" id="name" ref={name} />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  );
+};
+
+export default LoanForm;
+
+
+
+
+
+

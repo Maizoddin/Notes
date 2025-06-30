@@ -1,0 +1,543 @@
+Thread :
+A thread is the smallest unit of execution within a process.
+
+MultiThreading :
+* Multithreading is the ability of a program to manage multiple threads simultaneously.
+* It is useful for improving performance, especially in applications that perform I/O operations, network requests, or other tasks that can be parallelized.
+
+Java provided 2 ways to create and manage thread.
+1]  java.lang.Thread class 
+2]  java.lang.Runnable interface
+
+==================================================
+
+Behind the scene implementation :
+
+// Runnable Interface
+
+@FunctionalInterface
+public interface Runnable {
+    public abstract void run();
+}
+
+---------------------------------------------------
+// Thread Class
+
+public class Thread implements Runnable{
+    private Runnable target;
+
+    public Thread(Runnable target) {
+        this.target = target;
+    }
+
+    public void start() {
+         this.run();
+    }
+
+    public void run() {
+        if (target != null) {
+            target.run(); // Calls the Runnable's run() method.
+        }
+    }
+    // ... other methods ...
+}
+
+==================================================
+
+1] Using Runnable Interface
+Example :
+class Deliver implements Runnable {
+    public void run() {
+        int orderNo;
+        for (orderNo = 1; orderNo <= 100; orderNo++) {
+            this.deliverFood(orderNo);
+        }
+    }
+
+    public void deliverFood(int orderNo) {
+        System.out.println("Delivered Food for OrderNo-" + orderNo);
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+
+        Deliver deliver = new Deliver();
+        Thread thread = new Thread(deliver);
+        thread.start();
+
+    }
+}
+
+---------------------------------------------------
+2] Using Thread Class
+Example :
+class Order extends Thread {
+    public void run() {
+        int orderNo;
+        for (orderNo = 1; orderNo <= 100; orderNo++) {
+            this.takeOrder(orderNo);
+        }
+    }
+
+    public void takeOrder(int orderNo) {
+        System.out.println("Order No-" + orderNo);
+    }
+}
+
+    public static void main(String[] args) {
+
+        Order order = new Order();
+        order.start();
+
+    }
+}
+
+==================================================
+Note : 
+* It's always recommended to use Runnable interface over Thread class
+  Reason : If our class extends Thread class then our class can't extend any other class.
+           But with Runnable interface our class can extend other class also.
+
+Cleaner way :
+1] Anonymous Class :
+     
+    Thread thread  = new Thread(new Runnable() {
+           public void run() {
+                System.out.println("Running");
+           }
+     });
+
+
+2] Lambda Expression :
+
+   Thread thread = new Thread(()->{
+            System.out.println("Running");
+        });
+
+==================================================
+* JVM has created one thread and from inside the run method of that thread it calls main method.
+* When exception comes in any one thread then only that thread stops and all the other thread continues its execution.
+
+Methods :
+1] Thread.currentThread() :
+   Gives access to the Thread object of the thread that is currently running the code.
+   This is a static method which returns the currently executing Thread object.
+
+2] Thread.currentThread().getName() :
+   Returns the name of Thread which is executing the code.
+
+3] Thread.currentThread().setName() :
+   It sets the name for the current thread.
+   Ways :
+   1] Extends Thread class :
+      * use class object.setName("");
+      * pass inside class constructor to pass it to parent using super("");  - Recommended
+   2] Implemenets Runnable :
+      * pass as 2nd argument for Thread class constructor
+
+4] getState():
+   It's an instance method.
+
+5] Thread.sleep() :
+   * It makes thread to sleep for specified miliseconds.
+   * It's a static method.
+   * It gives checked exception, so compiler forces to use try catch.
+   Example :
+   for(int orderNo=1; orderNo <= 20; orderNo++){
+           System.out.println("OrderNo - "+orderNo);
+          try {
+              Thread.sleep(500);
+          }catch (InterruptedException e){
+              System.out.println("Thread was interrupted - PlaceOrder");
+          }
+       }
+6] setPriority() :
+   * This method is used to set the priority of a thread. 
+   * Higher priority threads get more CPU time, but it's not guaranteed as thread scheduling depends on the OS.
+   * The priority value should be between Thread.MIN_PRIORITY (1) and Thread.MAX_PRIORITY (10).
+   * The default priority is Thread.NORM_PRIORITY (5).
+
+7] yield() :
+   * yield() is a static method in the Thread class.
+   * It gives a hint to the JVM that the current thread is willing to pause and allow other threads of equal or higher priority to run.
+   * However, it's just a hint—the OS may ignore it, and the current thread may continue execution.
+   * Thread.yield();   // Hinting JVM to give CPU to other threads
+                       // We can write it inside run()
+
+8] setDeamon(true) :
+   User thread = Which we create and performs some business logic.
+                 JVM waits for them to finish.
+   Deamon thread = Background threads that run in the background (e.g., garbage collector). 
+                   JVM does not wait for them to complete.
+   Syntax : t1.setDaemon(true);
+            t1.start()
+
+   * JVM terminates daemon threads when all user threads finish execution.
+   * Cannot convert a thread to a daemon after it starts running, it must be done before start().
+   * Daemon threads are mainly used for background tasks like garbage collection, logging, etc.
+   
+    suppose we create our thread as t1.setDeamon(true) inside main then once JVM finishes main thread it terminates program and does not wait for t1.
+==================================================
+
+States of Thread :
+1] New :
+When you create a Thread object using new keyword, it is initially in the new state.
+
+2] Runnable:  
+When you call the start() method on the Thread object, thread then enters the runnable state. It means the thread is eligible to run and is waiting for its turn to be scheduled by the OS.  It's in the thread pool (or queue) waiting for its turn.
+
+3] Running: 
+The thread is actively executing the code in its run() method.
+
+4] Blocked/Waiting/Non-Runnable: 
+Not eligible to run due to sleep(), I/O, wait(), join(), or lock acquisition.
+
+5] Terminated (Dead): 
+run() method completed or terminated by an exception.
+
+
+==================================================
+Race Condition :
+A race condition occurs when multiple threads access a shared resource and try to modify it at the same time, leading to unexpected behavior.
+Example :
+class BankAccount {
+    private int balance = 100;
+
+    public void withdraw(String name, int amount) {
+        if (balance >= amount) {
+            System.out.println(name + " is withdrawing " + amount);
+            balance -= amount;
+            System.out.println(name + " completed withdrawal. Remaining balance: " + balance);
+        } else {
+            System.out.println(name + " cannot withdraw. Insufficient balance: " + balance);
+        }
+    }
+}
+
+public class RaceConditionExample {
+    public static void main(String[] args) {
+        BankAccount account = new BankAccount();
+
+        Thread t1 = new Thread(() -> account.withdraw("User1", 80));
+        Thread t2 = new Thread(() -> account.withdraw("User2", 80));
+
+        t1.start();
+        t2.start();
+    }
+}
+
+
+==================================================
+synchronized :
+It is used when multiple threads are using the shared common resource.
+We can use synchronized keyword on method OR on block of code. 
+Example :
+public synchronized void increment(){
+  this.count += 1  
+}
+
+OR 
+
+public void increment(){
+  synchronized(this){
+    this.count += 1 
+  } 
+}
+
+
+It puts lock on that part and no other thread can access it.
+
+==================================================
+** synchronized with wait(), notify(), notifyAll() :
+wait, notify, notifyall are Object class methods.
+It is used for interthread communication.
+so methods should be synchronized.
+
+When a thread calls wait() inside a synchronized block or method, the following happens:
+
+1] The thread releases the lock
+The thread stops execution and releases the monitor lock on the shared resource.
+Other threads can now acquire the lock and continue execution.
+2] The thread enters the "Waiting" state
+The thread is not removed from the thread pool.
+However, it does not consume CPU resources because it is in a waiting state.
+The OS scheduler will not give it CPU time until it is notified.
+3️] Other threads can acquire the lock
+Other threads using the same shared resource can now proceed and execute.
+If another thread calls notify() or notifyAll(), the waiting thread will be moved from the "Waiting" state to "Runnable" state.
+4️] The waiting thread resumes when notified
+Once notified, the thread moves to the "Runnable" state (ready to run).
+However, it does not immediately resume execution.
+It must first acquire the lock again and wait for the CPU to schedule it.
+
+Example :
+
+public class Test {
+    public static void main(String[] args) {
+        Restaurant restaurant = new Restaurant();
+        Order order = new Order(restaurant);
+        Deliver deliver = new Deliver(restaurant);
+        order.start();
+        deliver.start();
+    }
+}
+
+
+class Restaurant {
+    private int pendingOrder = 0;
+
+    public synchronized void placeOrder(int orderNo) {
+        pendingOrder += 1;
+        System.out.println("Order no : " + orderNo);
+        notify();
+    }
+
+    public synchronized void deliverOrder(int orderNo) {
+        if (pendingOrder == 0) {
+            try {
+                System.out.println("Waiting");
+                wait();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        System.out.println("Delivery no : " + orderNo);
+        pendingOrder -= 1;
+    }
+}
+
+class Order extends Thread {
+    Restaurant restaurant;
+
+    public Order(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
+
+    public void run() {
+        int orderNo;
+        for (orderNo = 1; orderNo <= 1000; orderNo++) {
+            restaurant.placeOrder(orderNo);
+        }
+    }
+
+}
+
+class Deliver extends Thread {
+    Restaurant restaurant;
+
+    public Deliver(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
+
+    public void run() {
+        int orderNo;
+        for (orderNo = 1; orderNo <= 1000; orderNo++) {
+            restaurant.deliverOrder(orderNo);
+        }
+    }
+}
+
+
+=============================================================
+
+join() :
+The join() method in Java is used to wait for a thread to complete its execution. When you call join() on a thread, the calling thread will block until the target thread finishes.
+
+public class DataProcessingExample {
+
+    static class DataFetcher implements Runnable {
+        private String sourceName;
+        private int fetchTime;
+        private String data;
+
+        DataFetcher(String sourceName, int fetchTime) {
+            this.sourceName = sourceName;
+            this.fetchTime = fetchTime;
+        }
+
+        @Override
+        public void run() {
+            System.out.println("Fetching data from " + sourceName + "...");
+            try {
+                Thread.sleep(fetchTime); // Simulate fetching data
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            data = "Data from " + sourceName; // Simulate data retrieval
+            System.out.println("Data fetched from " + sourceName);
+        }
+
+        public String getData() {
+            return data;
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        DataFetcher source1 = new DataFetcher("Source 1", 2000); // Fetch in 2 seconds
+        DataFetcher source2 = new DataFetcher("Source 2", 1000); // Fetch in 1 second
+
+        Thread thread1 = new Thread(source1);
+        Thread thread2 = new Thread(source2);
+
+        thread1.start();
+        thread2.start();
+
+        System.out.println("Waiting for data retrieval to complete...");
+
+        thread1.join(); // Wait for data from Source 1
+        thread2.join(); // Wait for data from Source 2
+
+        System.out.println("Data retrieval complete. Processing data...");
+
+        // Process the combined data
+        String data1 = source1.getData();
+        String data2 = source2.getData();
+        System.out.println("Combined data: " + data1 + ", " + data2);
+
+        System.out.println("Data processing complete.");
+    }
+}
+
+
+Note :
+thread1.join() and thread2.join() are crucial. They ensure that the main thread waits until both data retrievals are complete.
+Only after both join() calls return does the main thread proceed to process the combined data.
+
+Why join() Is Essential:
+Without join(), the main thread might proceed to process the data before it has been fully retrieved, leading to errors or incomplete results.
+join() provides a way to synchronize the execution of the main thread with the completion of the worker threads.
+It allows us to guarantee that all data is available before we attempt to process it.
+
+
+=============================================================
+
+Semaphore :
+A semaphore is a synchronization primitive that controls access to a shared resource by multiple threads or processes. It maintains a counter that tracks the number of available resources or permits.
+
+Key Concepts:
+
+Counter: The semaphore's core is an integer counter.
+Permits: The counter represents the number of available permits.
+Acquire (wait/P): A thread attempts to acquire a permit. If a permit is available (counter > 0), the counter is decremented, and the thread proceeds. If no permit is available (counter = 0), the thread is blocked until a permit becomes available.
+Release (signal/V): A thread releases a permit, incrementing the counter. If any threads are blocked waiting for a permit, one of them is unblocked.
+
+Types of Semaphores:
+
+1] Binary Semaphore (Mutex):
+A semaphore with a maximum count of 1.
+Used for mutual exclusion, ensuring that only one thread can access a critical section at a time.
+Effectively acts as a lock.
+
+2]Counting Semaphore:
+A semaphore with a count greater than 1.
+Used to control access to a limited number of resources.
+The count represents the number of available resources.
+
+Practical Use Cases:
+Resource Pooling:
+Imagine a database with a limited number of connections.
+A counting semaphore can be used to control the number of threads that can access the database concurrently.
+When a thread needs a connection, it acquires a permit.
+When it's finished, it releases the permit, making the connection available to other threads.
+
+Example :
+import java.util.concurrent.Semaphore;
+
+class Test {
+    public static void main(String[] args) {
+        DataBase dataBase = new DataBase();
+        for (int i = 1; i <= 5; i++) {
+            new Thread(() -> {
+                dataBase.DBConnection();
+            }, "Thread - " + i).start();
+        }
+    }
+}
+
+class DataBase {
+    private final int MAX_CONNECTION = 3;
+    private final Semaphore semaphore = new Semaphore(MAX_CONNECTION);
+
+    public void DBConnection() {
+        try {
+            semaphore.acquire();
+            Thread.sleep(1000);
+            System.out.println("Connection successful - " + Thread.currentThread().getName());
+            // Execute Query
+            semaphore.release();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+}
+
+=============================================================
+
+Definations :
+
+0] Critical section : A critical section is a part of the program where shared resources (variables, files, database, etc.) are accessed or modified by multiple threads.
+
+1] Race Condition :Multiple threads modify shared data simultaneously, causing inconsistent results.
+
+2] Mutual Exclusion :Ensures only one thread accesses critical data at a time (using synchronized, Locks, etc.).
+
+3] Deadlock :Threads wait for each other’s locks forever.
+
+4] Starvation : A thread never gets CPU time due to high-priority threads.
+
+
+=============================================================
+
+Notes :
+Sleep :
+* Thread goes into "Timed-Waiting" state.
+* It does not releases the lock.
+  [Have room lock and going to sleep inside room]
+
+Wait :
+* Thread goes into "waiting" state. until notified.
+* Thread releases the lock.
+
+Important :
+If we use synchronized on shared resource then if T1 has entered the synchronize block then it will be acquiring the lock and if at the same time T2 tries to acquire the same synchronized block then it will be moved to blocked state.
+Normal lock is object specific. [i.e Each object will have its own lock]
+
+
+To overcome this we can use ReentrantLock, where we can have complete control over the lock and we can perform ulternate tasks if lock is already acquired by some other thread.
+We can share the same single lock across multiple objects.
+
+=======================================================================
+
+Basics :
+
+Process:
+A process is an independent program in execution.
+Opening a browser creates a process, and opening Notepad creates another process.
+Each process has its own memory space, resources, and execution state.
+
+Multitasking:
+It means handling multiple processes at the same time.
+If the number of processes exceeds the available CPU cores, the OS uses process scheduling to switch between processes rapidly, creating an illusion of parallel execution.
+
+Threads:
+A thread is a smaller unit of execution within a process.
+A process can have multiple threads sharing the same memory space.
+Example: A browser might have multiple threads—one for rendering the UI, another for network requests, and separate ones for handling different tabs. Some browsers (like Chrome) actually create a new process for each tab instead of a thread.
+
+Multithreading:
+Handling multiple threads within the same process.
+Example: A media player might have one thread for playing audio and another for fetching data from the disk.
+Even on a single-core CPU, threads can be switched rapidly (time slicing).
+
+Multi-core CPUs and Process Switching:
+If you have fewer processes than cores, each process can run on a dedicated core without switching.
+If you have more processes than cores, the OS switches between them using a scheduler (like round-robin, priority-based scheduling, etc.).
+
+Multitasking deals with multiple processes.
+Multithreading deals with multiple threads within the same process.
+Context switching happens when the CPU moves between different processes or threads.
+
+- **Multitasking:** Handling multiple **processes**.
+- **Multithreading:** Handling multiple **threads** within the same process.
+- **Context switching:** CPU switching between tasks when needed.

@@ -1,0 +1,5 @@
+1] Create folder for components 
+2] Create utils folder to create common files
+3] Keep all the common URL's inside common.js file inside utils
+4] Create all common variable's with capital letters
+5] Create common file for import export inside utils 

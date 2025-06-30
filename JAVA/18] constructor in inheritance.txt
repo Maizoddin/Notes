@@ -1,0 +1,9 @@
+Constructor in inheritance :
+
+* When we create child class object then child class constructor will call the parent class constructor(with no args).
+* If we want to call parent class constructor explicitly then we should call using super(). and this should be first line in the child constructor.
+* If we have don't have constructor in child class then still compiler will call child class default constructor which then calls parent class default constructor.
+* If we don't write super in child constructor then compiler will add super() as first line in child constructor.
+* Only one parent constructor can be called, we can't write super() twice.
+* We can call current class constructor using this keyword, this also should be first line in the constructor and we can either use super or this in one constructor.
+* explicit constructor calling should be done only from inside the constructor, and only one call can be made.

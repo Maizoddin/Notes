@@ -1,0 +1,17 @@
+// OPTIONAL CHAINING
+
+const info = {
+  name : "John",
+  age : 22,
+  address : {
+    street1 : "Navi Galli",
+    street2 : "Shahapur"
+  }
+}
+
+// console.log(info.address.street3.name)
+// Error : Can not read the properties of undefined
+
+console.log(info.address?.street3?.name)
+// undefined 
+// Here if at any point value is undefined then it returns from there itself, it wont go further inside

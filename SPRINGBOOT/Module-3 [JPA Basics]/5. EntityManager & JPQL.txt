@@ -1,0 +1,61 @@
+EntityManager Methods :
+Method		Purpose			  	Returns
+persist()	Insert new record	  	void
+find()		Retrieve single record by ID	Entity
+merge()		Update existing record	  	Entity
+remove()	Delete record		  	void
+
+------------------------------------------------------------------------------
+
+JPQL (Java Persistence Query Language) :
+
+Key Features :
+* JPQL is an object-oriented query language similar to SQL.
+* Works with entity classes and attributes instead of database tables.
+* Database-independent
+* Supports:
+  Filtering, sorting, aggregation
+  Joins between entities
+  Bulk updates/deletes
+
+JPQL vs SQL Examples :
+// JPQL
+String jpql = "SELECT s FROM Student s WHERE s.email = :email";
+Student student = entityManager.createQuery(jpql, Student.class)
+                             .setParameter("email", "test@example.com")
+                             .getSingleResult();
+
+// Equivalent SQL
+SELECT * FROM student WHERE email = 'test@example.com';
+
+
+// Common JPQL Queries
+// Fetch all records
+String jpql = "SELECT s FROM Student s";
+List<Student> students = entityManager.createQuery(jpql, Student.class).getResultList();
+
+// Fetch records with a condition
+String jpql = "SELECT s FROM Student s WHERE s.age > 18";
+List<Student> students = entityManager.createQuery(jpql, Student.class).getResultList();
+
+// Update records
+String jpql = "UPDATE Student s SET s.email = :newEmail WHERE s.id = :id";
+entityManager.createQuery(jpql)
+             .setParameter("newEmail", "new@example.com")
+             .setParameter("id", 1L)
+             .executeUpdate();
+
+// Delete records
+String jpql = "DELETE FROM Student s WHERE s.id = :id";
+entityManager.createQuery(jpql)
+             .setParameter("id", 1L)
+             .executeUpdate();
+
+Key Takeaways :
+* Use EntityManager for basic CRUD operations.
+* Use JPQL for filtering, sorting, aggregations, joins, and bulk updates/deletes.
+* JPQL is database-independent and object-oriented.
+
+
+
+

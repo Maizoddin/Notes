@@ -1,0 +1,434 @@
+2025-05-28T09:11:19.753+05:30  INFO 13180 --- [restartedMain] com.example.Learn.MappingApplication     : Starting MappingApplication using Java 21.0.6 with PID 13180 (C:\Users\Administrator\Downloads\OneToMany\Learn\target\classes started by Administrator in C:\Users\Administrator\Downloads\OneToMany\Learn)
+2025-05-28T09:11:19.799+05:30  INFO 13180 --- [restartedMain] com.example.Learn.MappingApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-05-28T09:11:19.971+05:30  INFO 13180 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-28T09:11:19.971+05:30  INFO 13180 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-28T09:11:23.129+05:30  INFO 13180 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-28T09:11:23.430+05:30  INFO 13180 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 247 ms. Found 2 JPA repository interfaces.
+2025-05-28T09:11:26.947+05:30  INFO 13180 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-05-28T09:11:26.989+05:30  INFO 13180 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-05-28T09:11:26.989+05:30  INFO 13180 --- [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-05-28T09:11:27.126+05:30  INFO 13180 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-05-28T09:11:27.127+05:30  INFO 13180 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 7154 ms
+2025-05-28T09:11:27.786+05:30  INFO 13180 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-05-28T09:11:29.278+05:30  INFO 13180 --- [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@72a02672
+2025-05-28T09:11:29.283+05:30  INFO 13180 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-05-28T09:11:29.420+05:30  INFO 13180 --- [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-28T09:11:29.800+05:30  INFO 13180 --- [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.15.Final
+2025-05-28T09:11:29.960+05:30  INFO 13180 --- [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-05-28T09:11:31.012+05:30  INFO 13180 --- [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-28T09:11:31.411+05:30  INFO 13180 --- [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.41
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-28T09:11:35.176+05:30  INFO 13180 --- [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-28T09:11:35.182+05:30  INFO 13180 --- [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-28T09:11:37.217+05:30  WARN 13180 --- [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-28T09:11:39.510+05:30  INFO 13180 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-05-28T09:11:39.590+05:30  INFO 13180 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-05-28T09:11:39.612+05:30  INFO 13180 --- [restartedMain] com.example.Learn.MappingApplication     : Started MappingApplication in 21.904 seconds (process running for 23.6)
+2025-05-28T09:15:03.662+05:30  INFO 13180 --- [http-nio-8080-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-28T09:15:03.663+05:30  INFO 13180 --- [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-05-28T09:15:03.666+05:30  INFO 13180 --- [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2025-05-28T09:15:03.775+05:30  WARN 13180 --- [http-nio-8080-exec-2] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'GET' is not supported]
+2025-05-28T09:15:17.864+05:30  INFO 13180 --- [http-nio-8080-exec-3] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : saveUser, Arguments : [UserDTO(name=Maaz, email=maaz@gmail.com, posts=null)]
+2025-05-28T09:15:17.879+05:30  INFO 13180 --- [http-nio-8080-exec-3] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : saveUser, Arguments : [UserDTO(name=Maaz, email=maaz@gmail.com, posts=null)]
+2025-05-28T09:15:17.879+05:30  INFO 13180 --- [http-nio-8080-exec-3] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : toEntity, Arguments : [UserDTO(name=Maaz, email=maaz@gmail.com, posts=null)]
+2025-05-28T09:15:17.881+05:30  INFO 13180 --- [http-nio-8080-exec-3] com.example.Learn.aop.LoggingAspect      : [Response] Method : toEntity, Response : User(id=null, name=Maaz, email=maaz@gmail.com)
+2025-05-28T09:15:17.885+05:30  INFO 13180 --- [http-nio-8080-exec-3] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : save, Arguments : [User(id=null, name=Maaz, email=maaz@gmail.com)]
+2025-05-28T09:15:17.981+05:30 DEBUG 13180 --- [http-nio-8080-exec-3] org.hibernate.SQL                        : 
+    insert 
+    into
+        users
+        (email, name) 
+    values
+        (?, ?)
+2025-05-28T09:15:18.089+05:30  INFO 13180 --- [http-nio-8080-exec-3] com.example.Learn.aop.LoggingAspect      : [Response] Method : save, Response : User(id=7, name=Maaz, email=maaz@gmail.com)
+2025-05-28T09:15:18.090+05:30  INFO 13180 --- [http-nio-8080-exec-3] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : toDTO, Arguments : [User(id=7, name=Maaz, email=maaz@gmail.com)]
+2025-05-28T09:15:18.090+05:30  INFO 13180 --- [http-nio-8080-exec-3] com.example.Learn.aop.LoggingAspect      : [Response] Method : toDTO, Response : UserDTO(name=Maaz, email=maaz@gmail.com, posts=null)
+2025-05-28T09:15:18.091+05:30  INFO 13180 --- [http-nio-8080-exec-3] com.example.Learn.aop.LoggingAspect      : [Response] Method : saveUser, Response : UserDTO(name=Maaz, email=maaz@gmail.com, posts=null)
+2025-05-28T09:15:18.148+05:30  INFO 13180 --- [http-nio-8080-exec-3] com.example.Learn.aop.LoggingAspect      : [Response] Method : saveUser, Response : <201 CREATED Created,UserDTO(name=Maaz, email=maaz@gmail.com, posts=null),[]>
+2025-05-28T09:17:02.875+05:30  INFO 13180 --- [http-nio-8080-exec-5] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : saveUser, Arguments : [UserDTO(name=Sakib, email=sakib@gmail.com, posts=[PostDTO(title=graduate, content=Alhamdulillah graduated), PostDTO(title=new job, content=Alhamdulillah for new beginning)])]
+2025-05-28T09:17:02.878+05:30  INFO 13180 --- [http-nio-8080-exec-5] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : saveUser, Arguments : [UserDTO(name=Sakib, email=sakib@gmail.com, posts=[PostDTO(title=graduate, content=Alhamdulillah graduated), PostDTO(title=new job, content=Alhamdulillah for new beginning)])]
+2025-05-28T09:17:02.878+05:30  INFO 13180 --- [http-nio-8080-exec-5] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : toEntity, Arguments : [UserDTO(name=Sakib, email=sakib@gmail.com, posts=[PostDTO(title=graduate, content=Alhamdulillah graduated), PostDTO(title=new job, content=Alhamdulillah for new beginning)])]
+2025-05-28T09:17:02.879+05:30  INFO 13180 --- [http-nio-8080-exec-5] com.example.Learn.aop.LoggingAspect      : [Response] Method : toEntity, Response : User(id=null, name=Sakib, email=sakib@gmail.com)
+2025-05-28T09:17:02.879+05:30  INFO 13180 --- [http-nio-8080-exec-5] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : save, Arguments : [User(id=null, name=Sakib, email=sakib@gmail.com)]
+2025-05-28T09:17:02.889+05:30 DEBUG 13180 --- [http-nio-8080-exec-5] org.hibernate.SQL                        : 
+    insert 
+    into
+        users
+        (email, name) 
+    values
+        (?, ?)
+2025-05-28T09:17:02.901+05:30 DEBUG 13180 --- [http-nio-8080-exec-5] org.hibernate.SQL                        : 
+    insert 
+    into
+        posts
+        (content, title, user_id) 
+    values
+        (?, ?, ?)
+2025-05-28T09:17:03.651+05:30  WARN 13180 --- [http-nio-8080-exec-5] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 1146, SQLState: 42S02
+2025-05-28T09:17:03.652+05:30 ERROR 13180 --- [http-nio-8080-exec-5] o.h.engine.jdbc.spi.SqlExceptionHelper   : Table 'user_management.posts' doesn't exist
+2025-05-28T09:17:03.671+05:30 ERROR 13180 --- [http-nio-8080-exec-5] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: org.springframework.dao.InvalidDataAccessResourceUsageException: could not execute statement [Table 'user_management.posts' doesn't exist] [insert into posts (content,title,user_id) values (?,?,?)]; SQL [insert into posts (content,title,user_id) values (?,?,?)]] with root cause
+
+java.sql.SQLSyntaxErrorException: Table 'user_management.posts' doesn't exist
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:112) ~[mysql-connector-j-9.2.0.jar:9.2.0]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:114) ~[mysql-connector-j-9.2.0.jar:9.2.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:990) ~[mysql-connector-j-9.2.0.jar:9.2.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1168) ~[mysql-connector-j-9.2.0.jar:9.2.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1103) ~[mysql-connector-j-9.2.0.jar:9.2.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:1450) ~[mysql-connector-j-9.2.0.jar:9.2.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:1086) ~[mysql-connector-j-9.2.0.jar:9.2.0]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-6.3.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.0.jar:na]
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:194) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.id.insert.GetGeneratedKeysDelegate.performMutation(GetGeneratedKeysDelegate.java:116) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.jdbc.mutation.internal.MutationExecutorSingleNonBatched.performNonBatchedOperations(MutationExecutorSingleNonBatched.java:47) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.jdbc.mutation.internal.AbstractMutationExecutor.execute(AbstractMutationExecutor.java:55) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.persister.entity.mutation.InsertCoordinatorStandard.doStaticInserts(InsertCoordinatorStandard.java:194) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.persister.entity.mutation.InsertCoordinatorStandard.coordinateInsert(InsertCoordinatorStandard.java:132) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.persister.entity.mutation.InsertCoordinatorStandard.insert(InsertCoordinatorStandard.java:95) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.action.internal.EntityIdentityInsertAction.execute(EntityIdentityInsertAction.java:85) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.spi.ActionQueue.execute(ActionQueue.java:682) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.spi.ActionQueue.addResolvedEntityInsertAction(ActionQueue.java:293) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.spi.ActionQueue.addInsertAction(ActionQueue.java:274) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.spi.ActionQueue.addAction(ActionQueue.java:324) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.event.internal.AbstractSaveEventListener.addInsertAction(AbstractSaveEventListener.java:394) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.event.internal.AbstractSaveEventListener.performSaveOrReplicate(AbstractSaveEventListener.java:308) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.event.internal.AbstractSaveEventListener.performSave(AbstractSaveEventListener.java:224) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.event.internal.AbstractSaveEventListener.saveWithGeneratedId(AbstractSaveEventListener.java:136) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.event.internal.DefaultPersistEventListener.entityIsTransient(DefaultPersistEventListener.java:177) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.event.internal.DefaultPersistEventListener.persist(DefaultPersistEventListener.java:95) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.event.internal.DefaultPersistEventListener.onPersist(DefaultPersistEventListener.java:79) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.event.service.internal.EventListenerGroupImpl.fireEventOnEachListener(EventListenerGroupImpl.java:138) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.internal.SessionImpl.firePersist(SessionImpl.java:803) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.internal.SessionImpl.persist(SessionImpl.java:751) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.spi.CascadingActions$7.cascade(CascadingActions.java:295) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.spi.CascadingActions$7.cascade(CascadingActions.java:285) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.internal.Cascade.cascadeToOne(Cascade.java:570) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.internal.Cascade.cascadeAssociation(Cascade.java:492) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.internal.Cascade.cascadeProperty(Cascade.java:253) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.internal.Cascade.cascadeCollectionElements(Cascade.java:604) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.internal.Cascade.cascadeCollection(Cascade.java:534) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.internal.Cascade.cascadeAssociation(Cascade.java:495) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.internal.Cascade.cascadeProperty(Cascade.java:253) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.engine.internal.Cascade.cascade(Cascade.java:192) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.event.internal.AbstractSaveEventListener.cascadeAfterSave(AbstractSaveEventListener.java:521) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.event.internal.AbstractSaveEventListener.performSaveOrReplicate(AbstractSaveEventListener.java:320) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.event.internal.AbstractSaveEventListener.performSave(AbstractSaveEventListener.java:224) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.event.internal.AbstractSaveEventListener.saveWithGeneratedId(AbstractSaveEventListener.java:136) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.event.internal.DefaultPersistEventListener.entityIsTransient(DefaultPersistEventListener.java:177) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.event.internal.DefaultPersistEventListener.persist(DefaultPersistEventListener.java:95) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.event.internal.DefaultPersistEventListener.onPersist(DefaultPersistEventListener.java:79) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.event.internal.DefaultPersistEventListener.onPersist(DefaultPersistEventListener.java:55) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.event.service.internal.EventListenerGroupImpl.fireEventOnEachListener(EventListenerGroupImpl.java:127) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.internal.SessionImpl.firePersist(SessionImpl.java:761) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at org.hibernate.internal.SessionImpl.persist(SessionImpl.java:745) ~[hibernate-core-6.6.15.Final.jar:6.6.15.Final]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.orm.jpa.ExtendedEntityManagerCreator$ExtendedEntityManagerInvocationHandler.invoke(ExtendedEntityManagerCreator.java:364) ~[spring-orm-6.2.7.jar:6.2.7]
+	at jdk.proxy4/jdk.proxy4.$Proxy134.persist(Unknown Source) ~[na:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:320) ~[spring-orm-6.2.7.jar:6.2.7]
+	at jdk.proxy4/jdk.proxy4.$Proxy134.persist(Unknown Source) ~[na:na]
+	at org.springframework.data.jpa.repository.support.SimpleJpaRepository.save(SimpleJpaRepository.java:651) ~[spring-data-jpa-3.5.0.jar:3.5.0]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker$RepositoryFragmentMethodInvoker.lambda$new$0(RepositoryMethodInvoker.java:277) ~[spring-data-commons-3.5.0.jar:3.5.0]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.doInvoke(RepositoryMethodInvoker.java:170) ~[spring-data-commons-3.5.0.jar:3.5.0]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.invoke(RepositoryMethodInvoker.java:158) ~[spring-data-commons-3.5.0.jar:3.5.0]
+	at org.springframework.data.repository.core.support.RepositoryComposition$RepositoryFragments.invoke(RepositoryComposition.java:515) ~[spring-data-commons-3.5.0.jar:3.5.0]
+	at org.springframework.data.repository.core.support.RepositoryComposition.invoke(RepositoryComposition.java:284) ~[spring-data-commons-3.5.0.jar:3.5.0]
+	at org.springframework.data.repository.core.support.RepositoryFactorySupport$ImplementationMethodExecutionInterceptor.invoke(RepositoryFactorySupport.java:734) ~[spring-data-commons-3.5.0.jar:3.5.0]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.doInvoke(QueryExecutorMethodInterceptor.java:174) ~[spring-data-commons-3.5.0.jar:3.5.0]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.invoke(QueryExecutorMethodInterceptor.java:149) ~[spring-data-commons-3.5.0.jar:3.5.0]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.data.projection.DefaultMethodInvokingMethodInterceptor.invoke(DefaultMethodInvokingMethodInterceptor.java:69) ~[spring-data-commons-3.5.0.jar:3.5.0]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:380) ~[spring-tx-6.2.7.jar:6.2.7]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:138) ~[spring-tx-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:165) ~[spring-data-jpa-3.5.0.jar:3.5.0]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:223) ~[spring-aop-6.2.7.jar:6.2.7]
+	at jdk.proxy4/jdk.proxy4.$Proxy136.save(Unknown Source) ~[na:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.adapter.AfterReturningAdviceInterceptor.invoke(AfterReturningAdviceInterceptor.java:57) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.adapter.MethodBeforeAdviceInterceptor.invoke(MethodBeforeAdviceInterceptor.java:58) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:223) ~[spring-aop-6.2.7.jar:6.2.7]
+	at jdk.proxy4/jdk.proxy4.$Proxy136.save(Unknown Source) ~[na:na]
+	at com.example.Learn.service.UserService.saveUser(UserService.java:23) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.adapter.AfterReturningAdviceInterceptor.invoke(AfterReturningAdviceInterceptor.java:57) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.adapter.MethodBeforeAdviceInterceptor.invoke(MethodBeforeAdviceInterceptor.java:58) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:380) ~[spring-tx-6.2.7.jar:6.2.7]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728) ~[spring-aop-6.2.7.jar:6.2.7]
+	at com.example.Learn.service.UserService$$SpringCGLIB$$0.saveUser(<generated>) ~[classes/:na]
+	at com.example.Learn.controller.UserController.saveUser(UserController.java:27) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.adapter.AfterReturningAdviceInterceptor.invoke(AfterReturningAdviceInterceptor.java:57) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.adapter.MethodBeforeAdviceInterceptor.invoke(MethodBeforeAdviceInterceptor.java:58) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.7.jar:6.2.7]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728) ~[spring-aop-6.2.7.jar:6.2.7]
+	at com.example.Learn.controller.UserController$$SpringCGLIB$$0.saveUser(<generated>) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258) ~[spring-web-6.2.7.jar:6.2.7]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191) ~[spring-web-6.2.7.jar:6.2.7]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.2.7.jar:6.2.7]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:986) ~[spring-webmvc-6.2.7.jar:6.2.7]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:891) ~[spring-webmvc-6.2.7.jar:6.2.7]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.2.7.jar:6.2.7]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.2.7.jar:6.2.7]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.2.7.jar:6.2.7]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.2.7.jar:6.2.7]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.2.7.jar:6.2.7]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.41.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.2.7.jar:6.2.7]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.41.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.2.7.jar:6.2.7]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.7.jar:6.2.7]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.2.7.jar:6.2.7]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.7.jar:6.2.7]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.2.7.jar:6.2.7]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.7.jar:6.2.7]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:116) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:398) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1740) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1189) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.41.jar:10.1.41]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2025-05-28T09:18:28.302+05:30  INFO 13180 --- [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-05-28T09:18:28.308+05:30  INFO 13180 --- [Thread-5] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-28T09:18:28.338+05:30  INFO 13180 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-05-28T09:18:28.343+05:30  INFO 13180 --- [Thread-5] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-28T09:18:28.352+05:30  INFO 13180 --- [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-05-28T09:18:28.381+05:30  INFO 13180 --- [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-05-28T09:18:28.683+05:30  INFO 13180 --- [restartedMain] com.example.Learn.MappingApplication     : Starting MappingApplication using Java 21.0.6 with PID 13180 (C:\Users\Administrator\Downloads\OneToMany\Learn\target\classes started by Administrator in C:\Users\Administrator\Downloads\OneToMany\Learn)
+2025-05-28T09:18:28.686+05:30  INFO 13180 --- [restartedMain] com.example.Learn.MappingApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-05-28T09:18:29.441+05:30  INFO 13180 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-28T09:18:29.486+05:30  INFO 13180 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 43 ms. Found 2 JPA repository interfaces.
+2025-05-28T09:18:30.186+05:30  INFO 13180 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-05-28T09:18:30.188+05:30  INFO 13180 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-05-28T09:18:30.190+05:30  INFO 13180 --- [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-05-28T09:18:30.256+05:30  INFO 13180 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-05-28T09:18:30.256+05:30  INFO 13180 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1562 ms
+2025-05-28T09:18:30.521+05:30  INFO 13180 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2025-05-28T09:18:30.757+05:30  INFO 13180 --- [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5bdfdb26
+2025-05-28T09:18:30.758+05:30  INFO 13180 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2025-05-28T09:18:30.763+05:30  INFO 13180 --- [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-28T09:18:30.780+05:30  INFO 13180 --- [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-05-28T09:18:30.813+05:30  INFO 13180 --- [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-28T09:18:30.822+05:30  INFO 13180 --- [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-2)']
+	Database driver: undefined/unknown
+	Database version: 8.0.41
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-28T09:18:31.107+05:30  INFO 13180 --- [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-28T09:18:31.108+05:30  INFO 13180 --- [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-28T09:18:32.000+05:30  WARN 13180 --- [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-28T09:18:32.701+05:30  INFO 13180 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-05-28T09:18:32.740+05:30  INFO 13180 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-05-28T09:18:32.754+05:30  INFO 13180 --- [restartedMain] com.example.Learn.MappingApplication     : Started MappingApplication in 4.257 seconds (process running for 436.742)
+2025-05-28T09:18:32.760+05:30  INFO 13180 --- [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-05-28T09:18:36.557+05:30  INFO 13180 --- [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-28T09:18:36.570+05:30  INFO 13180 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-05-28T09:18:36.573+05:30  INFO 13180 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-28T09:18:36.575+05:30  INFO 13180 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2025-05-28T09:18:36.631+05:30  INFO 13180 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+2025-05-28T09:18:40.841+05:30  INFO 9932 --- [restartedMain] com.example.Learn.MappingApplication     : Starting MappingApplication using Java 21.0.6 with PID 9932 (C:\Users\Administrator\Downloads\OneToMany\Learn\target\classes started by Administrator in C:\Users\Administrator\Downloads\OneToMany\Learn)
+2025-05-28T09:18:40.847+05:30  INFO 9932 --- [restartedMain] com.example.Learn.MappingApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-05-28T09:18:40.992+05:30  INFO 9932 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-28T09:18:40.993+05:30  INFO 9932 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-28T09:18:42.941+05:30  INFO 9932 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-28T09:18:43.104+05:30  INFO 9932 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 137 ms. Found 2 JPA repository interfaces.
+2025-05-28T09:18:44.978+05:30  INFO 9932 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-05-28T09:18:45.017+05:30  INFO 9932 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-05-28T09:18:45.018+05:30  INFO 9932 --- [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-05-28T09:18:45.130+05:30  INFO 9932 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-05-28T09:18:45.132+05:30  INFO 9932 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 4136 ms
+2025-05-28T09:18:45.753+05:30  INFO 9932 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-05-28T09:18:46.648+05:30  INFO 9932 --- [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@64b930c0
+2025-05-28T09:18:46.653+05:30  INFO 9932 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-05-28T09:18:46.753+05:30  INFO 9932 --- [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-28T09:18:46.949+05:30  INFO 9932 --- [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.15.Final
+2025-05-28T09:18:47.073+05:30  INFO 9932 --- [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-05-28T09:18:47.895+05:30  INFO 9932 --- [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-28T09:18:48.148+05:30  INFO 9932 --- [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.41
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-28T09:18:50.192+05:30  INFO 9932 --- [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-28T09:18:50.197+05:30  INFO 9932 --- [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-28T09:18:51.524+05:30  WARN 9932 --- [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-28T09:18:52.953+05:30  INFO 9932 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-05-28T09:18:53.039+05:30  INFO 9932 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-05-28T09:18:53.060+05:30  INFO 9932 --- [restartedMain] com.example.Learn.MappingApplication     : Started MappingApplication in 13.496 seconds (process running for 14.661)
+2025-05-28T09:19:14.238+05:30  INFO 9932 --- [http-nio-8080-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-28T09:19:14.239+05:30  INFO 9932 --- [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-05-28T09:19:14.242+05:30  INFO 9932 --- [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-05-28T09:19:14.830+05:30  INFO 9932 --- [http-nio-8080-exec-2] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : saveUser, Arguments : [UserDTO(name=Sakib, email=sakib@gmail.com, posts=[PostDTO(title=graduate, content=Alhamdulillah graduated), PostDTO(title=new job, content=Alhamdulillah for new beginning)])]
+2025-05-28T09:19:14.853+05:30  INFO 9932 --- [http-nio-8080-exec-2] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : saveUser, Arguments : [UserDTO(name=Sakib, email=sakib@gmail.com, posts=[PostDTO(title=graduate, content=Alhamdulillah graduated), PostDTO(title=new job, content=Alhamdulillah for new beginning)])]
+2025-05-28T09:19:14.854+05:30  INFO 9932 --- [http-nio-8080-exec-2] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : toEntity, Arguments : [UserDTO(name=Sakib, email=sakib@gmail.com, posts=[PostDTO(title=graduate, content=Alhamdulillah graduated), PostDTO(title=new job, content=Alhamdulillah for new beginning)])]
+2025-05-28T09:19:14.856+05:30  INFO 9932 --- [http-nio-8080-exec-2] com.example.Learn.aop.LoggingAspect      : [Response] Method : toEntity, Response : User(id=null, name=Sakib, email=sakib@gmail.com)
+2025-05-28T09:19:14.860+05:30  INFO 9932 --- [http-nio-8080-exec-2] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : save, Arguments : [User(id=null, name=Sakib, email=sakib@gmail.com)]
+2025-05-28T09:19:14.984+05:30 DEBUG 9932 --- [http-nio-8080-exec-2] org.hibernate.SQL                        : 
+    insert 
+    into
+        users
+        (email, name) 
+    values
+        (?, ?)
+2025-05-28T09:19:15.146+05:30 DEBUG 9932 --- [http-nio-8080-exec-2] org.hibernate.SQL                        : 
+    insert 
+    into
+        posts
+        (content, title, user_id) 
+    values
+        (?, ?, ?)
+2025-05-28T09:19:15.163+05:30 DEBUG 9932 --- [http-nio-8080-exec-2] org.hibernate.SQL                        : 
+    insert 
+    into
+        posts
+        (content, title, user_id) 
+    values
+        (?, ?, ?)
+2025-05-28T09:19:15.171+05:30  INFO 9932 --- [http-nio-8080-exec-2] com.example.Learn.aop.LoggingAspect      : [Response] Method : save, Response : User(id=1, name=Sakib, email=sakib@gmail.com)
+2025-05-28T09:19:15.172+05:30  INFO 9932 --- [http-nio-8080-exec-2] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : toDTO, Arguments : [User(id=1, name=Sakib, email=sakib@gmail.com)]
+2025-05-28T09:19:15.172+05:30  INFO 9932 --- [http-nio-8080-exec-2] com.example.Learn.aop.LoggingAspect      : [Response] Method : toDTO, Response : UserDTO(name=Sakib, email=sakib@gmail.com, posts=[PostDTO(title=graduate, content=Alhamdulillah graduated), PostDTO(title=new job, content=Alhamdulillah for new beginning)])
+2025-05-28T09:19:15.173+05:30  INFO 9932 --- [http-nio-8080-exec-2] com.example.Learn.aop.LoggingAspect      : [Response] Method : saveUser, Response : UserDTO(name=Sakib, email=sakib@gmail.com, posts=[PostDTO(title=graduate, content=Alhamdulillah graduated), PostDTO(title=new job, content=Alhamdulillah for new beginning)])
+2025-05-28T09:19:15.237+05:30  INFO 9932 --- [http-nio-8080-exec-2] com.example.Learn.aop.LoggingAspect      : [Response] Method : saveUser, Response : <201 CREATED Created,UserDTO(name=Sakib, email=sakib@gmail.com, posts=[PostDTO(title=graduate, content=Alhamdulillah graduated), PostDTO(title=new job, content=Alhamdulillah for new beginning)]),[]>
+2025-05-28T09:23:23.922+05:30  INFO 9932 --- [http-nio-8080-exec-5] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : saveUser, Arguments : [UserDTO(name=Maaz, email=maaz@gmail.com, posts=[])]
+2025-05-28T09:23:23.924+05:30  INFO 9932 --- [http-nio-8080-exec-5] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : saveUser, Arguments : [UserDTO(name=Maaz, email=maaz@gmail.com, posts=[])]
+2025-05-28T09:23:23.924+05:30  INFO 9932 --- [http-nio-8080-exec-5] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : toEntity, Arguments : [UserDTO(name=Maaz, email=maaz@gmail.com, posts=[])]
+2025-05-28T09:23:23.925+05:30  INFO 9932 --- [http-nio-8080-exec-5] com.example.Learn.aop.LoggingAspect      : [Response] Method : toEntity, Response : User(id=null, name=Maaz, email=maaz@gmail.com)
+2025-05-28T09:23:23.925+05:30  INFO 9932 --- [http-nio-8080-exec-5] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : save, Arguments : [User(id=null, name=Maaz, email=maaz@gmail.com)]
+2025-05-28T09:23:23.926+05:30 DEBUG 9932 --- [http-nio-8080-exec-5] org.hibernate.SQL                        : 
+    insert 
+    into
+        users
+        (email, name) 
+    values
+        (?, ?)
+2025-05-28T09:23:23.930+05:30  INFO 9932 --- [http-nio-8080-exec-5] com.example.Learn.aop.LoggingAspect      : [Response] Method : save, Response : User(id=2, name=Maaz, email=maaz@gmail.com)
+2025-05-28T09:23:23.931+05:30  INFO 9932 --- [http-nio-8080-exec-5] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users, Method : toDTO, Arguments : [User(id=2, name=Maaz, email=maaz@gmail.com)]
+2025-05-28T09:23:23.932+05:30  INFO 9932 --- [http-nio-8080-exec-5] com.example.Learn.aop.LoggingAspect      : [Response] Method : toDTO, Response : UserDTO(name=Maaz, email=maaz@gmail.com, posts=[])
+2025-05-28T09:23:23.932+05:30  INFO 9932 --- [http-nio-8080-exec-5] com.example.Learn.aop.LoggingAspect      : [Response] Method : saveUser, Response : UserDTO(name=Maaz, email=maaz@gmail.com, posts=[])
+2025-05-28T09:23:23.942+05:30  INFO 9932 --- [http-nio-8080-exec-5] com.example.Learn.aop.LoggingAspect      : [Response] Method : saveUser, Response : <201 CREATED Created,UserDTO(name=Maaz, email=maaz@gmail.com, posts=[]),[]>
+2025-05-28T09:24:43.499+05:30  INFO 9932 --- [http-nio-8080-exec-7] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users/2/posts, Method : savePost, Arguments : [2, PostDTO(title=job, content=Alhamdulillah for new job)]
+2025-05-28T09:24:43.503+05:30  INFO 9932 --- [http-nio-8080-exec-7] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users/2/posts, Method : savePost, Arguments : [2, PostDTO(title=job, content=Alhamdulillah for new job)]
+2025-05-28T09:24:43.505+05:30  INFO 9932 --- [http-nio-8080-exec-7] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users/2/posts, Method : findById, Arguments : [2]
+2025-05-28T09:24:43.555+05:30 DEBUG 9932 --- [http-nio-8080-exec-7] org.hibernate.SQL                        : 
+    select
+        u1_0.id,
+        u1_0.email,
+        u1_0.name 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+2025-05-28T09:24:43.584+05:30  INFO 9932 --- [http-nio-8080-exec-7] com.example.Learn.aop.LoggingAspect      : [Response] Method : findById, Response : Optional[User(id=2, name=Maaz, email=maaz@gmail.com)]
+2025-05-28T09:24:43.584+05:30  INFO 9932 --- [http-nio-8080-exec-7] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users/2/posts, Method : toEntity, Arguments : [PostDTO(title=job, content=Alhamdulillah for new job)]
+2025-05-28T09:24:43.585+05:30  INFO 9932 --- [http-nio-8080-exec-7] com.example.Learn.aop.LoggingAspect      : [Response] Method : toEntity, Response : Post(id=null, title=job, content=Alhamdulillah for new job)
+2025-05-28T09:24:43.587+05:30  INFO 9932 --- [http-nio-8080-exec-7] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users/2/posts, Method : save, Arguments : [Post(id=null, title=job, content=Alhamdulillah for new job)]
+2025-05-28T09:24:43.589+05:30 DEBUG 9932 --- [http-nio-8080-exec-7] org.hibernate.SQL                        : 
+    insert 
+    into
+        posts
+        (content, title, user_id) 
+    values
+        (?, ?, ?)
+2025-05-28T09:24:43.593+05:30  INFO 9932 --- [http-nio-8080-exec-7] com.example.Learn.aop.LoggingAspect      : [Response] Method : save, Response : Post(id=3, title=job, content=Alhamdulillah for new job)
+2025-05-28T09:24:43.594+05:30  INFO 9932 --- [http-nio-8080-exec-7] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : POST, URL : /api/v1/users/2/posts, Method : toDTO, Arguments : [Post(id=3, title=job, content=Alhamdulillah for new job)]
+2025-05-28T09:24:43.595+05:30  INFO 9932 --- [http-nio-8080-exec-7] com.example.Learn.aop.LoggingAspect      : [Response] Method : toDTO, Response : PostDTO(title=job, content=Alhamdulillah for new job)
+2025-05-28T09:24:43.596+05:30  INFO 9932 --- [http-nio-8080-exec-7] com.example.Learn.aop.LoggingAspect      : [Response] Method : savePost, Response : PostDTO(title=job, content=Alhamdulillah for new job)
+2025-05-28T09:24:43.613+05:30  INFO 9932 --- [http-nio-8080-exec-7] com.example.Learn.aop.LoggingAspect      : [Response] Method : savePost, Response : <201 CREATED Created,PostDTO(title=job, content=Alhamdulillah for new job),[]>
+2025-05-28T09:26:16.534+05:30  INFO 9932 --- [http-nio-8080-exec-1] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : GET, URL : /api/v1/users/2, Method : findUserById, Arguments : [2]
+2025-05-28T09:26:16.535+05:30  INFO 9932 --- [http-nio-8080-exec-1] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : GET, URL : /api/v1/users/2, Method : findUserById, Arguments : [2]
+2025-05-28T09:26:16.535+05:30  INFO 9932 --- [http-nio-8080-exec-1] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : GET, URL : /api/v1/users/2, Method : findById, Arguments : [2]
+2025-05-28T09:26:16.550+05:30 DEBUG 9932 --- [http-nio-8080-exec-1] org.hibernate.SQL                        : 
+    select
+        u1_0.id,
+        u1_0.email,
+        u1_0.name 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+2025-05-28T09:26:16.556+05:30  INFO 9932 --- [http-nio-8080-exec-1] com.example.Learn.aop.LoggingAspect      : [Response] Method : findById, Response : Optional[User(id=2, name=Maaz, email=maaz@gmail.com)]
+2025-05-28T09:26:16.556+05:30  INFO 9932 --- [http-nio-8080-exec-1] com.example.Learn.aop.LoggingAspect      : [Request] RequestType : GET, URL : /api/v1/users/2, Method : toDTO, Arguments : [User(id=2, name=Maaz, email=maaz@gmail.com)]
+2025-05-28T09:26:16.563+05:30 DEBUG 9932 --- [http-nio-8080-exec-1] org.hibernate.SQL                        : 
+    select
+        p1_0.user_id,
+        p1_0.id,
+        p1_0.content,
+        p1_0.title 
+    from
+        posts p1_0 
+    where
+        p1_0.user_id=?
+2025-05-28T09:26:16.577+05:30  INFO 9932 --- [http-nio-8080-exec-1] com.example.Learn.aop.LoggingAspect      : [Response] Method : toDTO, Response : UserDTO(name=Maaz, email=maaz@gmail.com, posts=[PostDTO(title=job, content=Alhamdulillah for new job)])
+2025-05-28T09:26:16.578+05:30  INFO 9932 --- [http-nio-8080-exec-1] com.example.Learn.aop.LoggingAspect      : [Response] Method : findUserById, Response : UserDTO(name=Maaz, email=maaz@gmail.com, posts=[PostDTO(title=job, content=Alhamdulillah for new job)])
+2025-05-28T09:26:16.578+05:30  INFO 9932 --- [http-nio-8080-exec-1] com.example.Learn.aop.LoggingAspect      : [Response] Method : findUserById, Response : <200 OK OK,UserDTO(name=Maaz, email=maaz@gmail.com, posts=[PostDTO(title=job, content=Alhamdulillah for new job)]),[]>

@@ -1,0 +1,50 @@
+Event Binding () :
+
+Note : One way binding from the  view  to the component
+
+---------
+
+Example 1:
+// app.component.ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  inputValue = '';
+
+  onInputChange(event: any) {
+    this.inputValue = event.target.value;
+  }
+}
+
+---------
+
+<!-- app.component.html -->
+<input (input)="onInputChange($event)" placeholder="Type something">
+<p>You typed: {{ inputValue }}</p>
+
+======================================================================
+
+Example 2:
+// app.component.ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  onButtonClick() {
+    console.log('Button clicked!');
+  }
+}
+
+--------
+
+<!-- app.component.html -->
+<button (click)="onButtonClick()">Click me</button>

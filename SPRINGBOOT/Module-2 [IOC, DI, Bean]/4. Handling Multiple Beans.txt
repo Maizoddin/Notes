@@ -1,0 +1,24 @@
+If multiple beans of the same type exist, Spring cannot decide which one to inject.
+
+Solutions:
+* @Qualifier Annotation (Specifies the exact bean to inject)
+* @Primary Annotation (Sets a default bean)
+
+Example using @Qualifier :
+@Autowired
+public DemoController(@Qualifier("hockeyCoach") Coach coach) {
+    this.coach = coach;
+}
+
+
+Example using @Primary :
+@Primary
+@Component
+public class CricketCoach implements Coach {
+    @Override
+    public String getDailyWorkout() {
+        return "Practice batting for 30 minutes.";
+    }
+}
+
+Note : Here, CricketCoach is the default bean unless specified otherwise using @Qualifier.

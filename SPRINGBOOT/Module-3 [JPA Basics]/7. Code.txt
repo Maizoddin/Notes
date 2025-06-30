@@ -1,0 +1,333 @@
+Main :
+package com.example.demo;
+
+import com.example.demo.service.StudentService;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+@SpringBootApplication
+public class DemoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+
+    @Bean
+    public CommandLineRunner commandLineRunner(StudentService studentService) {
+        return (args) -> {
+            System.out.println("CommandLine Runner");
+            studentService.createStudent("Saniya", "Chikkodi", "sakib@gmail.com");
+//            studentService.findStudentById();
+
+//            studentService.updateStudentEmail();
+//            studentService.updateStudentName();
+//            studentService.deleteStudent();
+            studentService.findAllStudents();
+        };
+    }
+
+
+}
+
+
+--------------------------------------------------------------
+
+entity 
+ Student.java
+
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "student")
+public class Student {
+
+    //    Create variables/fields
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    @Column(unique = true)
+    private String email;
+
+    @Column(name="address")
+    private String address;
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    // Define no argument constructor
+    public Student() {
+    }
+
+    //    Parameterised constructor
+    public Student(String firstName, String lastName, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
+
+    //    Define getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+}
+
+--------------------------------------
+
+repository
+ StudentRepository :
+
+package com.example.demo.repository;
+
+import com.example.demo.entity.Student;
+
+import java.util.List;
+
+public interface StudentRepository {
+    void save(Student student);
+    Student findById(Long id);
+    List<Student> findAll();
+    Student updateEmail(Long id, String email);
+
+    void updateName(Long id, String name);
+
+    void delete(Long id);
+
+}
+
+---------------------------
+
+repository
+ StudentRepositoryImpl :
+
+ package com.example.demo.repository;
+
+import com.example.demo.entity.Student;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public class StudentRepositoryImpl implements StudentRepository {
+    EntityManager entityManager;
+
+    @Autowired
+    public StudentRepositoryImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+    @Override
+    @Transactional
+    public void save(Student student) {
+        entityManager.persist(student);
+    }
+
+    @Override
+    public Student findById(Long id) {
+        return entityManager.find(Student.class, id);
+    }
+
+    @Override
+    public List<Student> findAll() {
+        String query = "SELECT s FROM Student s";
+        List<Student> students = entityManager.createQuery(query, Student.class).getResultList();
+        return students;
+    }
+
+//    UPDATE USING ENTITYMANAGER MERGE FUNCTION
+    @Override
+    @Transactional
+    public Student updateEmail(Long id,String email){
+        Student student = entityManager.find(Student.class, id);
+        student.setEmail(email);
+        Student updatedStudent = entityManager.merge(student);
+        return updatedStudent;
+    }
+
+//   UPDATE USING JPQL
+    @Override
+    @Transactional
+    public void updateName(Long id, String name){
+        String jpql = "UPDATE Student s SET firstName = :name WHERE id = :id";
+            Query query = entityManager.createQuery(jpql);
+            query.setParameter("id", id);
+            query.setParameter("name", name);
+            int affectedRowsCount = query.executeUpdate();
+    }
+
+//    DELETE USING ENTITYMANAGER
+//    @Transactional
+//    public void delete(Long id){
+//        Student student = entityManager.find(Student.class, id);
+//        entityManager.remove(student);
+//    }
+
+//    DELETE USING JPQL
+    @Transactional
+    public void delete(Long id){
+        String jpql = "DELETE FROM Student s WHERE id = :id";
+        Query query = entityManager.createQuery(jpql);
+        query.setParameter("id", id);
+        query.executeUpdate();
+    }
+
+
+}
+
+--------------------
+
+service 
+ StudentService :
+package com.example.demo.service;
+
+
+public interface StudentService {
+
+    void createStudent(String firstName, String lastName, String email);
+
+    void findStudentById();
+
+    void findAllStudents();
+
+    void updateStudentEmail();
+
+    void updateStudentName();
+
+    void deleteStudent();
+}
+
+-------------------
+
+service
+  StudentServiceImpl.java
+
+package com.example.demo.service;
+
+import com.example.demo.entity.Student;
+import com.example.demo.repository.StudentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class StudentServiceImpl implements StudentService {
+
+    private StudentRepository studentRepository;
+
+    @Autowired
+    public StudentServiceImpl(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
+
+    @Override
+    public void createStudent(String firstName, String lastName, String email) {
+        Student student = new Student(firstName, lastName, email);
+        studentRepository.save(student);
+        System.out.println("Student Created with ID : " + student.getId());
+    }
+
+    @Override
+    public void findStudentById(){
+        Student student = studentRepository.findById(2L);
+        System.out.println(student);
+    }
+
+    @Override
+    public void findAllStudents(){
+        List<Student> students = studentRepository.findAll();
+        for(Student student:students){
+            System.out.println(student);
+        }
+    }
+
+    @Override
+    public void updateStudentEmail(){
+        Long id = 2L;
+        String newEmail = "maizoddin@gmail.com";
+        Student updatedStudent = studentRepository.updateEmail(id, newEmail);
+        System.out.println(updatedStudent);
+    }
+
+    @Override
+    public void updateStudentName(){
+        Long id = 2L;
+        String name = "Maizoddin";
+        studentRepository.updateName(id, name);
+    }
+
+    @Override
+    public void deleteStudent(){
+        studentRepository.delete(1L);
+    }
+}
+
+-------------------------
+
+Structure :
+
+src/main/java/com/example/demo
+│── entity/                # Entity classes
+│── repository/            # JPA Repository interfaces
+│── service/               # Business logic layer
+│── controller/            # REST Controllers
+│── config/                # Configuration classes
+└── DemoApplication.java   # Main Spring Boot Application

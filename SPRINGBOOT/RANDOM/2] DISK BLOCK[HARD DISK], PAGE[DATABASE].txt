@@ -1,0 +1,74 @@
+Disk Block :
+* A disk block is the smallest unit of data that the file system uses for read/write.
+* On most systems, it is typically 4KB.
+* This is hardware-managed and relates to how the OS fetches data from disk.
+
+==========================================================================================
+
+InnoDB Page :
+* MySQL InnoDB stores data in units called pages.
+* Default size = 16KB.
+* A single InnoDB page consists of 4 disk blocks
+  [4 × 4KB = 16KB]
+
+==========================================================================================
+
+Rows Per Page :
+* Let’s say each row is ~400 bytes.
+* One 16KB page can roughly hold:
+  [16KB / 400B ≈ 40 rows per page]
+
+┌──────────────────────────────┐
+│ Header (Metadata)            │
+├──────────────────────────────┤
+│ Row 1: ID=1, Name="Alice"... │
+├──────────────────────────────┤
+│ Row 2: ID=2, Name="Bob"...   │
+├──────────────────────────────┤
+│ ...                          │
+├──────────────────────────────┤
+│ Row 40: ID=40, Name="Zack"...│
+├──────────────────────────────┤
+│ Slot Array [offset1, offset2]│
+└──────────────────────────────┘
+
+┌───────────────────────┐
+│      Disk Block 1     │ ← 4KB
+│ (Page 1: Part 1)      │
+├───────────────────────┤
+│      Disk Block 2     │ ← 4KB
+│ (Page 1: Part 2)      │
+├───────────────────────┤
+│      Disk Block 3     │ ← 4KB
+│ (Page 1: Part 3)      │
+├───────────────────────┤
+│      Disk Block 4     │ ← 4KB
+│ (Page 1: Part 4)      │
+└───────────────────────┘  = 1 full 16KB database page
+
+IMPORTANT :
+1 Page (16KB) = 4 Disk Blocks (4KB each)
+
+==========================================================================================
+
+Buffer Pool (RAM) :
+* Acts as an in-memory cache for disk pages.
+* Frequently accessed pages stay here.
+* Reduces disk I/O, improves speed.
+* When memory is full, Least Recently Used (LRU) pages are evicted.
+* Dirty pages (modified pages) are flushed back to disk periodically or during commits.
+
+==========================================================================================
+
+Disk to RAM Data Movement :
+Yes, whenever you operate (SELECT, UPDATE, INSERT, DELETE):
+Entire 16KB Page (not just a row) is:
+ * Loaded from Disk (4 blocks) to Buffer Pool (RAM).
+ * Modified there.
+ * Written back as a whole if dirty.
+
+
+
+
+
+

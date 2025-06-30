@@ -1,0 +1,50 @@
+Example :
+
+.ts
+
+import { Component } from '@angular/core';
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
+})
+export class AppComponent {
+  course: string = 'Angular';
+  price: number = 17000;
+  start: Date = new Date('2024-01-08');
+  score: number = 250;
+  totalScore: number = 300;
+}
+
+--------------------------------------------------
+
+.html
+
+<h1>{{ course | uppercase }}</h1>
+
+<!-- LowerCase -->
+<h1>{{ course | lowercase }}</h1>
+
+<!-- TitleCase -->
+<h1>{{ course | titlecase }}</h1>
+
+<!-- Slice -->
+<h1>{{ course | slice : 0 : 5 }}</h1>
+
+<!-- Date -->
+<h1>{{ start | date : "fullDate" }}</h1>
+<!-- Here we can use different types of options  -->
+
+<!-- Decimal -->
+<h1>{{ price | number : "5.2-4" }}</h1>
+<!-- 5=digits before decimal point, 2=min digits after decimal point, 4=max digit after decimal point -->
+
+<!-- Currency -->
+<h1>{{ price | currency : "INR" : "symbol" }}</h1>
+<h2>{{ price | currency : "USD" : "code" }}</h2>
+
+<!-- Percent -->
+<h1>{{ score / totalScore | percent }}</h1>
+<!-- It multiplies the result with 100 and appends % -->
+
+<!-- async pipe -->

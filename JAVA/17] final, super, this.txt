@@ -1,0 +1,111 @@
+final :
+
+We can use it with class, method, variables.
+
+
+Variables: 
+* final variable's value can't be changed.
+* final variable's can't be left uninitialized.
+* final variable's are blank bydefault.
+* for non-static final variable's we can either initialize ( during declaration || inside constructor || inside initialization block ).   
+  for static final variable's we can either initialize (during declaration || inside static initialization block).
+
+Methods :
+* final method's can't be overridden. but can be overloaded.
+
+
+Class :
+* final class can't be inherited.
+
+============================
+
+super :
+super keyword is used to refer to parent class instance members.
+Important :
+* The key is that super is resolved based on where it is used in the code, not based on the actual object type at runtime. 
+* super is resolved based on where it is used in the code (statically).  This is because super is a keyword that's directly tied to the compile-time definition of the class where it's used.  It's not affected by the actual object type at runtime.
+=============================
+this :
+this keyword is used to refer to current object.
+Important :
+* this is resolved based on the actual object type at runtime (dynamically). This is a key aspect of polymorphism. this always refers to the most specific object instance at the time of the method call.
+
+================================
+Summary :
+super binding happens at compile time.
+this binding happens at run time
+Important : binding for private members happens at compile time
+Example:
+
+public class Test {
+    public static void main(String args[]) {
+        Child c = new Child();
+        c.start();
+    }
+}
+
+class GrandParent {
+    public void run() {
+        System.out.println("GrandParent Run");
+    }
+}
+
+class Parent extends GrandParent {
+    public void run() {
+        System.out.println("Parent Run");
+    }
+
+    public void start() {
+        this.run();    // Calls Child.run()
+        super.run();  // Calls GrandParent.run()
+    }
+}
+
+class Child extends Parent {
+    public void run() {
+        System.out.println("Child Run");
+    }
+}
+
+
+Output :
+
+Child Run
+GrandParent Run
+
+
+
+=================================================
+
+Binding of private members :
+
+
+class Parent {
+    public void run() {
+        System.out.println("Run");
+        this.suspense();
+    }
+
+    private void suspense() {
+        System.out.println("Parent Suspense");
+    }
+}
+
+class Child extends Parent {
+    public void suspense() {
+        System.out.println("Child Suspense");
+    }
+}
+
+
+
+ public static void main(String[] args) {
+        Child c = new Child();
+        c.run();
+    }
+
+Output :
+Run
+Parent Suspense
+
+Note : Even though "this" inside run points to child but due to private access specifier the binding for that method has already happened at compile time only. 

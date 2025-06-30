@@ -1,0 +1,75 @@
+The N+1 Problem occurs when:
+You run 1 query to fetch a list of parent entities, and then for each parent, Hibernate runs 1 extra query to fetch associated child data.
+Total = 1 (initial query) + N (child queries) = N+1 queries
+
+Scenario: Blog Platform with Posts and Comments
+Entities:
+ Post (1 post)
+ Comment (N comments per post)
+Relationship: One-to-Many (1 Post → N Comments)
+
+Entity :
+@Entity
+public class Post {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String title;
+    
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
+}
+
+@Entity
+public class Comment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String content;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Post post;
+}
+
+
+Service :
+@Transactional
+public void printAllPostsWithComments() {
+    List<Post> posts = postRepository.findAll();  // 1 query: get all posts
+    
+    for (Post post : posts) {
+        System.out.println("Post: " + post.getTitle());
+        for (Comment comment : post.getComments()) {  // N queries: get comments for each post
+            System.out.println("- Comment: " + comment.getContent());
+        }
+    }
+}
+
+
+SQL :
+-- Query 1: Get all posts
+SELECT id, title FROM post;
+
+-- Query 2: Get comments for post_id=1
+SELECT id, content, post_id FROM comment WHERE post_id = 1;
+
+-- Query 3: Get comments for post_id=2
+SELECT id, content, post_id FROM comment WHERE post_id = 2;
+
+-- ... (N additional queries)
+
+----------------------------------------------------------------------
+
+SOLUTION :
+1. JOIN FETCH in JPQL (Recommended)
+
+public interface PostRepository extends JpaRepository<Post, Long> {
+    @Query("SELECT p FROM Post p LEFT JOIN FETCH p.comments")
+    List<Post> findAllWithComments();
+}
+
+SQL : SELECT  p.id, p.title, c.id, c.content FROM post p LEFT JOIN comment c ON p.id = c.post_id
+
+
+
+

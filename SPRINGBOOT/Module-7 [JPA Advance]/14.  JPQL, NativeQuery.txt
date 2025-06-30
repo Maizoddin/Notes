@@ -1,0 +1,119 @@
+JPQL (Java Persistence Query Language) :
+
+* JPQL is an object-oriented query language defined in JPA (Java Persistence API).
+* Unlike SQL which works on tables and columns, JPQL works on Java entity classes and their fields.
+* Same JPQL works for MySQL, PostgreSQL, etc.
+* IT SUPPORTS SELECT, UPDATE, DELETE. BUT DOES NOT SUPPORT INSERT.
+
+SIMPLE QUERY :
+
+* WITH ENTITY
+   @Query("SELECT s FROM Student s")
+    List<Student> findStudents();
+
+* WITH DTO [BY USING CONSTRUCTOR]
+  @Query("SELECT new com.example.Learn.dto.StudentDTO(s.name, s.email) FROM Student s WHERE s.email = :email")
+  List<StudentDTO> findByEmail(@Param("email") String email);
+
+
+JOIN :
+Note : IF WE USE JOIN THEN IT WILL RETURN ARRAY OF TYPE OBJECT FOR EACH ROW.
+
+ Repository :
+ @Query("SELECT u.name, p.bio FROM User u JOIN u.profile p")
+ List<Object[]> findUserWithProfile();
+
+ Service :
+ public List<UserProfileDTO> findUserWithProfile() {
+        List<Object[]> users = repository.findUserWithProfile();
+        List<UserProfileDTO> userDTOList = new ArrayList<>();
+        users.stream().map((user) -> {
+            return userDTOList.add(new UserProfileDTO((String) user[0], (String) user[1]));
+        }).collect(Collectors.toList());
+        return userDTOList;
+  }
+
+
+WE CAN ALSO CREATE DTO INTERFACE WITH JUST GETTER METHODS AND JPA WILL DO THE PROJECTION BY MATCHING FEILD NAMES.
+USE ALIAS TO MATCH THE EXACT NAMES.
+EXAMPLE 1:
+DTO ::
+public interface UserDTO {
+    String getName(); 
+    String getEmail();
+}
+
+REPOSITORY ::
+@Query("SELECT u.name AS name, u.email AS email FROM User u")
+List<UserDTO> findAllUsers();  
+
+
+EXAMPLE 2:
+DTO ::
+public interface UserDetailsDTO {
+    String getName();
+    String getBio();
+}
+
+REPOSITORY ::
+@Query("SELECT u.name AS name, p.bio AS bio FROM User u JOIN u.profile p")
+List<UserDetailsDTO> findUserWithProfile();
+
+
+FOR UPDATE AND DELETE IT RETURNS NUMBER OF ROWS AFFECTED.
+USE  @Modifying
+
+
+EXAMPLE :
+ @Modifying
+ @Query("DELETE FROM User u WHERE u.id = :id")
+ int deleteUserById(@Param("id") Long id);
+
+
+Note : FOR PAGINATION ALSO DTO PROJECTION WORKS [USING CONSTRUCTOR IN QUERY, DTO INTERFACE WITH GETTERS]
+
+---------------------------------------------------
+
+NATIVE SQL QUERY :
+NOTE : JPQL IS RECOMMENDED OVER NATIVE SQL QUERY.
+IT DOESN'T SUPPORT AUTO DTO PROJECTION OR CONSTRUCTOR PROJECTION IN QUERY USING NEW.
+IF WE WANT TO CONVERT TO DTO THEN WE SHOULD DO IT IN THE SERVICE LAYER.
+INSERT, UPDATE, DELETE, SELECT ALL QUERIES ARE SUPPORTED BY NATIVE QUERY.
+
+EXAMPLE :
+@Query(value = "SELECT * FROM users", nativeQuery = true)
+
+NOTE :
+NATIVE QUERY SUPPORTS Spring Data Projections (interface-based) BUT IT DOES NOT SUPPORT THE new keyword or constructor projection directly INSIDE THE QUERY.
+
+WHEN USING PAGINATION ITS GOOD PRACTICE TO PROVIDE COUNT QUERY MANUALLY.
+
+EXAMPLE :
+
+DTO :
+public interface UserAddressProjection {
+    String getName();
+    String getEmail();
+    String getCity();
+}
+
+REPOSITORY :
+@Query(
+    value = """
+        SELECT u.name AS name, u.email AS email, a.city AS city
+        FROM users u
+        JOIN address a ON u.address_id = a.id
+        WHERE a.country = :country
+        """,
+    countQuery = """
+        SELECT COUNT(*) 
+        FROM users u
+        JOIN address a ON u.address_id = a.id
+        WHERE a.country = :country
+        """,
+    nativeQuery = true
+)
+Page<UserAddressProjection> fetchUserAddressByCountry(
+    @Param("country") String country,
+    Pageable pageable
+);

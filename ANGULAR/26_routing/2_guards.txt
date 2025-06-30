@@ -1,0 +1,177 @@
+Note : For class based approach @Injectable is needed and not needed for funcional approach
+
+1] CanActivate :
+
+app.routing.module.ts
+
+  {
+    path: 'product/:id',
+    component: DetailsComponent,
+    canActivate: [CanActivateGuard],
+  }
+
+------------------------------------------------
+canActivate.guard.ts
+
+import {
+  ActivatedRouteSnapshot,
+  CanActivateFn,
+  Router,
+  RouterStateSnapshot,
+} from '@angular/router';
+import { Observable } from 'rxjs';
+import { AuthService } from '../services/auth.service';
+import { inject } from '@angular/core';
+
+export const CanActivateGuard: CanActivateFn = (
+  route: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot
+): boolean | Observable<boolean> | Promise<boolean> => {
+  const authService: AuthService = inject(AuthService);
+  const router: Router = inject(Router);
+  return authService.authenticate().then((res) => {
+    if (res) {
+      return true;
+    } else {
+      router.navigate(['/login']);
+      return false;
+    }
+  });
+};
+
+------------------------------------------------
+auth.service.ts
+
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AuthService {
+  loggedIn: boolean = false;
+
+  authenticate() {
+    const authPromise = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(this.loggedIn);
+      }, 250);
+    });
+    return authPromise;
+  }
+
+  login() {
+    this.loggedIn = true;
+  }
+
+  logout() {
+    this.loggedIn = false;
+  }
+}
+
+
+============================================================
+
+2] CanActivateChild :
+
+routing.module.ts
+{
+    path: 'parent',
+    canActivateChild: [AuthGuard], // Apply the AuthGuard to child routes of 'parent'
+    children: [
+      // Child route configurations
+    ]
+  }
+
+canActivateChild.guard.ts
+
+import { ActivatedRouteSnapshot, CanActivateChildFn, RouterStateSnapshot, Router } from '@angular/router';
+
+export const canActivateChild: CanActivateChildFn = (
+  route: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot
+): Observable<boolean> => {
+  
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if(loggedIn) return true;
+  else return false
+};
+
+
+
+============================================================
+3] CanDeactivate :
+
+canDeactivate.guard.ts
+import { Injectable } from '@angular/core';
+import { CanDeactivate } from '@angular/router';
+import { Observable } from 'rxjs';
+
+export interface CanComponentDeactivate {
+  canExit: () => Observable<boolean> | Promise<boolean> | boolean;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class CanDeactivateGuard implements CanDeactivate<CanComponentDeactivate> {
+  canDeactivate(component: CanComponentDeactivate): Observable<boolean> | Promise<boolean> | boolean {
+    return component.canExit();
+  }
+}
+
+------------
+
+.component.ts
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
+
+@Component({
+  selector: 'app-signup',
+  templateUrl: './signup.component.html',
+  styleUrls: ['./signup.component.css'],
+})
+export class SignupComponent {
+  @ViewChild('formRef') ref: NgForm;
+  submit: boolean = false;
+  canExit() {
+    if (this.ref.dirty && !this.submit) {
+      return confirm('Do you want to leave?');
+    } else {
+      return true;
+    }
+  }
+  onSubmit() {
+    this.submit = true;
+  }
+}
+
+-------------
+
+.html
+<div class="container">
+  <form #formRef="ngForm" (ngSubmit)="onSubmit()">
+    <div class="feild">
+      <label for="name">Name : </label>
+      <input type="text" id="name" name="Name" ngModel />
+    </div>
+    <div class="feild">
+      <label for="password">Password : </label>
+      <input type="password" id="password" name="Password" ngModel />
+    </div>
+    <div class="feild">
+      <label for="phone">Phone No : </label>
+      <input type="phone" id="phone" name="Phone" ngModel />
+    </div>
+    <div>
+      <button type="submit">Submit</button>
+    </div>
+  </form>
+</div>
+
+-------------
+routing.module.ts
+ {path:'signup', component:SignupComponent, canDeactivate:[CanDeactivateGuard]},
+
+=================================================================

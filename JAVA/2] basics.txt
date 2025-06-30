@@ -1,0 +1,73 @@
+* class name and file name shouold be same.
+* camelCase is used for variables and functions.
+* PascalCase is used for class and interface
+* Variable's name should only contain alphabets, digits and underscore. (It should not start with digit)
+
+public class Test{
+ public static void main(String []args){
+   System.out.println("");
+ }
+}
+
+-----------------------------------------------------------------------------------------------------------------------
+
+public static void main(String []args) ::::
+
+1. public
+Type: Access Modifier.
+Purpose: Allows the method to be accessible from anywhere.
+The main method must be public so the JVM can call it from outside the class.
+
+2. static
+Type: Modifier.
+Purpose: Makes the method a class method.
+A static method belongs to the class rather than an instance of the class.
+This allows the JVM to call the main method without creating an object of the class.
+
+3. void
+Type: Return Type.
+Purpose: Specifies that the method does not return any value.
+The main method is not expected to return anything to the JVM.
+
+4. main
+Type: Method Name.
+Purpose: The name of the method that acts as the starting point of execution.
+The JVM specifically looks for a method named main.
+
+5. String[] args
+Type: Parameter.
+Purpose: Represents command-line arguments passed to the program.
+args is an array of String objects, allowing you to pass data to the program at runtime.
+If no arguments are passed, args will be an empty array (but never null)
+
+-----------------------------------------------------------------------------------------------------------------------
+
+Systme.out.println ::::
+
+1. System
+Type: A built-in Java class from the java.lang package.
+Role: Provides access to system-level resources like standard input, output, and error streams.
+
+2. out
+Type: A static field in the System class.
+It's an instance of java.io.PrintStream.
+
+3. println
+Type: A method of the PrintStream class.
+
+
+
+
+===========================================================
+
+/*
+ When we write "java HelloWorld agr1 arg2 arg3" then OS will run the program named as java(written in c++) and this program's main method
+will recive arguments [filepath, HelloWorld, agr1, agr2, agr3] and then it will call jvm by passing arguments [HelloWorld, agr1, agr2, agr3] and now
+ jvm will call args[0].main(args[1],...args[n]).*/
+
+
+
+
+
+
+

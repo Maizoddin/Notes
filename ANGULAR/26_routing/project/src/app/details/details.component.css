@@ -1,0 +1,35 @@
+.card{
+    margin:40px auto 0px;
+    width: 350px;
+    height: 370px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 2px 2px grey;
+    text-align: center;
+    background-color: #fff;
+}
+img{
+    width: 350px;
+    height: 300px;
+    border-radius: 8px;
+    border-bottom: 1px solid grey;
+}
+.desc{
+    text-align: center;
+    margin-top: 30px;
+    color: orange;
+}
+.container{
+    display: flex;
+}
+button{
+    height: 30px;
+    width: 100px;
+    border-radius: 4px;
+    padding: 4px;
+    color: white;
+    background-color: #212121;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 200px 100px;
+    cursor: pointer;
+}

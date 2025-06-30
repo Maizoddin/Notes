@@ -1,0 +1,6 @@
+
+useCallback:
+Avoids re-creation of function 
+
+memo
+if our parent component re-renders then our child component will also re-renders so to avoid it we use memo so now our child component will render only when the props of our child component changes

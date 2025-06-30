@@ -1,0 +1,14 @@
+*ngFor :
+
+Note : We can also get index using ngFor.
+
+Example :
+<ul>
+  <li *ngFor="let item of items; let i = index"> {{ item }} </li>
+</ul>
+
+Note : We can't use it directly on components, we should use it on HTML Elements
+Example :
+  <ng-container *ngFor="let user of users; let i = index">
+    <app-user [name]="user"></app-user>
+  </ng-container>

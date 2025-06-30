@@ -1,0 +1,10 @@
+div{
+    background-color: #F1F1F3;
+    height: 100vh;
+}
+main{
+    margin-top: 10vh;
+    min-height: 80vh;
+    background-color: #F1F1F3;
+    overflow-y: auto;
+}

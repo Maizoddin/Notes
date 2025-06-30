@@ -1,0 +1,222 @@
+Transaction propogation :::
+DEFAULT IS : REQUIRED
+
+1] REQUIRED :
+* Join existing transaction if available; create new if none exists.
+* Scenario:
+  Banking transfer: Debit Account A → Credit Account B (both must succeed or fail together).
+
+CODE :
+@Service  
+public class BankService {  
+    @Transactional(propagation = Propagation.REQUIRED)   // USE THIS ON CHILD TRANSACTIONS
+    public void transferFunds(Account from, Account to, double amount) {  
+        debitAccount(from, amount);  
+        creditAccount(to, amount);  
+    }  
+}  
+
+Key Points:
+* Both debitAccount() and creditAccount() use the same transaction.
+* If creditAccount() fails, debitAccount() rolls back.
+
+---------------------
+
+2] REQUIRES_NEW :
+* It suspends the parent transaction.
+* It starts a new, independent transaction.
+* It commits/rolls back independently, regardless of the parent transaction’s outcome.
+* Scenario:
+  User Creation + Email Sending
+
+CODE :
+@Service
+public class UserService {
+
+    @Autowired
+    private EmailService emailService;
+
+    @Transactional // PARENT
+    public void registerUser(UserDto dto) {
+        userRepository.save(dto.toEntity()); // This is part of PARENT TX
+
+        emailService.sendWelcomeEmail(dto.getEmail()); // NEW TX
+    }
+}
+
+@Service
+public class EmailService {
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void sendWelcomeEmail(String email) {
+        emailClient.send(email); // NEW TX committed independently
+    }
+}
+
+IF Email sending fails ?
+* userRepository.save(...) succeeds and commits nothing yet.
+* sendWelcomeEmail(...) fails (e.g., SMTP server down) and throws exception.
+* Only the REQUIRES_NEW transaction rolls back.
+* If exception is not caught, parent transaction will also roll back.
+* If exception is caught and handled inside UserService, parent can still commit.
+
+CODE :
+@Transactional
+public void registerUser(UserDto dto) {
+    userRepository.save(dto.toEntity());
+
+    try {
+        emailService.sendWelcomeEmail(dto.getEmail());
+    } catch (Exception ex) {
+        log.error("Email sending failed, but user is still created", ex);
+    }
+}
+
+---------------------
+
+3] NESTED :
+* Create a nested transaction (savepoint) within the current transaction.
+* Creates a sub-transaction with a savepoint.
+* Rolls back only part of the transaction if needed.
+* Scenario:
+  Batch processing: Process 100 orders; if one fails, continue with others.
+
+CODE :
+@Service  
+public class BatchService {  
+    @Transactional  
+    public void processBatch(List<Order> orders) {  
+        for (Order order : orders) {  
+            try {  
+                processSingleOrder(order);  
+            } catch (Exception e) {  
+                // Continue processing other orders  
+            }  
+        }  
+    }  
+
+    @Transactional(propagation = Propagation.NESTED)  
+    public void processSingleOrder(Order order) {  
+        inventoryService.updateStock(order);  
+        orderRepository.save(order);  
+    }  
+}  
+
+Key Points :
+* If processSingleOrder() fails, only its changes roll back (others continue).
+* Requires DataSourceTransactionManager and JDBC 3.0+ driver.
+
+NOTE :
+* Most enterprise Spring Boot apps use:
+  Propagation.REQUIRED
+  Propagation.REQUIRES_NEW
+  NESTED is very rarely used, and only in very specific JDBC-heavy applications.
+
+====================================================================================================================
+
+EXAMPLE CODE :
+// Entity Classes
+@Entity
+@Table(name = "accounts")
+public class Account {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String accountNumber;
+    private double balance;
+    
+    // Constructors, getters, setters
+}
+
+@Entity
+@Table(name = "audit_logs")
+public class AuditLog {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String message;
+    private LocalDateTime timestamp;
+    
+    // Constructors, getters, setters
+}
+
+// Repository Interfaces
+public interface AccountRepository extends JpaRepository<Account, Long> {
+    Optional<Account> findByAccountNumber(String accountNumber);
+}
+
+public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {}
+
+// Service Layer
+@Service
+public class BankService {
+    private final AccountService accountService;
+    private final AuditLogService auditLogService;
+
+    public BankService(AccountService accountService, AuditLogService auditLogService) {
+        this.accountService = accountService;
+        this.auditLogService = auditLogService;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void transferFunds(String fromAccountNumber, String toAccountNumber, double amount) {
+        Account fromAccount = accountService.findByAccountNumber(fromAccountNumber)
+                .orElseThrow(() -> new AccountNotFoundException("Sender account not found"));
+        
+        Account toAccount = accountService.findByAccountNumber(toAccountNumber)
+                .orElseThrow(() -> new AccountNotFoundException("Receiver account not found"));
+
+        accountService.debitAccount(fromAccount, amount);
+        accountService.creditAccount(toAccount, amount);
+        
+        auditLogService.logTransaction(fromAccountNumber, toAccountNumber, amount);
+    }
+}
+
+@Service
+public class AccountService {
+    private final AccountRepository accountRepository;
+
+    public AccountService(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void debitAccount(Account account, double amount) {
+        if(account.getBalance() < amount) {
+            throw new InsufficientFundsException("Insufficient balance in account " + account.getAccountNumber());
+        }
+        account.setBalance(account.getBalance() - amount);
+        accountRepository.save(account);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void creditAccount(Account account, double amount) {
+        account.setBalance(account.getBalance() + amount);
+        accountRepository.save(account);
+    }
+
+    public Optional<Account> findByAccountNumber(String accountNumber) {
+        return accountRepository.findByAccountNumber(accountNumber);
+    }
+}
+
+@Service
+public class AuditLogService {
+    private final AuditLogRepository auditLogRepository;
+
+    public AuditLogService(AuditLogRepository auditLogRepository) {
+        this.auditLogRepository = auditLogRepository;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void logTransaction(String from, String to, double amount) {
+        AuditLog log = new AuditLog();
+        log.setMessage(String.format("Transfer: $%.2f from %s to %s", amount, from, to));
+        log.setTimestamp(LocalDateTime.now());
+        auditLogRepository.save(log);
+    }
+}
+

@@ -1,0 +1,25 @@
+Polymorphism :
+The ability of method to take multiple forms.
+
+Function Prototype :
+ return type
+ functionName
+ (arguments)
+
+Function Signature :
+ function name
+ (arguments)
+
+Types :
+1] Compile time polymorphism  -  Method overloading :
+   Two function with the same name but difference in arguments(num of arg || type of arg || order or arg).
+   Same name but different signature.
+   Return type doesn't matter.
+   Methods can be in both child and parent.
+
+
+
+2] Run time polymorphism  -  Method overriding :
+   Two function with the same prototype but one should be in parent and one should be in child with different implementation.
+   Child class method's access modifier can be less strict or equal to parent.
+   Both should be of same type(either both should be static or both should be non static).

@@ -1,0 +1,26 @@
+What is JPA?
+* JPA (Java Persistence API) is a specification for object-relational mapping (ORM) in Java.
+* It provides a way to map Java objects to database tables.
+* JPA does not implement anything directly; it needs an implementation like Hibernate.
+
+What is Hibernate?
+* Hibernate is the most popular JPA implementation.
+* Hibernate is an ORM framework that simplifies database interactions by mapping Java objects to database tables.
+* Uses JDBC for all database communications.
+* Converts Java Objects -> Hibernate[JDBC] -> Database Tables.
+
+                   +-------------------+
+                   |      JPA          |  (Specification)
+                   +-------------------+
+                             |
+  -------------------------------------------------
+  |                 |                 |          |
+  |                 |                 |          |
++---------+    +------------+    +-----------+    +--------------+
+| Hibernate|    | EclipseLink|    | OpenJPA   |    | DataNucleus  |
++---------+    +------------+    +-----------+    +--------------+
+(ORM Frameworks implementing JPA)
+
+
+Flow :
+JAVA Application → [JPA/Hibernate] → [JDBC] → Database

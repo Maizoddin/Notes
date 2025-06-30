@@ -1,0 +1,21 @@
+int nums[] = {1,2,3,4};
+OR
+int nums[] = new int[10];
+
+[] indicates that nums is a reference type variable which holds the address of int array.
+
+Bydefault array elements contains default value based on type.
+
+TWO DIMENTIONAL ARRAY :
+int nums[][] = new int[2][3];
+OR
+int nums[][] = {
+  {2,3,4},
+  {5,6,7}
+}
+
+We can give different sizes for 2D array.
+int marks[][] = new int[3][];
+        marks[0] = new int[2];
+        marks[1] = new int[5];
+        marks[2] = new int[3];

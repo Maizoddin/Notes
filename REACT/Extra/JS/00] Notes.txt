@@ -1,0 +1,10 @@
+* this - keyword
+In strict mode this refers to undefined.
+In non-strict mode this refers to window object in browser and global object in node.
+
+If variables are created globally using var outside of any function then they will be attached to window object. but not when created using let or const.
+
+call, apply, bind does not work with arrow functions because "this" is fixed at the time the function is defined, not when it is called. 
+
+But for normal functions "this" will be determined dynamically at run time based on the calling context.
+

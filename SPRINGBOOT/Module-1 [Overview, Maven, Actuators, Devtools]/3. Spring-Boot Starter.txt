@@ -1,0 +1,16 @@
+Spring Boot Starters :
+* Spring Boot Starters are dependency packages that bundle commonly used dependencies.
+* They bundle commonly used libraries for specific functionalities.
+
+Common Starters :
+* Spring Web: spring-boot-starter-web (for building web applications).
+* Spring Data JPA: spring-boot-starter-data-jpa (for database access).
+* Spring Security: spring-boot-starter-security (for security features).
+* Thymeleaf: spring-boot-starter-thymeleaf (for server-side templating).
+
+Example: If "Spring Web" is selected in the Spring Initializer, it adds:
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>

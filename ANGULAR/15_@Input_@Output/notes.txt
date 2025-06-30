@@ -1,0 +1,61 @@
+@Input() :
+
+  Note :
+  We can pass Data from Parent to Child.
+
+  Example : 
+
+  parent.html
+  <child [user]="John"></child>
+
+  child.ts
+  @Input user:string = ""
+
+---------------------------------------------------
+
+@Output():
+
+  Note :
+  It is used to notify the parent that an event has occured in child component.
+  We can pass data from Child to Parent when some event occurs in Child.
+  Use EventEmitter to create custom event and emit the data.
+
+  Example : 
+
+  child.ts
+   @Output customEvent = new EventEmitter<string>()
+   onClick(){
+     this.customEvent.emit(this.user)
+   }
+
+   parent.html
+   <child (customEvent)="handleEvent($event)"></child>
+
+------------
+
+Important :
+We can create event in service class and we can emit data from one component and we can subscribe to it from multiple components.
+But its not a good practice to use EventEmitter for this purpose its only used to notify the parent about occurance of some events.
+
+Example :
+.service
+ @Output()
+  customEvent: EventEmitter<number> = new EventEmitter<number>();
+
+.component1
+ onClick(){
+    this.testService.customEvent.emit(new Date().getSeconds())
+  }
+
+.component2
+   this.testService.customEvent.subscribe((val) =>
+      console.log('component2 Received', val)
+    );
+
+.component3
+ this.testService.customEvent.subscribe((val) =>
+      console.log('component2 Received', val)
+    );
+
+
+So here both the components will recive the same value at the same time.

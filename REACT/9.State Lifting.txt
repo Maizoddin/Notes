@@ -1,0 +1,127 @@
+Controlled component : If a component is controlled by it's parent then its controlled component.
+
+Un-controlled components : These are independent component.
+
+Lifting the state up :
+Sometimes, you want the state of two components to always change together. To do it, remove state from both of them, move it to their closest common parent, and then pass it down to them via props. This is known as lifting state up
+
+
+Example :
+Accordion (when one item is opened others should get closed)
+
+App.js
+import React, { useState } from "react";
+import useFetchData from "./useFetchData";
+import User from "./User";
+
+const App = () => {
+  const { data } = useFetchData("http://localhost:4000/users");
+  const [showIdx, setShowIdx] = useState(null);
+  const handleClick = (idx) => {
+    setShowIdx(idx);
+  };
+  return (
+    <div>
+      {data.map((user, idx) => (
+        <User
+          user={user}
+          show={idx === showIdx}
+          handleClick={() => handleClick(idx)}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default App;
+
+
+User.jsx
+import React from 'react'
+
+const User = ({user,show, handleClick}) => {
+  return (
+    <div>
+      <button onClick={handleClick}>{user.name}</button>
+      {show && <div>
+        <h1>{user.posts}</h1>
+        </div>}
+    </div>
+  )
+}
+
+export default User
+
+===================================
+Example 2(Good coding practice)
+
+Accordian.jsx
+import React, { useState } from "react";
+import Item from "./Item";
+
+const Accordian = () => {
+  const data = [
+    { title: "GOAT", description: "Greatest of All Time" },
+    { title: "FY", description: "Financial Year" },
+    { title: "ASAP", description: "As soon as possible" },
+  ];
+  const [expandIndex, setExpandIndex] = useState(null);
+  const handleClick = (idx) => {
+    setExpandIndex((prev) => {
+      if (prev === idx) {
+        return null;
+      } else {
+        return idx;
+      }
+    });
+  };
+  return (
+    <div>
+      {data.map((item, idx) => (
+        <Item
+          data={item}
+          isExpandable={idx === expandIndex}
+          clickHandler={() => handleClick(idx)}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default Accordian;
+
+----------
+
+Item.jsx
+import React from "react";
+
+const Item = ({ data, isExpandable, clickHandler }) => {
+  return (
+    <div>
+      <div className="title" onClick={clickHandler}>
+        <h1>{data.title}</h1>
+      </div>
+
+      {isExpandable && (
+        <div className="content">
+          <h2>{data.description}</h2>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Item;
+
+
+
+=====================================
+
+Props Drilling :
+Passing data from parent to leaf node via all the intermediate nodes.
+Problem : Even though intermediate nodes don't need that data but still they are getting it.
+
+Solution : Context API OR State management library like redux solves the problem of props drilling.
+
+
+

@@ -1,0 +1,308 @@
+Spring Bean :
+* A Spring Bean is any Java object managed by the Spring IoC (Inversion of Control) container (i.e Spring container).
+* The container is responsible for creating, configuring, and destroying these objects.
+
+Purpose:
+To enable Dependency Injection (DI), promoting loose coupling, testability, and maintainability.
+
+We can give name to beans by passing it in the bean annotation. Example : @Component(value="order")  OR @Repository(value = "invoice")
+
+Bean Lifecycle :
+Application Starts -> IOC container starts -> Construct Bean -> Inject dependecy -> @PostConstruct -> Use the Bean -> @PreDestroy -> Destroy
+-----------------------------------------------------------------------
+
+Bean Declaration Annotations:
+1] @Component:
+A generic annotation indicating a class is a Spring-managed component.
+
+2] @Service:
+Indicates a class that holds business logic (a specialized @Component).
+Example: UserService, PaymentService.
+
+3] @Repository:
+Indicates a class that handles data access operations (a specialized @Component).
+Example: UserRepository, ProductRepository.
+
+4] @Controller:
+Indicates a class that handles web requests in Spring MVC (a specialized @Component).
+Example: UserController, ProductController.
+
+5] @RestController:
+A specialized @Controller for RESTful web services (a specialized @Component).
+
+6] @Configuration:
+Indicates a class that provides bean definitions.
+Used in conjunction with @Bean.
+
+7] @Bean:
+Used within @Configuration classes to explicitly declare a bean.
+The method annotated with @Bean returns the bean instance.
+
+-----------------------------------------------------------------------
+
+Bean Lifecycle:
+
+1] Instantiation:
+Spring creates an instance of the bean class.
+
+2] Population of Properties (Dependency Injection):
+Spring injects the bean's dependencies.
+Constructor Injection or Setter Injection.
+
+3] Initialization:
+Custom initialization logic is executed.
+
+4] Usage:
+The bean is ready for use.
+
+5] Destruction:
+Cleanup logic is executed before the bean is removed.
+
+
+Lifecycle Methods:
+1] @PostConstruct:
+Called after dependency injection is complete.
+
+2] @PreDestroy:
+Called before the bean is destroyed.
+
+Example :
+
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+@Repository
+class ProductRepository {
+    public void saveProduct(String product) {
+        System.out.println("Saving product: " + product + " to database.");
+    }
+}
+
+@Service
+class ProductService {
+    private final ProductRepository productRepository;
+
+    @Autowired
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    public void addProduct(String product) {
+        productRepository.saveProduct(product);
+        System.out.println("Product added: " + product);
+    }
+
+    @PostConstruct
+    public void init(){
+        System.out.println("ProductService Initialized");
+    }
+
+    @PreDestroy
+    public void destroy(){
+        System.out.println("ProductService Destroyed");
+    }
+
+}
+
+-----------------------------------------------------------------------
+
+Bean Scope :
+1] singleton (Default):
+Only one instance of the bean is created per Spring IoC container.
+All requests for the bean result in the same instance being returned.
+Instance is created at application startup.
+This is the default scope of bean.
+
+2] prototype:
+Instance is created only when requested[injected].
+A new instance is created each time it is injected.
+Useful for stateful beans or when you need independent instances.
+
+3] request (Web-aware Spring applications):
+A new instance of the bean is created for each HTTP request.
+The bean's lifecycle is tied to the HTTP request.
+Note : If 5 beans are there with scope of "request" and each is dependent on other then still only one instance of that is created for one request.
+
+4] session (Web-aware Spring applications):
+A new instance of the bean is created for each HTTP session.
+The bean's lifecycle is tied to the HTTP session.
+
+etc...
+
+Setting Bean Scope :
+@Component
+@Scope("prototype") // or "singleton", "request", "session", etc.
+public class MyPrototypeBean {
+    // ...
+}
+
+Note :
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE) → If you prefer a type-safe constant and want to avoid hardcoded strings.
+-----------------------------------------------------------------------
+
+Bean Declaration Annotations with Real-World Examples :
+1] @Component:
+Use Case: Generic component that doesn't fit into other categories.
+Example:
+import org.springframework.stereotype.Component;
+
+@Component
+public class FileLogger {
+    public void log(String message) {
+        // Log message to a file
+        System.out.println("Logging to file: " + message);
+    }
+}
+
+2] @Service:
+Use Case: Business logic layer.
+Example:
+import org.springframework.stereotype.Service;
+
+@Service
+public class OrderService {
+    public void processOrder(String orderId) {
+        // Business logic to process an order
+        System.out.println("Processing order: " + orderId);
+    }
+}
+
+3] @Repository:
+Use Case: Data access layer.
+Example:
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class CustomerRepository {
+    public String findCustomerById(String customerId) {
+        // Database interaction to find a customer
+        return "Customer Name";
+    }
+}
+
+4] @Controller:
+Use Case: MVC controller for handling web requests.
+Example:
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller
+public class HomeController {
+    @GetMapping("/")
+    @ResponseBody
+    public String home() {
+        return "Welcome to the home page!";
+    }
+}
+
+5] @RestController:
+Use Case: RESTful web service controller.
+Example:
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class ProductApiController {
+    @GetMapping("/products")
+    public String getProducts() {
+        return "[{\"name\": \"Product 1\"}, {\"name\": \"Product 2\"}]";
+    }
+}
+
+6] @Configuration:
+Use Case: Java-based configuration class.
+Example:
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public Coach cricketCoach(){
+      return new CricketCoach();    
+    }
+
+    @Bean
+    public String message() {
+        return "Hello, Spring!";
+    }
+}
+
+-----------------------------------------------------------------------
+
+Creating Bean :
+
+Creating Beans with @Bean Annotation :
+
+Purpose:
+* @Bean is used within @Configuration classes to explicitly declare a bean.
+* It allows you to control the creation and configuration of beans programmatically.
+
+This is especially useful for:
+* Integrating third-party libraries.
+
+@Bean is applied to methods within a class annotated with @Configuration.
+The method's return value is registered as a bean in the Spring IoC container.
+The method name becomes the bean's name by default[But we can give any name using by passing it inside annotation. Example : @Component(value = "") OR @Bean(value = "")].
+
+Return Types:
+@Bean methods can return any type, including:
+* Objects of custom classes.
+* Objects from third-party libraries.
+* Primitive types (e.g., int, boolean, double).
+
+Example :
+Example
+SwimCoach.java (Third-party class, no @Component)
+
+public class SwimCoach implements Coach {
+    @Override
+    public String getDailyWorkout() {
+        return "Swim 1000 meters.";
+    }
+}
+
+
+SportConfig.java (Configuration class)
+@Configuration
+public class SportConfig {
+    @Bean(value= "swimCoach")
+    public Coach swimCoach() {
+        return new SwimCoach();
+    }
+}
+
+Injecting in Controller
+@RestController
+public class DemoController {
+    private Coach coach;
+
+    @Autowired
+    public DemoController(@Qualifier("swimCoach") Coach coach) {
+        this.coach = coach;
+    }
+}
+
+------------------------------------------------------------------------
+Note :
+* If bean has multiple constructor then we should use @Autowired on one of the constructor so that spring should know which constructor to use while creating an instance of it.
+* But if we have only one constructor then we can omit using it.
+* If we are using setter then we should use @Autowired so that spring should call that method and inject dependency automatically else we should have to call it manually.
+
+--------------------------------------------------------------------------
+
+* If singleton bean has dependency on bean which has scope as request then it throws error because scope="request" beans object will get created when there is an active http request so on start of application when singleton bean loads that time it will not be able to inject the bean which has scope = "request".
+* To handle this we can do proxy configuration.
+Example : @Scope(value = "request" proxyMode = ScopedProxyMode.TARGET_CLASS)
+
+Important :
+If we enable proxyMode for bean then it will give proxy for injection and then for actual use it gives the real object.
+@Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
+
+While injecting if we use @Lazy then it always uses proxy of that object
+private User(@Lazy Order order){}

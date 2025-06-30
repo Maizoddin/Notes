@@ -1,0 +1,11 @@
+0] npm install json-server
+1] create db.json file in root folder[i.e outside of src]
+2] add end points in db.json
+   {
+    'users':[],
+    'albums':[],
+    'photos':[]
+   }
+3] add start script in package.json
+  Example :
+  'start:server':'json-server --watch db.json --port 3005'

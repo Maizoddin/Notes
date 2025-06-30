@@ -1,0 +1,236 @@
+ID Generation in JPA: IDENTITY vs SEQUENCE
+
+Feature			IDENTITY			SEQUENCE
+Used in			MySQL, SQL Server		PostgreSQL, Oracle, H2, DB2, etc.
+Industry Preference	❌ Less preferred		✅ Preferred in enterprise applications
+Performance		Slower (1 insert per call)	Faster (supports prefetching/cache)
+Bulk insert		Not supported			✅ Supported
+Portability		Limited (DB specific)		✅ More portable across RDBMS
+
+In enterprise-grade systems, SEQUENCE is preferred because it decouples ID generation from the actual insert and supports bulk operations and better tuning.
+
+------------------------------------------
+
+Insert Flow Comparison :::
+📌 a. GenerationType.IDENTITY – Flow
+* JPA/Hibernate executes an INSERT without setting the id.
+* The database auto-generates the id using AUTO_INCREMENT or similar mechanism.
+* After insert, Hibernate fetches the generated id back using JDBC methods.
+* It sets the id on the Java entity after insert.
+
+SQL :
+CREATE TABLE orders (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ...
+);
+
+JAVA :
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
+
+----------------------------------------------
+
+b. GenerationType.SEQUENCE – Flow
+* JPA/Hibernate calls the sequence before insert to fetch the next ID.
+* It assigns the generated ID to the entity.
+* It then executes the INSERT with the ID already set.
+* If allocationSize is used, Hibernate prefetches a block of IDs and stores them in memory to reduce sequence calls.
+
+SQL :
+// --- Database Setup (PostgreSQL) ---
+
+-- Create sequence manually
+CREATE SEQUENCE order_sequence
+    START WITH 100
+    INCREMENT BY 1
+    MINVALUE 100
+    NO MAXVALUE
+    CACHE 100;
+
+-- Create table using this sequence
+CREATE TABLE orders (
+    id BIGINT nextval('order_sequence') PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL
+);
+
+
+JAVA :
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_seq")
+    @SequenceGenerator(
+        name = "order_seq",
+        sequenceName = "order_sequence",
+        allocationSize = 50
+    )
+    private Long id;
+
+
+Note :
+✅ Faster inserts, supports bulk operations, and better scalability.
+✅ Recommended in large enterprise applications.
+
+-------------------------------------------------------
+
+Code for Sequence :
+
+// --- Database Setup (PostgreSQL) ---
+
+-- Create sequence manually
+CREATE SEQUENCE order_sequence
+    START WITH 100
+    INCREMENT BY 1
+    MINVALUE 100
+    NO MAXVALUE
+    CACHE 100;
+
+-- Create table using this sequence
+CREATE TABLE orders (
+    id BIGINT PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL
+);
+
+
+// --- Entity Class ---
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "orders")
+public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_seq")
+    @SequenceGenerator(
+        name = "order_seq",
+        sequenceName = "order_sequence",
+        initialValue = 100,
+        allocationSize = 50
+    )
+    private Long id;
+
+    private String customerName;
+
+    // Constructors
+    public Order() {}
+
+    public Order(String customerName) {
+        this.customerName = customerName;
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
+}
+
+
+// --- DTO ---
+
+public class OrderDTO {
+    private Long id;
+    private String customerName;
+
+    // Constructors
+    public OrderDTO() {}
+    public OrderDTO(Long id, String customerName) {
+        this.id = id;
+        this.customerName = customerName;
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
+}
+
+
+// --- Mapper ---
+
+public class OrderMapper {
+    public static OrderDTO toDTO(Order order) {
+        return new OrderDTO(order.getId(), order.getCustomerName());
+    }
+
+    public static Order toEntity(OrderDTO dto) {
+        return new Order(dto.getCustomerName());
+    }
+}
+
+
+// --- Repository ---
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface OrderRepository extends JpaRepository<Order, Long> {
+}
+
+
+// --- Service ---
+
+import org.springframework.stereotype.Service;
+import java.util.Optional;
+
+@Service
+public class OrderService {
+
+    private final OrderRepository repository;
+
+    public OrderService(OrderRepository repository) {
+        this.repository = repository;
+    }
+
+    public OrderDTO createOrder(OrderDTO dto) {
+        Order order = OrderMapper.toEntity(dto);
+        Order saved = repository.save(order);
+        return OrderMapper.toDTO(saved);
+    }
+
+    public Optional<OrderDTO> getOrder(Long id) {
+        return repository.findById(id).map(OrderMapper::toDTO);
+    }
+}
+
+
+// --- Controller ---
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/orders")
+public class OrderController {
+
+    private final OrderService service;
+
+    public OrderController(OrderService service) {
+        this.service = service;
+    }
+
+    @PostMapping
+    public ResponseEntity<OrderDTO> create(@RequestBody OrderDTO dto) {
+        OrderDTO saved = service.createOrder(dto);
+        return ResponseEntity.ok(saved);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderDTO> get(@PathVariable Long id) {
+        return service.getOrder(id)
+                      .map(ResponseEntity::ok)
+                      .orElse(ResponseEntity.notFound().build());
+    }
+}
+
+
+
+Important :
+If Id = IDENTITY 
+Then, JPA sends query immediately and gets the id.
+
+If ID = SEQUENCE 
+Then, JPA doen't send the INSERT query immediately but just does the query to get the SEQUENCE 
+Example :  (SELECT nextval('order_seq'))

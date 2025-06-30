@@ -1,0 +1,238 @@
+                                                Iterable[Interface]                         
+
+                                               Collection [Interface]
+
+ List[Interface]                      Queue[Interface]    |  Deque[Interface]                     Set[Interface]
+     ArrayList[Class]                  PriorityQueue[Class]                                          Hashset[Class]
+     LinkedList[Class]            
+     Stack[Class]
+     Vector[Class] 
+
+
+Map
+
+
+Note :
+* Collection framework is present in java.util
+* Iterable was introduced in java 1.5
+* Collection was introduced in java 1.2
+
+Iterable interface provides iterator method which returns iterator object. which provides [hasNext, next, remove] methods.
+Example : 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public static void main(String[] args) {
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        Iterator<Integer> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            int val = iterator.next();
+            if (val == 3) {
+                iterator.remove();
+            }
+        }
+        System.out.println(list);
+    }
+
+
+* Ways of iterating over collection :
+1] Using iterator object with hasNext and next methods.
+2] Using enhanced for loop
+   for (int num : list){}
+3] Using forEach method with lambda expression 
+   list.forEach(num -> System.out.println(num));
+
+
+
+Collection : It represents group of objects. Its an interface which provides group of methods to work on group of objects.
+Methods :
+
+add()
+remove()
+size()
+isEmpty()
+contains()
+toArray()
+clear()
+get()
+set(idx, val)
+indexOf()
+equals()     : Compares 2 collections
+addAll()     : Inserts one collection into another collection
+removeAll()  : Removes all elements of the specified collection
+stream()
+parallelStream()
+
+
+1] ArrayList :
+List<Integer> list = new ArrayList<>();
+
+list.add(value);
+list.get(index);
+list.set(index, value);
+list.indexOf(value);
+list.remove(index);
+list.remove(object)  | Example : list.remove(Integer.valueOf(value));
+list.size();
+list.isEmpty();
+list.clear();
+list.addAll(Collection);
+list.removeAll(Collection);
+list.equals(Collection); | Value and Order should be same
+
+list.toArray() 
+Example :
+Integer[] nums = list.toArray(new Integer[0]);
+
+ANOTHER WAY :
+List<Integer> marks = Arrays.asList(3,2,4,1);
+Note : It gives fixed size of list, where elements can't be added or removed, but existing elements can be mutated.
+
+List<Integer> marks = List.of(1,2,3);
+Note : It's immutable list where(No addition, deletion, mutation)
+
+2] Set :
+Elements are stored randomly, no index.
+No duplicates allowed.
+Can't use .get(), .indexOf()
+HashSet is a normal set and TreeSet is a sorted set.
+
+Set<Integer> set = new HashSet<>();
+set.add(value);
+set.remove(value); | set.remove(22);
+set.size();
+set.isEmpty();
+set.clear();
+set.removeAll();
+set.addAll();
+set.equals();
+
+Set<Integer> set = new TreeSet<>();
+
+Note :
+Convertion from List to Set :
+Set<Integer> set = new HashSet<>();
+List<Integer> list = new ArrayList<>(set);
+
+Vice versa
+
+3] Map :
+Map<String, Integer> map = new HashMap<>();
+
+map.put(key, value);
+map.get(key);
+map.remove(key);
+map.size();
+map.isEmpty();
+map.clear();
+map.keySet(); | for (String key : map.keySet()){}
+map.values(); | for (int value : map.values()){}
+
+
+Note :
+Collections class has few methods. Example : sort(), reverseOrder()
+
+Example :
+Collection.sort(list);
+Collection.sort(list, Collection.reverseOrder());
+// It sorts the original collection(list, set)
+
+sort function takes 2 parameters [collection, compareFunction]
+Comparator is a functional interface which has compare function.
+
+Example :
+Comparator<String> comp = (i, j) -> {}
+Collection.sort(list, comp);
+
+OR
+
+Collection.sort(list, (i, j) -> {});
+
+1 means swap | -1 means no swap
+
+
+Example :
+import java.util.*;
+
+class Test {
+    public static void main(String[] args) {
+
+        List<Student> students = new ArrayList<>();
+        students.add(new Student("Maaz", 24));
+        students.add(new Student("Sakib", 26));
+        students.add(new Student("Musa", 4));
+        students.add(new Student("Arham", 14));
+
+
+        Comparator<Student> compare = (student1, student2) -> {
+            if (student1.getAge() < student2.getAge()) {
+                return -1;
+            } else {
+                return 1;
+            }
+        };
+        Collections.sort(students, compare);
+        System.out.println(students);
+
+        students.forEach(student -> System.out.println(student));
+    }
+}
+
+
+class Student {
+    private String name;
+    private int age;
+
+    public Student(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public int getAge() {
+        return this.age;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+}
+
+===========================================
+
+Stream :
+Stream interface provides [filter, map, reduce] methods.
+It doesn't modify the original collection.
+Stream can be used only once.
+We can use forEach method to iterate over stream.
+We can convert stream to collection using methods like (toList()).
+
+Example :
+List<Integer> nums = Arrays.asList(1,2,3);
+        Stream<Integer> s= nums.stream();
+        Stream<Integer> f = s.filter(num -> num%2==0);
+        List<Integer> res = f.toList();
+
+OR
+
+List<Integer> list = Arrays.asList(1,2,3);
+        List<Integer> squares = list.stream().map(num -> num*2).toList();
+
+int sum = squares.stream().reduce(0, (a,b) -> a+b);
+
+SHORT FORM
+int sum = list.stream()
+                .filter(num -> num % 2 == 0)
+                .map(num -> num * 2)
+                .reduce(0, (a, b) -> a + b);
+
+Important :
+Stream runs with only single thread.
+parallelStream will run with multiple threads.
+Example :
+list.parallelStream().filter(n -> n%2==0)

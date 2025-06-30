@@ -1,0 +1,515 @@
+ Elasticsearch is a distributed, open-source search and analytics engine built on Apache Lucene. It's designed for horizontal scalability, real-time search, and complex data analysis across massive datasets.
+
+* Near Real-Time (NRT) Search
+  Data becomes searchable within seconds of ingestion (not milliseconds).
+
+* Distributed & Scalable
+  Automatically shards (splits) data across nodes. Add servers to scale horizontally.
+
+* Document-Oriented
+  Stores data as flexible JSON "documents" (e.g., a product, user, or log entry).
+
+* Inverted Index
+  Like a book's index: Maps terms → Document IDs for lightning-fast searches.
+  Example:
+  "quick" → Doc 1, Doc 3
+  "fox" → Doc 1, Doc 2
+
+* RESTful API
+  Interact via HTTP requests (e.g., GET /products/_search?q=name:laptop).
+
+
+TERMS :
+Term	:	Description
+Cluster	:	A group of Elasticsearch nodes.
+Node	:	A single instance of Elasticsearch (a JVM process).
+Index	:	Like a table in RDBMS. Stores documents.
+Document:	Like a row in RDBMS. A JSON object with fields.
+Shard	:	Horizontal partition of an index (like table sharding in MySQL).
+Replica	:	Copy of a shard for fault tolerance.
+Mapping	:	Defines schema of fields in a document.
+
+
+A. Inverted Index & Tokenization :
+What happens when you index Document 1?
+{"description": "Transfer to Alice"}
+
+Step 1: Tokenization 
+Original: "Transfer to Alice"
+→ Tokenization: ["Transfer", "to", "Alice"]
+→ Lowercasing: ["transfer", "to", "alice"]
+→ Stopword Removal: ["transfer", "alice"]  // "to" removed
+
+Step 2: Build Inverted Index [For Description fields]
+Term		Doc IDs		Frequency	Positions
+transfer	1		1		[0]
+alice		1		1		[2]
+deposit		2		1		[0]
+
+INTERNAL STORING :
+term: "india"
+ → posting list:
+     - docId: 1, positions: [2]
+     - docId: 2, positions: [0, 6]
+
+
+Search Query: GET /events/_search?q=transfer
+→ Checks inverted index for "transfer" → Returns Doc 1 instantly.
+
+IMPORTANT : FOR EACH FIELD SEPARATE INVERTED INDEX TABLE IS CREATED. 
+            [KEYWORDS ARE STORED AS IT IS, DATE IS CONVERTED TO MILISECONDS AND STORED, DATA TYPE TEXT IS BROKEN INTO TOKEN]
+
+B. Sharding & Distributed Architecture :
+Cluster Setup:
+3 Nodes (Node-1, Node-2, Node-3)
+Index: banking_events with 3 primary shards (P0, P1, P2)
+Replica: 1 (R0, R1, R2)
+
+Node-1: P0, R1
+Node-2: P1, R2
+Node-3: P2, R0
+
+Routing Table (stored in cluster state):
+Shard	Node	Type
+P0	Node-1	Primary
+R0	Node-3	Replica
+P1	Node-2	Primary
+R1	Node-1	Replica
+P2	Node-3	Primary
+R2	Node-2	Replica
+
+               Cluster
++---------+    +---------+    +---------+
+| Node-1  |    | Node-2  |    | Node-3  |
++---------+    +---------+    +---------+
+     |              |              |
+     |              |              |
+     |              |              |
+     v              v              v
++-------------+ +-------------+ +-------------+
+| Primary 0   | | Primary 1   | | Primary 2   |
++-------------+ +-------------+ +-------------+
+| Replica 2   | | Replica 0   | | Replica 1   |
++-------------+ +-------------+ +-------------+
+
+
+How Documents are Routed to Shards:
+shard_num = hash(DocumentID) % num_primary_shards
+Example :
+Document 1
+hash(1) % 3 = 2 → Stored in P2 (Node-3)
+
+C. Indexing Workflow
+Indexing Document 2:
+{"description": "Cash deposit"}
+
+Client → Node-1 (coordinating node[DOES NOT HAVE TO BE MASTER OR DATA NODE])
+Node-1 calculates: hash(2) % 3 = 0 (shard P0)
+Request routed to Node-1 (primary shard P0)
+Parallel replication to Node-2 (replica R0)
+Acknowledgement sent after both succeed
+
+*** Search Execution Flow ***
+Query: Find deposit in description
+GET /banking_events/_search?q=description:deposit
+
+Step-by-Step Process:
+Query received by coordinating node (Node-2) [ANY RANDOM NODE CAN BECOME CO-ORDINATING NODE]
+
+Query broadcast to all
+Elasticsearch broadcast  Query to one copy of each shard. Based on Load balancing, Node availability, Shard location
+That means:
+Either P0 or R0
+Either P1 or R1
+Either P2 or R2
+
+Each shard searches locally using its inverted index. Results gathered, sorted, and returned.
+
+
+5. SEARCH FLOW
+Banking Events Dataset (Full 20 Documents)
+event_id	timestamp		account_id	event_type	amount	currency	description		status
+1		2023-10-01 09:15:00	ACC001		transfer	100.00	USD		Transfer to Alice	completed
+2		2023-10-01 10:30:00	ACC002		deposit		500.00	USD		Cash deposit		completed
+3		2023-10-01 11:45:00	ACC003		withdrawal	50.00	EUR		ATM withdrawal		completed
+4		2023-10-01 12:00:00	ACC004		payment		75.50	GBP		Utility bill		completed
+5		2023-10-01 14:15:00	ACC001		deposit		300.00	USD		Check deposit		pending
+6		2023-10-01 15:30:00	ACC005		transfer	200.00	USD		To savings account	completed
+7		2023-10-01 16:45:00	ACC002		withdrawal	100.00	USD		Branch withdrawal	completed
+8		2023-10-02 09:00:00	ACC003		fee		5.00	EUR		Monthly service fee	completed
+9		2023-10-02 10:15:00	ACC004		deposit		150.00	GBP		Direct deposit		completed
+10		2023-10-02 11:30:00	ACC001		withdrawal	50.00	USD		ATM withdrawal		completed
+11		2023-10-02 12:45:00	ACC005		alert		0.00	-		Low balance alert	notified
+12		2023-10-02 13:00:00	ACC002		transfer	250.00	USD		To Bob			completed
+13		2023-10-02 14:15:00	ACC003		deposit		400.00	EUR		International transfer	pending
+14		2023-10-02 15:30:00	ACC004		withdrawal	30.00	GBP		Contactless payment	completed
+15		2023-10-02 16:45:00	ACC001		login		0.00	-		User login		success
+16		2023-10-03 09:30:00	ACC005		payment		45.00	USD		Online purchase		completed
+17		2023-10-03 10:45:00	ACC002		fee_reversal	10.00	USD		Overcharge refund	completed
+18		2023-10-03 12:00:00	ACC003		transfer	125.00	EUR		To charity		completed
+19		2023-10-03 14:15:00	ACC004		deposit		220.00	GBP		Cash deposit		completed
+20		2023-10-03 16:30:00	ACC005		failed_login	0.00	-	
+
+A. Full-Text Search
+GET /banking_events/_search
+{
+  "query": {
+    "match": {
+      "description": "atm withdrawal"
+    }
+  }
+}
+
+Process:
+Tokenizes to ["atm", "withdrawal"]
+Checks inverted index:
+"atm" → Docs 3,10
+"withdrawal" → Docs 3,7,10
+Returns Docs 3 and 10 (ranked by relevance)
+
+
+*** Document to Index Flow [Insert] ***
+
+Production Configuration :
+PUT /banking_events
+{
+  "settings": {
+    "number_of_shards": 3,    // Primary shards
+    "number_of_replicas": 1   // Copies per primary
+  }
+}
+
+Shard Allocation:
+Node-1: P0 (primary), R2 (replica of P2)
+Node-2: P1 (primary), R0 (replica of P0)
+Node-3: P2 (primary), R1 (replica of P1)
+
+STEPS :
+Step 1: Client Sends Document
+{
+  "id": "21",
+  "account_no": "ACC006",
+  "event_type": "deposit",
+  "amount": 300.00,
+  "currency": "USD",
+  "description": "Salary deposit",
+  "status": "completed"
+}
+
+Step 2: Routing Decision
+Formula: shard_num = hash(document_id) % number_of_primary_shards
+Calculation:
+hash("21") → 123456789 (example hash)
+123456789 % 3 = 0 → Shard P0
+
+Step 3: Coordinating node (Node-1) sends document to Node-1 (where P0 lives)
+
+Step 4: Tokenization & Inverted Index Update
+In Shard P0 (Node-1):
+A. Text Analysis Pipeline:
+"Salary deposit" 
+→ Lowercase: "salary deposit"
+→ Tokenization: ["salary", "deposit"]
+→ Stopword removal: None removed (if configured)
+→ Stemming: "deposit" → "deposit" (unchanged)
+
+B. Update Inverted Index (Shard P0's private index):
+Shard P0 (Node-1) Inverted Index:
+
+| Term       | Doc IDs (Posting List) | Positions |
+|------------|------------------------|-----------|
+| salary     | 21                     | [0]       |
+| deposit    | 21                     | [1]       |
+
+C. Store Raw Document:
+
+Step 4 : Replicate to Replica (R0)
+Node-1 sends document to Node-2 (replica R0)
+R0 performs identical tokenization and indexing
+
+Client             Node-1 (Coord)         Node-1 (P0)           Node-2 (R0)
+   |                     |                     |                     |
+   |--- PUT Document --->|                     |                     |
+   |                     |--- Index in P0 ---->|                     |
+   |                     |                     |--- Replicate to R0->|
+   |                     |                     |<------ Ack ---------|
+   |                     |<------ Ack ---------|                     |
+   |<---- 201 Created ---|                     |                     |
+
+
+========================================================================================
+
+Phase 1: Transaction Initiation
+1.1 Client Request
+User initiates $1500 wire transfer via mobile app
+HTTPS request sent to API Gateway
+
+POST /api/transactions
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "from_account": "ACC-777",
+  "to_account": "ACC-888",
+  "amount": 1500.00,
+  "currency": "USD",
+  "description": "Intl wire to Germany"
+}
+
+
+1.2 API Gateway Processing
+Validates JWT token
+Routes to Payment Service
+Generates unique transaction ID: txn_67890
+
+
+
+Phase 2: Core Processing
+2.1 Payment Service Workflow
+
+ # Step 1: Deduct funds from source account
+ # Step 2: SAVE TRANSACTION IN DB
+ # Step 3: Publish an event to Kafka
+
+Phase 3: Kafka Consumer Reads the Event
+         Consumer can be [Notification Service, Elastic Search, etc]
+Phase 4 : Index Document in Elasticsearch[Store in Elastic Search DB]
+          PERFORM ALL REQUIRED ACTIONS LIKE TOKENIZE -> UPDATE INVERTED INDEX TABLE -> STORE AND REPLICATE
+
+
+=============================================================
+
+TYPES OF NODES :
+1] Master Node  
+* Manages the cluster (e.g. Index creation/deletion, Track nodes, Assign shards, Cluster health)
+
+2] Data Node 
+* Stores data, executes CRUD, search, and aggregation queries
+* These are resource-intensive (RAM, disk, CPU)
+
+3] Coordinating Node	 
+* Acts as a smart load balancer — receives client requests, routes them 
+* It Collect responses from shards, Merge & return result
+
+4] Ingest Node
+*  Helps preprocess data before storing in Elasticsearch.
+* Removing fields, Extracting info from logs etc
+
+
+5] ML Node (Paid Feature – X-Pack)
+* Runs ML jobs 
+
+
+etc ....
+
+
+
+FLOW WITH EXAMPLE :
+🔧 Cluster Setup (for this example)
+Let’s assume your Elasticsearch cluster has the following nodes:
+
+Node Name	Roles
+NodeA		Coordinating + Ingest
+NodeB		Master-only
+NodeC		Data Node
+NodeD		Data Node
+NodeE		ML Node
+
+You have an index called:
+POST /transactions/_doc
+
+🧾 Sample Transaction Document
+{
+  "transactionId": "TXN123456",
+  "fromAccount": "1234567890",
+  "toAccount": "0987654321",
+  "amount": 50000,
+  "timestamp": "2025-06-13T09:30:00",
+  "description": "Loan payment"
+}
+
+🛠 Step-by-Step Flow to Index This Document
+🟡 Step 1: Request Hits Coordinating Node (NodeA)
+Client sends POST /transactions/_doc request.
+NodeA receives the request and becomes the coordinating node.
+It parses the request and checks if any ingest pipeline is configured.
+
+🟠 Step 2: Document Passes Through Ingest Pipeline (on NodeA)
+Let’s say an ingest pipeline is configured with processors like:
+{
+  "pipeline": {
+    "processors": [
+      { "set": { "field": "ingested_at", "value": "{{_ingest.timestamp}}" } },
+      { "lowercase": { "field": "description" } },
+      { "rename": { "field": "transactionId", "target_field": "txn_id" } }
+    ]
+  }
+}
+So:
+"description": "Loan payment" → becomes "loan payment"
+"transactionId" → renamed to "txn_id"
+ingested_at field is added
+
+✔️ Final transformed document:
+{
+  "txn_id": "TXN123456",
+  "fromAccount": "1234567890",
+  "toAccount": "0987654321",
+  "amount": 50000,
+  "timestamp": "2025-06-13T09:30:00",
+  "description": "loan payment",
+  "ingested_at": "2025-06-13T09:30:03.456Z"
+}
+
+🔵 Step 3: Coordinating Node Calculates Target Primary Shard
+It uses: shard = hash(txn_id) % number_of_primary_shards
+Let’s say there are 3 primary shards (P0, P1, P2)
+Result: shard = 2 → P2 is the target
+Now the coordinating node needs to send the document to the primary shard (P2).
+
+🔴 Step 4: Coordinating Node Asks Master Node (NodeB)
+Before writing, the coordinating node consults master node:
+Is transactions index active?
+Where is shard P2 located?
+Master node looks up its cluster state and says:
+P2 (primary) is on NodeC
+R2 (replica) is on NodeD
+
+🟢 Step 5: Coordinating Node Sends to Primary Data Node (NodeC)
+NodeA sends final document to NodeC
+
+NodeC:
+Analyzes the text fields (e.g., tokenizes "loan payment" into ["loan", "payment"])
+Updates the inverted index
+Writes document into Lucene segment
+
+🔵 Step 6: Primary Data Node (NodeC) Replicates to Replica (NodeD)
+NodeC sends the same raw document to NodeD
+NodeD repeats indexing process independently
+✅ Now data is safely stored on both primary and replica
+
+🟣 Step 7: Optional ML Node Processing (NodeE)
+Let’s say:
+You have an ML job running that detects unusual transactions
+NodeE (ML node) will:
+Periodically pull indexed data from the transactions index
+Train and apply ML models (e.g., anomaly detection)
+Store results in a new index like transaction-anomalies
+
+✅ Summary of Roles in the Flow
+Node Type			Role in the Flow
+Coordinating Node (NodeA)	Received request, checked pipelines, routed to primary shard
+Ingest Node (NodeA)		Modified the document via processors before indexing
+Master Node (NodeB)		Helped determine shard routing and index availability
+Data Nodes (NodeC + NodeD)	Indexed document in primary and replicated in secondary
+ML Node (NodeE)			Continuously analyzes indexed data for anomalies (runs in background)
+
+🔄 Full Flow Diagram (Textual)
+Client
+  │
+  ▼
+[Coordinating Node (NodeA)]
+  └─> Apply Ingest Pipeline
+       └─> Modified JSON
+  └─> Ask Master (NodeB) where shard lives
+       └─> P2 on NodeC
+  └─> Send to Primary Data Node (NodeC)
+       └─> Tokenize, index, store → Success
+       └─> Forward to Replica Data Node (NodeD)
+            └─> Tokenize, index → Success
+  └─> Acknowledge to client ✅
+
+
+
+
+NOTE:
+ONLY PRIMARY NODES[DATA] REPLICA IS CREATED AND NOT FOR OTHER ROLES.
+AND PRIMARY, REPLICA IS STORED IN NODES WHERE ROLE IS DATA.
+
+
+========================
+
+FLOW FOR SEARCH WITH NODE ROLES 
+
+📦 Cluster Setup (Same as before)
+Node	Role(s)
+NodeA	Coordinating + Ingest
+NodeB	Master-only
+NodeC	Data
+NodeD	Data
+NodeE	ML
+
+Assume:
+Index transactions has 3 primary shards: P0, P1, P2
+Each has 1 replica: R0, R1, R2
+
+🔄 SEARCH FLOW: Step-by-Step
+🟡 1. Client Sends Request to Coordinating Node
+The request lands on NodeA (coordinating node).
+It parses the query JSON and acts as the orchestrator for the entire search.
+
+🟠 2. Coordinating Node Determines Shards to Query
+Coordinating node asks Master Node (NodeB) for the latest cluster state:
+Where are the shards (P0, P1, P2) for the transactions index?
+Which replicas are available?
+From the list of shards, it chooses one active copy of each shard:
+
+For example:
+P0 → NodeC
+R1 → NodeC
+R2 → NodeD
+
+🔁 This is called the Query Phase, and it can hit primary or replica (randomly chosen by coordinating node).
+
+🔵 3. Coordinating Node Sends Query Phase Requests
+NodeA sends query request to:
+NodeC (for P0 & R1)
+NodeD (for R2)
+
+Each data node does:
+Tokenizes search term "loan" (using inverted index)
+Finds matching documents in its shard
+Returns lightweight [doc IDs + shard ID + scores] to coordinating node
+
+🔎 NO actual document content is returned yet. Only IDs and relevance scores.
+
+🔴 4. Coordinating Node Performs Merge + Sort (Query Phase Result)
+Now NodeA has partial search results (doc IDs & scores) from:
+NodeC (P0 and R1)
+NodeD (R2)
+It merges and sorts them globally (based on score, time, etc.)
+Picks top N results (e.g. top 10 hits[])
+
+🟢 5. Coordinating Node Sends Fetch Phase Requests
+Now it knows which doc IDs are in which shards
+Sends fetch requests to retrieve actual document source (_source)
+NodeC → docId=1
+NodeD → docId=12
+
+The nodes return the full document content
+
+🟣 6. Coordinating Node Sends Final Response to Client
+NodeA collects all full documents
+Wraps them in the Elasticsearch _search response format
+Sends final JSON response to the client
+
+🧠 Node Roles Recap in Search Flow
+Node Type		What It Does in Search
+Coordinating (NodeA)	Parses search query, routes to shards, merges results, returns to client
+Master (NodeB)		Provides up-to-date cluster metadata (shard routing info)
+Data (NodeC/D)		Executes query phase (inverted index lookup), fetches full docs
+Ingest			❌ Not involved in search flow
+ML (NodeE)		❌ Not involved here (but might use search to feed its own job data)
+
+🧾 Summary (Text Flow Diagram)
+Client
+  │
+  ▼
+[Coordinating Node (NodeA)]
+  └─> Ask Master (NodeB) → where are shards?
+  └─> Send Query to Shards (NodeC & D)
+       └─> Local search in shard → Return doc IDs + scores
+  └─> Merge & sort top hits
+  └─> Send Fetch Request for actual documents
+       └─> NodeC & D return full _source
+  └─> Final Response to Client ✅

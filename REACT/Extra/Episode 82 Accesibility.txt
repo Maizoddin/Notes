@@ -1,0 +1,64 @@
+Accessibility :
+FullForms :
+WCAG  : Web Content Accessibility Guidelines
+AT : Assistive Technology
+ARIA : Accessible Rich Internet Applications
+
+
+Assistive Technology:
+Assistive technology refers to any device, software, or equipment that helps people with disabilities to perform tasks.
+Example :
+Screen Readers(NVDA), Keyboard Navigation Tools
+
+To open default screen reader's in windows : Ctrl + WinKey + Enter
+
+
+Use semantic elements:
+Semantic elements convey meaningful information about their content and role to both developers and browsers, as well as for assistive technologies like screen readers.
+<header>
+<main>
+<nav>
+<footer>
+<article>
+<section>
+<h1> - <h6>
+<button>
+<form>
+<label>
+<ul>
+<li>
+<table> 
+<th> 
+<thead>
+<tfoot>
+
+Note : 
+Use label for input, 
+use alt for images
+
+TabIndex : 
+tabIndex = 0 : Makes the element focusable using keyboard.
+tabIndex = -1 : Makes the element not focusable via the Tab key.
+
+Roles  : role = "button"
+Properties : aria-label = "" aria-described-by = ""
+State : aria-pressed = "true"
+
+Example :
+     <div role="button" aria-describedby="pay-info" tabIndex={0}> PAY </div>
+     <span id="pay-info" className="hidden"> This is pay button </span>
+
+aria-live : assertive | polite | off
+assertive : Announces immediately
+polite : Announces after the current ongoing finishes
+
+use assertive for form validations, popup alerts etc
+use polite for notifications
+
+
+Color Contrast 
+It should pass both AA and AAA test.
+
+
+* Focus Trapping for modals
+* Skip Links 

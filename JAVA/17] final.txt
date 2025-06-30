@@ -1,0 +1,29 @@
+final :
+
+We can use it with class, method, variables.
+
+
+Variables: 
+* final variable's value can't be changed.
+* final variable's can't be left uninitialized.
+* final variable's are blank bydefault.
+* for non-static final variable's we can either initialize ( during declaration || inside constructor || inside initialization block ).   
+  for static final variable's we can either initialize (during declaration || inside static initialization block).
+
+Methods :
+* final method's can't be overridden. but can be overloaded.
+
+
+Class :
+* final class can't be inherited.
+
+============================
+
+super :
+super keyword is used to refer to parent class members.
+
+=============================
+this :
+this keyword is used to refer to current object.
+
+

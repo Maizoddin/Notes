@@ -1,0 +1,60 @@
+Custom Directive :
+
+Note :
+* Decorate it with @Directive({selector:"[name]"}) and add it in declaration in module
+* use Renderer2 to manipulate the DOM. (we can add, remove classes etc)
+* use @HostListner to listen to events
+* use @HostBinding to bind to the properties of elements.(such as value, style)
+
+------------------------------------------------------------
+
+Example 1:
+Using Renderer 
+
+.html
+<h1 colorChange>Custom Directive Creation</h1>
+
+.directive.ts
+import { Directive, ElementRef, HostListener, Renderer2 } from "@angular/core";
+
+@Directive({
+    selector:"[colorChange]"
+})
+export class ColorChangeDirective{
+    constructor(private element:ElementRef,private renderer:Renderer2){}
+    @HostListener('mouseenter')
+    onMouseEnter(){
+        this.renderer.setStyle(this.element.nativeElement,'color','green')
+    }
+    @HostListener('mouseleave')
+    onMouseLeave(){
+        this.renderer.setStyle(this.element.nativeElement,'color','initial')
+    }
+}
+
+-------------------------------------------------------
+
+Example 2:
+Using HostBinding
+
+.html
+<h1 colorChange>Custom Directive Creation</h1>
+
+.directive.ts
+import { Directive, ElementRef, HostBinding, HostListener} from "@angular/core";
+
+@Directive({
+    selector:"[colorChange]"
+})
+export class ColorChangeDirective{
+    constructor(private element:ElementRef){}
+    @HostBinding('style.color') color:string="black"
+    @HostListener('mouseenter')
+    onMouseEnter(){
+        this.color="green"
+    }
+    @HostListener('mouseleave')
+    onMouseLeave(){
+        this.color="black"
+    }
+}

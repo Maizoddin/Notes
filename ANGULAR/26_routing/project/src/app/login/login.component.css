@@ -1,0 +1,25 @@
+form{
+    margin: 100px auto;
+    font-size: 20px;
+    font-weight: 600;
+}
+.feild{
+    padding: 5px;
+}
+input{
+    width: 250px;
+}
+.container{
+    text-align: center;
+}
+button{
+    margin-top: 10px;
+    cursor: pointer;
+    height: 30px;
+    width: 100px;
+    border-radius: 4px;
+    color: white;
+    background-color: darkmagenta;
+    font-size: 18px;
+    font-weight: 600;
+}

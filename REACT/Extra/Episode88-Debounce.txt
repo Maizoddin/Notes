@@ -1,0 +1,104 @@
+Trailing Debounce
+
+const input = document.querySelector("#input-search");
+const trailingDebounce = (fn, delay=400) => {
+  let timeoutID;
+  return function () {
+    const args = arguments;
+    const self = this;
+    clearTimeout(timeoutID);
+    timeoutID = setTimeout(() => {
+      fn.apply(self, args);
+    }, delay);
+  };
+};
+const handleChange = (event) => {
+  console.log(event.target.value);
+  
+  // console.log(event.target.value);
+};
+input.addEventListener("input", trailingDebounce(handleChange, 400));
+===========================
+
+Leading Debounce
+
+
+const leadingDebounce = (fn, delay=400) => {
+  let timeoutID = null;
+  return function () {
+    const args = arguments;
+    const self = this;
+    if (timeoutID === null) {
+      fn.apply(self, args);
+    }
+    clearInterval(timeoutID);
+    timeoutID = setTimeout(() => (timeoutID = null), delay);
+  };
+};
+input.addEventListener("input", leadingDebounce(handleChange, 400));
+
+============================
+
+Mix of both
+
+const debounce = (
+  fn,
+  delay = 400,
+  options = { isLeading: false, isTrailing: true }
+) => {
+  let timeoutID = null;
+  return function () {
+    const self = this;
+    const args = arguments;
+    let isInvoked = false;
+    if (options.isLeading && timeoutID === null) {
+      fn.apply(self, args);
+      isInvoked = true;
+    }
+    clearTimeout(timeoutID);
+    timeoutID = setTimeout(() => {
+      if (options.isTrailing && !isInvoked) {
+        fn.apply(self, args);
+      }
+      timeoutID = null;
+    }, delay);
+  };
+};
+
+input.addEventListener(
+  "input",
+  debounce(handleChange, 400, { isLeading: true, isTrailing: true })
+);
+
+======================
+
+Throttling
+
+const throttle = (fn, delay) => {
+  let timeoutID = null;
+  let prev = null;
+  return function (...args) {
+    const self = this;
+    const now = Date.now();
+    const invokeFunctionExecution = () => {
+      fn.apply(self, args);
+      prev = now;
+    };
+    if (prev === null) {
+      invokeFunctionExecution();
+    } else {
+      clearTimeout(timeoutID);
+      const remainigTime = delay - (now - prev);
+      if (remainigTime <= 0) {
+        invokeFunctionExecution(); 
+
+      } else {
+        timeoutID = setTimeout(invokeFunctionExecution, remainigTime);
+      }
+    }
+  };
+};
+
+
+Note : Debounce delay should be between 200-300ms 
+       Throttling delay should be between 50-100ms

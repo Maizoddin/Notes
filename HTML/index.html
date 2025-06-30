@@ -1,0 +1,686 @@
+<!--Bismillah-->
+<!--Internet : Internet is a vast network that connects computers all over the 
+               world-->
+<!--SearchEngines : Google , Bing, Yahoo, DuckDuckGo-->
+<!--Browsers : Chrome, FireFox, Brave, Opera, Apple Safari-->
+<!--How Does Internet Work : Whenever we type any URL in the browser then 
+   the browser will send that message to the Internet Service Provider
+   and then ISP will send that message to the Domain Name System Server and 
+   then DNS server will look up in it's DataBase for the exact IP address of the 
+   wesite that we are looking for, 
+   and once the DNS server  finds that then it sends that IP address to the 
+   browser through the ISP. 
+   Now browser will request for the website directly by using the IP address 
+   through the ISP via Internet Backbone to the server located at that IP 
+   address.
+   and then Server will send all the Files and Data that are required for me to  
+   the view the web page-->
+<!--Google Home Page IP address : 216.58.210.46-->
+<!--Latest Tech News : techcrunch.com-->
+<!--Live Practice : codepen.io-->
+<!--Documentation : DevDocs.io , w3school, MDN-->
+
+<html>
+  <head>
+    <title> </title>
+  </head>
+  <body></body>
+</html>
+
+<!--DOCTYPE html : It indicates documentation type(HTML 5)-->
+<!--utf-8 : Standard encoding(It includes all the international symbols)-->
+
+Links :
+unicode-table.com : To see the different unicodes and emoji
+pexels.com --> For images
+https://source.unsplash.com/collection/190727/1600x900 - Unsplash Link
+photobucket.com : To upload and get URL of image
+crop-circle.imageonline.co : To crop our image in circle shape
+fevicon.io : To generate the fevicons
+colorhunt.co : different colors and their codes
+uicolorpicker.com : To get the colors with hex 
+Animate.css : Animation 
+google fonts or https://fonts.google.com/ - To get google Fonts
+clippy or https://bennettfeely.com/clippy/ - To get Clipped shape path
+flaticon.com : For Images. (ex : computers,profile)
+giphy.com : For GIF's
+
+favicon :
+Website : favicon.io
+<link rel="shortcut icon" href="../favicon/favicon.ico" type="image/x-icon">
+
+<h1>Biggest</h1>
+<h6>Smallest</h6>
+
+<!--Self Closing Tag-->
+<!--Line Break-->
+<br />
+<!--Horizontal Line-->
+<hr />
+<hr color="red", size ="3" />
+
+<!--Emphasize Text (Italic)-->
+<em>Italic</em>
+
+<!--Bold Text-->
+<strong>Bold</strong>
+
+LISTS : 
+<!--Ordered List-->
+<!--Type : 1, a, A, i, I-->
+<ol type="1">
+  <li>First Item</li>
+  <li>Second Item</li>
+  <li>Third Item</li>
+</ol>
+
+<!--UnOredered List-->
+<!--Type : disc,circle,square,none-->
+<ul type="disc">
+  <li>First Item</li>
+  <li>Second Item</li>
+  <li>Third Item</li>
+</ul>
+
+<!--Description List-->
+<dl>
+  <dt>Diploma :</dt>
+  <dd>Maratha Mandal Polytechnic</dd>
+  <dt>Engineering :</dt>
+  <dd>Gogte Institute of Technology</dd>
+</dl>
+
+
+
+<!--Examples-->
+<!--Nested UnOrdered List-->
+<ul>
+  <li>First item</li>
+  <li>
+    Second item
+    <ul type="circle">
+      <li>Second item first sub item</li>
+      <li>
+        Second item second sub item
+        <ul>
+          <li>second item second subitem first sub sub-item</li>
+          <li>second item second subitem second sub sub-item</li>
+          <li>second item second sub item third sub sub-item</li>
+        </ul>
+      </li>
+      <li>second item third sub item</li>
+    </ul>
+  </li>
+  <li>third item</li>
+</ul>
+
+<!--UnOrdered list nested with Ordered list-->
+<ul>
+  <li>First item</li>
+  <li>
+    Second item
+    <ol>
+      <li>second item first subitem</li>
+      <li>second item second subitem</li>
+      <li>second item thord subitem</li>
+    </ol>
+  </li>
+  <li>Third item</li>
+</ul>
+
+
+
+
+<!--Self Closing Tag-->
+<img src="abc.png" alt="Not Found" />
+<img src="xyz.jpg" alt="Image not Found" height="200" width="300" />
+
+
+<img style="border-radius: 50%;" src="image.PNG" />   <!-- It makes the image circle -->
+
+
+<!-- Picture Tag -->
+<picture>
+  <source width="600px" media="(min-width: 750px)" srcset="../material/images/hungry.jpg">
+  <source width="400px" media="(min-width: 550px)" srcset="../material/images/Code.jpg">
+  <img width="300px" src="../material/images/Square.jpg" alt="Code">
+</picture>
+
+
+<!-- Anchor Tag(Hyper Links)-->
+<a href="PersonalWebsite.html"><strong>Personal Web site</strong></a>
+<!--To open the Link in other Tab-->
+<a href="PersonalWebsite.html" target="_blank"><strong>PersonalWebsite</strong></a>
+
+TABLE
+<table border="2">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>College</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>Maaz</td>
+      <td>KLS GIT</td>
+    </tr>
+    <tr>
+      <td>John</td>
+      <td>MMP</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<!-- TO OPEN IMOGI KEYBOARD : WINDOWS + .     or   WINDOWS + ; -->
+<!--cellspacing : space between two cells-->
+<!--cellpadding : space between the content of a cell and its border-->
+
+<!--Note : We can add desing and alignment using CSS.(ex : we can place the caption bottom of the Table)-->
+
+<!--NESTED TABLE EXAMPLES-->
+<table cellspacing="10" cellpadding="5" align="left">
+  <caption>
+    Figure :<strong> Skills Table </strong>
+  </caption>
+  <thead>
+    <th>LANGUAGE</th>
+    <th>WEB DEVELOPMENT</th>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <table>
+          <tr>
+            <td><strong>C</strong></td>
+            <td>⭐⭐⭐⭐⭐</td>
+          </tr>
+          <tr>
+            <td><strong>DS</strong></td>
+            <td>⭐⭐⭐⭐⭐</td>
+          </tr>
+        </table>
+      </td>
+      <td>
+        <table>
+          <tr>
+            <td><strong>HTML</strong></td>
+            <td>⭐⭐⭐⭐⭐</td>
+          </tr>
+          <tr>
+            <td><strong>CSS</strong></td>
+            <td>⭐⭐⭐⭐⭐</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td>Foot-1</td>
+      <td>Foot-2</td>
+    </tr>
+  </tfoot>
+</table>
+
+<!-- Important -->
+<!-- Best way of creating Tables -->
+
+<!-- Achieving CellPadding and CellSpacing using CSS
+    table,tr,th,td{
+        border: 2px solid black;
+        padding: 10px;
+        border-spacing: 10px;
+        border-collapse:separate;
+       /* border-collapse: collapse; */
+    } -->
+
+<!-- Example of colspan  -->
+<style>
+  table, th, td {
+    border: 1px solid black;
+  }
+  </style>
+
+<div>
+  <table cellspacing="2px" cellpadding="2px">
+    <caption>
+      Students Marks
+    </caption>
+    <thead>
+      <tr>
+        <th>Roll Number</th>
+        <th>Name</th>
+        <th colspan="3">Marks</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <th>Maaz</th>
+        <td>90</td>
+        <td>80</td>
+        <td>98</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <th>Sakib</th>
+        <td>60</td>
+        <td>90</td>
+        <td>99</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <th>Saniya</th>
+        <td>125</td>
+        <td>100</td>
+        <td>99</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Exmaple of RowSpan  -->
+<style>
+  table,th,td{
+      border: 2px solid black;
+  }
+</style>
+
+<table>
+  <caption>
+    Rowspan Demo Table
+  </caption>
+  <thead>
+    <tr>
+      <th>Roll No</th>
+      <th>Name</th>
+      <th>School</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <th>Maaz</th>
+      <td rowspan="2">Gomatesh</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <th>Sakib</th>
+    </tr>
+  </tbody>
+</table>
+
+
+<!-- Mixed Example of rowspan and colspan  -->
+
+<style>
+  table, th, td {
+    border: 2px solid black;
+    text-align: center;
+  }
+</style>
+
+<table cellspacing="2px" cellpadding="2px">
+  <thead>
+    <th>Roll No</th>
+    <th>Name</th>
+    <th>Current Age</th>
+    <th>Actual Age</th>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <th>Maaz</th>
+      <td colspan="2" rowspan="2">22</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <th>Sakib</th>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+FORMS :
+
+<form
+  action="mailto:maazchikkodi123@gmail.com"
+  method="post"
+  enctype="text/plain"
+>
+  <div>
+    <label for="name"> Name :</label>
+    <input type="text" name="Name" id="name" required />
+  </div>
+  <br />
+
+  <div>
+    <label for="password">Password : </label>
+    <input type="password" name="Password" id="password" />
+  </div>
+  <br />
+
+  <div>
+    <label for="age">Age : </label>
+    <input type="number" name="Age" id="age" />
+  </div>
+  <br />
+
+#For Radio Button Name Should be Same.
+  <div>
+    <strong>Gender : </strong>
+    <label for="male">Male : </label>
+    <input type="radio" name="Gender" id="male" value="male" />
+    <label for="female">Female :</label>
+    <input type="radio" name="Gender" id="female" value="female" />
+  </div>
+  <br />
+
+  <div>
+    <label for="file"> </label>
+    <input type="file" name="File" id="file" />
+  </div>
+  <br />
+
+  <div>
+    <label for="about">About Your Self : </label>
+    <textarea name="About" id="about" cols="30" rows="10"></textarea>
+  </div>
+  <br />
+
+
+
+  <div>
+    <label for="color"> Colour : </label>
+    <input type="color" name="Colour" id="color" />
+  </div>
+  <br />
+
+  <div>
+    <label for="agree">Do you agree to our Terms and conditions : </label>
+    <input type="checkbox" name="Agree" id="agree" value="I Agree" checked />
+  </div>
+  <br />
+
+  <div>
+    <label for="dob">Date Of Birth : </label>
+    <input type="date" name="DOB" id="dob" />
+I.  </div>
+  <br />
+
+  
+<div>
+    <label for="country">Country : </label>
+    <select name="Country" id="country">
+      <option value="India">INDIA</option>
+      <option value="Pakistan" selected>PAKISTAN</option>
+      <option value="USA">USA</option>
+      <option value="UK">UK</option>
+    </select>
+  </div>
+  <br />
+
+  <div>
+    <label for="category">Category : </label>
+    <select name="Category" id="category">
+      <option value="sc">SC</option>
+      <option value="st">ST</option>
+      <option value="obc">OBC</option>
+      <option value="muslim" selected>MUSLIM</option>
+      <option value="christan">CHRISTAN</option>
+    </select>
+  </div>
+  <br />
+
+
+  <div>
+    <label for="email">Email : </label>
+    <input type="email" name="Email" id="email" />
+  </div>
+  <br />
+
+  <div>
+    <input type="submit" />  #Here ByDefault It shows Submit as Button name But we can change it by using Value=" "
+  </div>
+  <br />
+
+  <div>
+    <input type="reset" />  #Here ByDefault It shows Submit as Button name But we can change it by using Value=" "
+  </div>
+</form>
+
+
+Note:We can create buttons in this way also
+btn:s{SUBMIT}   =    <button type="submit">SUBMIT</button>
+btn:r{RESET}    =    <button type="reset">RESET</button>
+
+
+pre Tag : This Displays the Text as it is with all the spaces and Lines(Example we can use it for Displaying Code)
+<pre>This is      Space</pre>
+
+big small sub sup Tags :
+    <big>This is Big</big>
+    <small>This is Small</small>
+    <p> CO <sub>2</sub> </p>
+    <p> AX <sup>2</sup> + BX + C </p>
+
+iframe : It allows us to open other web pages or web sites in our Page 
+         We can set Height and width       
+         <iframe src="https://www.wikipedia.org" frameborder="0"  height="450px" width="450px"></iframe>
+
+
+ Audio and Vedio Tag :
+<audio src="../material/Audio/Rabtaa.mp3" controls autoplay loop muted></audio>
+<video src="../material/Video/Nashe.mp4" controls autoplay loop muted   width="550px"></video>
+
+<strike>300</strike>100
+
+<details>
+  <summary>My Address</summary>
+  Navi Galli Shahapur Belgavi
+</details>
+
+<figure>
+    <img src="https://source.unsplash.com/collection/190727/1600x900"  alt="Downloading"  width="400px"  height="400px">
+    <figcaption>
+       <p>Beautiful Image</p>
+    </figcaption>
+</figure>
+
+<!-- Inline Element : takes only required space (ex : <span>)
+     <span>    -> Spans
+     <img>     ->Images
+     <a>       ->Anchors
+     <video>    ->Video
+     <audio>    ->Audo
+
+     Block Elements : takes complete block (ex : <p>, <div>)
+        *if we use 2 <p> tags then content of both the tags will in different   
+         line  bcz it takes complete block
+        *if we use 2 <span> tags then the content of both tags will come in same 
+         line bcz it takes only required space
+         <p>                    ->Paragraphs
+         <h1> to <h6>           ->Headings
+         <div>                  ->Divisions
+         <ol>  <ul>  <li>       ->Lists
+         <form>                 ->Forms
+ -->
+     
+EMMET + CLASS + ID
+<!-- Multiple ELements can have the same class but one id is associated with  
+     only one element -->
+    <!-- Ctrl + / : To Comment -->  
+    <!-- Alt +  DownArrow : To take any selected text down -->
+    <!-- Ctrl + Enter : Next Line -->
+    <!-- Alt + z : To make the Text inside the Screen -->
+    <!-- Tab Key : To come inside next tag -->
+     <!-- ALt + leftArrow : tO open Prev File -->
+
+    
+  <!-- lorem20 : To create 20 Dummy words. (ex : <p1>Lorem5</p>) -->
+      <p>Lorem ipsum dolor sit amet.</p>
+  
+  
+    <!-- p*5 : To create 5 Paragraph Tags.  div*10 : To Create 10 div Tags. -->
+    <p></p>
+    <p></p>
+    <p></p>
+
+
+    <!-- Nested Tags :
+      p>h1 :  -->
+      <p>
+        <h1></h1>
+      </p>
+
+       <!-- 
+       ul>li*4 : -->
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+  
+
+<!-- TagName . ClassName : To Create the Tag with ClassName. (ex : p.myClass )-->
+     <p class="myClass">  </p>
+
+    <!-- TagName # id : To create the Tag with idName. (ex : h1#myId ) -->
+    <h1 id="myId"> </h1>)
+
+    <!-- Tag with multiple class names :
+      span.FClass.SClass.TClass#Fid : -->
+      <span class="FClass SClass TClass" id="Fid"> </span>
+      
+
+    
+    <!-- Nested Tags with id and class :
+      h1.First>h2.Second>h3.Third>h4#Fourth: -->
+      <h1 class="First">
+        <h2 class="Second">
+          <h3 class="Third">
+            <h4 id="Fourth"></h4>
+          </h3>
+        </h2>
+      </h1> 
+ 
+
+  <!-- Multiple Elements :
+  span.myClass1.myClass2.myClass*4 :  -->  
+  <span class="myClass1 myClass2 myClass">First</span>
+  <span class="myClass1 myClass2 myClass">Second</span>
+  <span class="myClass1 myClass2 myClass">Third</span>
+  <span class="myClass1 myClass2 myClass">Fourth</span>
+
+
+<!-- HTML ENTITIES :unicode-table.com
+                    html entities reference chart-->
+<!-- By using HTML ENTITIES we can print any Symbol or any HTML Tag -->
+<!-- example :To print space  :   &nbsp;  
+               EX2 : <h1>&Mopf;</h1>-->
+
+
+a{Click Here}  ---->   <a href=" ">Click Here</a>
+a:mail{Mail Me} --->   <a href="mailto:maazchikkodi123@gmail.com">Mail Me</a>
+h1{Hello}  --> <h1>Hello</h1>
+btn:s --> <button type="submit"></button>
+btn{Click Me Button} <button>Click Me Buttom</button>
+
+Tab key is used to go inside next element to type something there
+
+#To create ID's 
+ul>li#myId$*3 
+<ul>
+  <li id="myId1"></li>
+  <li id="myId2"></li>
+  <li id="myId3"></li>
+</ul>
+
+#To have elements at same hirarchy(Siblings)
+div+p+h1
+<div></div>
+<p></p>
+<h1></h1>
+
+div>header+h1+footer
+<div>
+  <header></header>
+  <h1></h1>
+  <footer></footer>
+</div>
+
+#Grouping
+div>(header>h1)+footer
+<div>
+  <header>
+    <h1></h1>
+  </header>
+  <footer></footer>
+</div>
+
+#Grouping
+div>(header>ul>li*3>a)+footer>p
+<div>
+  <header>
+    <ul>
+      <li><a href=""></a></li>
+      <li><a href=""></a></li>
+      <li><a href=""></a></li>
+    </ul>
+  </header>
+  <footer>
+    <p></p>
+  </footer>
+</div>
+
+div>dl>(dt+dd)*3
+<div>
+  <dl>
+    <dt></dt>
+    <dd></dd>
+    <dt></dt>
+    <dd></dd>
+    <dt></dt>
+    <dd></dd>
+  </dl>
+</div>
+
+
+
+<style>
+  html {
+        background-color: rgba(214, 32, 32, 0.918);
+       }
+</style>
+
+To Go One Directory Back use ..
+"../CSS-My Site/m.ico"
+
+<a href="#">Nothing</a>            --> Going NoWhere
+
+To Add Vedio :
+Go to any YouTube Vedio 
+click on share
+click on Embed
+click on copy
+->Paste that iframe in<div></div>
+
+Tab : Tab key to go inside next Tag
+Ctrl + Tab : to go next line
+
+
+#Shows Text inside the Input Feild -->placeholder
+<form action="">
+  <input type="password" name="Password" id="" placeholder="Enter Password">
+</form>
+#placeholder will go as soon as we start typing something But the value=" " will remain untill and unless we erase it
+
+

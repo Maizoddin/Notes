@@ -1,0 +1,25 @@
+How to create Module ? 
+
+Note : To create module use @NgModule decorator
+
+// example.module.ts
+import { NgModule } from '@angular/core';
+// Import other Angular modules, components, services, etc.
+
+@NgModule({
+  declarations: [
+    // List of components, directives, and pipes belonging to this module
+  ],
+  imports: [
+    // Other modules that this module depends on
+  ],
+  providers: [
+    // Services that this module provides
+  ],
+})
+export class ExampleModule { }
+
+----------------
+
+Now Add this module in app.module.ts
+Add it inside imports

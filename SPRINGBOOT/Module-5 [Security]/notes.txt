@@ -1,0 +1,207 @@
+Spring Security Notes:::
+
+### ⚖️ Overview
+
+Client   ->   Spring Security Filters   ->   REST API
+
+### ✅ Step 1: Add Dependency
+- Adding the Spring Security dependency **automatically protects all routes**.
+- A default user is created with username: `user` and a generated password (shown in console).
+
+You can override the default credentials in `application.properties`:
+```properties
+spring.security.user.name=maaz
+spring.security.user.password=pwd
+```
+
+---
+
+### ✨ Authentication Levels
+
+| Level | Topic               | Description                                      |
+|-------|---------------------|--------------------------------------------------|
+| 1     | Basic Auth          | Username/password sent on every request         |
+| 2     | JWT (Token-based)   | Stateless authentication using JSON Web Tokens  |
+
+#### ✔️ Level 1: Basic Auth
+- Every request sends `Base64-encoded username:password`
+- No token, no expiry
+- Best for simple or internal APIs
+
+#### ✔️ Level 2: JWT (JSON Web Tokens)
+- Token stored in memory/localStorage
+- Token sent on every request
+- Token has expiry
+- Client can remove token to logout
+
+---
+
+### ⚡ Password Encoding in Spring Security
+
+Spring Security requires password formats to include encoding information:
+```
+Format: {encodingAlgorithmId}passwordText
+Examples:
+{noop}ChangePwd        # Plain text
+{bcrypt}hashedPwd      # BCrypt hashed
+```
+
+#### BCrypt Highlights:
+- One-way hashing (irreversible)
+- Salted automatically
+- Even identical passwords produce different hashes
+
+---
+
+### 🔒 Level 1: Basic Auth Options
+
+#### 1. In-Memory Authentication
+```java
+@Configuration
+public class SecurityConfig {
+
+    @Bean
+    public InMemoryUserDetailsManager userDetailsManager() {
+        UserDetails maaz = User.builder()
+                .username("maaz")
+                .password("{noop}pwd")
+                .roles("EMPLOYEE")
+                .build();
+
+        UserDetails sakib = User.builder()
+                .username("sakib")
+                .password("{noop}pwd")
+                .roles("EMPLOYEE", "MANAGER")
+                .build();
+
+        UserDetails zakir = User.builder()
+                .username("zakir")
+                .password("{noop}pwd")
+                .roles("EMPLOYEE", "MANAGER", "ADMIN")
+                .build();
+
+        return new InMemoryUserDetailsManager(maaz, sakib, zakir);
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.authorizeHttpRequests(configurer ->
+                configurer
+                        .requestMatchers(HttpMethod.GET, "/api/employees").hasRole("EMPLOYEE")
+                        .requestMatchers(HttpMethod.GET, "/api/employees/**").hasRole("EMPLOYEE")
+                        .requestMatchers(HttpMethod.PUT, "/api/employees").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.PATCH, "/api/employees/**").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.POST, "/api/employees").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/employees/**").hasRole("ADMIN")
+        );
+        httpSecurity.httpBasic(Customizer.withDefaults());
+        httpSecurity.csrf(csrf -> csrf.disable());
+        return httpSecurity.build();
+    }
+}
+```
+
+---
+
+#### 2. JDBC Authentication
+##### Option A: Predefined Table Schema (Plaintext or Encrypted Passwords)
+Required table names: `users`, `authorities`
+```sql
+CREATE TABLE users (
+ username VARCHAR(50) PRIMARY KEY,
+ password VARCHAR(68) NOT NULL,
+ enabled TINYINT NOT NULL
+);
+
+CREATE TABLE authorities (
+ username VARCHAR(50),
+ authority VARCHAR(50),
+ UNIQUE (username, authority),
+ FOREIGN KEY (username) REFERENCES users(username)
+);
+
+-- Insert sample data
+INSERT INTO users VALUES ("john", "{noop}pwd", 1);
+INSERT INTO authorities VALUES ("john", "ROLE_EMPLOYEE");
+```
+
+##### Java Config:
+```java
+@Bean
+public UserDetailsManager userDetailsManager(DataSource dataSource){
+    return new JdbcUserDetailsManager(dataSource);
+}
+```
+
+##### Encrypted Password Support:
+```sql
+ALTER TABLE users MODIFY password CHAR(68);
+
+-- Insert encrypted password (bcrypt)
+INSERT INTO users VALUES (
+ "maaz", "{bcrypt}$2a$12$usolX/pO6Q6qQ8FLryROE.3U2HIWgRQI8bG4SAzSxAxvPG3UEVV4.", 1
+);
+```
+
+##### BCrypt Flow:
+1. Retrieve password from DB
+2. Detect encoding algorithm (e.g., bcrypt)
+3. Encrypt submitted password with salt from DB
+4. Compare hashes
+5. Authenticate if matched
+
+---
+
+##### Option B: Custom Table Schema
+```sql
+CREATE TABLE users (
+ name VARCHAR(60) PRIMARY KEY,
+ password CHAR(68),
+ isActive TINYINT
+);
+
+CREATE TABLE roles (
+ name VARCHAR(60),
+ role VARCHAR(60),
+ UNIQUE KEY unk (name, role),
+ FOREIGN KEY (name) REFERENCES users(name)
+);
+
+-- Insert sample data
+INSERT INTO users VALUES ("maaz", "{bcrypt}...", 1);
+INSERT INTO roles VALUES ("maaz", "ROLE_EMPLOYEE");
+```
+
+##### Java Config for Custom Tables:
+```java
+@Bean
+public UserDetailsManager userDetailsManager(DataSource dataSource){
+    JdbcUserDetailsManager jdbcManager = new JdbcUserDetailsManager(dataSource);
+    jdbcManager.setUsersByUsernameQuery(
+        "SELECT name, password, isActive FROM users WHERE name = ?"
+    );
+    jdbcManager.setAuthoritiesByUsernameQuery(
+        "SELECT name, role FROM roles WHERE name = ?"
+    );
+    return jdbcManager;
+}
+```
+
+##### Security FilterChain (same as in-memory):
+```java
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    httpSecurity.authorizeHttpRequests(configurer ->
+            configurer
+                    .requestMatchers(HttpMethod.GET, "/api/employees").hasRole("EMPLOYEE")
+                    .requestMatchers(HttpMethod.GET, "/api/employees/**").hasRole("EMPLOYEE")
+                    .requestMatchers(HttpMethod.PUT, "/api/employees").hasRole("MANAGER")
+                    .requestMatchers(HttpMethod.PATCH, "/api/employees/**").hasRole("MANAGER")
+                    .requestMatchers(HttpMethod.POST, "/api/employees").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.DELETE, "/api/employees/**").hasRole("ADMIN")
+    );
+    httpSecurity.httpBasic(Customizer.withDefaults());
+    httpSecurity.csrf(csrf -> csrf.disable());
+    return httpSecurity.build();
+}
+```

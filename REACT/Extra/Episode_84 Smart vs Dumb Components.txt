@@ -1,0 +1,64 @@
+Smart Component (Container component)
+Dumb Component (Representation component)
+
+---------------------------------------------------------------
+
+Smart Components (Container Components) ::
+
+Definition: Components that handle logic, state management, and data fetching.
+
+Responsibilities:
+Interact with APIs or external systems.
+Manage application state.
+Pass data and functions down to child components as props.
+
+Characteristics:
+Focus on functionality and behavior.
+
+Exmple :
+import React, { useState, useEffect } from "react";
+import UserList from "./UserList";
+
+const UserContainer = () => {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/users")
+      .then((response) => response.json())
+      .then((data) => setUsers(data));
+  }, []);
+
+  return <UserList users={users} />;
+};
+
+export default UserContainer;
+
+--------------------------------------------------------------
+
+Dumb Components (Presentational Components)  ::
+
+Definition: Components that focus solely on rendering the UI.
+
+Responsibilities:
+Receive data and functions from props.
+Display the UI based on the received data.
+Avoid direct interaction with application state or APIs.
+
+Characteristics:
+Stateless or minimally stateful (e.g., local UI state like input values).
+Reusable and easy to test.
+
+Example :
+import React from "react";
+
+const UserList = ({ users }) => (
+  <ul>
+    {users.map((user) => (
+      <li key={user.id}>{user.name}</li>
+    ))}
+  </ul>
+);
+
+export default UserList;
+
+

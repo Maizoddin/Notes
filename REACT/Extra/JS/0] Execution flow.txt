@@ -1,0 +1,84 @@
+In js execution happens in 2 phases.
+1] Memory Allocation phase
+2] Code Execution phase
+
+1] Memory Allocation Phase :
+In this phase code gets scanned from top to bottom and all the var variable's will get assigned memory with undefined and all the functions will get assigned memory with function body.
+Note : For each function same process gets repeated.
+       let and const are also hoisted but remain in a temporal dead zone (TDZ) until their declaration is encountered.
+       Class Declarations are Hoisted but Not Initialized:
+
+
+2] Code Execution Phase :
+Global Execution context is created.
+this refers to window in browser and global object in node. and undefined in strict mode.
+Functions are pushed inside call stack and popped out from there.
+
+Global Execution Context (GEC): Created by default, this is where global code (outside of any function) is executed.
+Function Execution Context (FEC): Created whenever a function is called.
+
+Execution contexts are managed using a Call Stack (also called the Execution Stack). Each time a function is invoked, its execution context is pushed onto the stack, and when it finishes execution, it is popped off.
+
+Synchronous code will be executed immediately.
+
+setTimeout, setInterval, DOM events will be pushed to the Task Queue(call back queue).
+Timer is a feature of WEB API.
+
+Promises (.then, .catch, .finally) are pushed to the microtask queue.
+
+Once the callstack gets empty then event loop will push the tasks from microtask queue to the callstack, and then tasks from taskqueue are pushed to the callstack.
+
+
+
+Example :
+console.log('Script Start');
+
+setTimeout(() => {
+  console.log('Task 1: setTimeout');
+}, 0);
+
+Promise.resolve().then(() => {
+  console.log('Microtask 1: Promise');
+}).then(() => {
+  console.log('Microtask 2: Chained Promise');
+});
+
+setTimeout(() => {
+  console.log('Task 2: setTimeout');
+}, 0);
+
+console.log('Script End');
+
+
+Output :::
+Script Start
+Script End
+Microtask 1: Promise
+Microtask 2: Chained Promise
+Task 1: setTimeout
+Task 2: setTimeout
+
+
+==========================================
+
+Event Loop :
+The event loop is the mechanism in JavaScript that allows asynchronous code (e.g., promises, setTimeout) to execute alongside synchronous code. JavaScript is single-threaded, so it uses the event loop to handle asynchronous tasks without blocking the main thread.
+
+The event loop continuously checks if the call stack is empty.
+If the stack is empty:
+It first processes all microtasks in the microtask queue.
+Then it processes tasks in the task queue.
+
+========================================
+
+Temporal Dead Zone (TDZ)
+The Temporal Dead Zone (TDZ) is the time between when a variable is hoisted and when it is declared in the code. Variables declared with let and const are hoisted but remain in the TDZ until the line where they are initialized.
+Accessing a variable in the TDZ throws a ReferenceError.
+
+
+Yes, let and const are hoisted, but unlike var, they are not initialized to undefined during the memory creation phase. Instead, they remain in the temporal dead zone (TDZ) from the start of their scope until the line of their declaration.
+========================================
+
+Starvation in js :
+if micro tasks keep popping up without allowing other tasks a chance to run, what happens next? Well, in this scenario, the Callback Queue won’t get an opportunity to execute its tasks. This situation is what we call the starvation of tasks in the Callback Queue.
+Example: One promise resolve another promise and other one resolves another one and so on.

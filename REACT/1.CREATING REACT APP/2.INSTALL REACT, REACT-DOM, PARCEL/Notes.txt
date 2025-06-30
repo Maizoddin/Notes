@@ -1,0 +1,11 @@
+Steps :
+1] Initialize package.json using 'npm init'
+2] Install react, react-dom using 
+   'npm install react react-dom'
+3] Install parcel using
+   'npm install -D parcel'
+4] Run command
+   npx parcel index.html
+
+Note : 
+Babel converts JSX to React.createElement().

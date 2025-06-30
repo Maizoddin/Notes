@@ -1,0 +1,5 @@
+[ngClass] :
+ Adds or removes CSS classes based on conditions.
+
+Example :
+ <div [ngClass]="{ 'active': isActive, 'highlight': isHighlighted }">Styled Text</div>

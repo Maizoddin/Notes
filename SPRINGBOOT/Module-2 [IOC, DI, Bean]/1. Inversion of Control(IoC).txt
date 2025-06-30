@@ -1,0 +1,90 @@
+What is IoC?
+IoC is a design principle where the control of object creation and dependency management is inverted from the application code to a framework or container
+
+Example :
+Traditionally, objects are created manually using new keyword, This leads to tight coupling and makes testing and maintenance difficult.   
+
+public class CricketCoach {
+    public void getTraining() {
+        System.out.println("Practice batting for 30 minutes.");
+    }
+}
+
+public class App {
+    public static void main(String[] args) {
+        CricketCoach coach = new CricketCoach();  // Manual object creation
+        coach.getTraining();
+    }
+}
+
+------------------------------------------------------------------------
+
+With IoC, you delegate the responsibility of creating and providing dependencies to an external entity, the IoC container (in Spring's case, the Spring container).   
+Objects receive their dependencies from the container rather than creating them.
+
+@Component
+public class CricketCoach {
+    public void getTraining() {
+        System.out.println("Practice batting for 30 minutes.");
+    }
+}
+
+@RestController
+public class DemoController {
+    private CricketCoach coach;
+
+    @Autowired
+    public DemoController(CricketCoach coach) {
+        this.coach = coach;
+    }
+
+    @GetMapping("/training")
+    public String getTraining() {
+        return coach.getTraining();
+    }
+}
+
+Note :
+Here, @Component marks CricketCoach as a Spring-managed bean, and the dependency[object of CricketCoach] is injected via the constructor in DemoController.
+
+------------------------------------------------------------------------
+
+How Spring's IoC Container Works:
+
+1] Bean Definitions:
+You provide the Spring container with information about how to create and configure your objects (beans). This can be done through:
+Annotations (like @Component, @Service, @Repository, @Controller, @Bean).
+
+2] Container Creation:
+The Spring container is initialized.   
+
+3] Bean Creation:
+The container creates instances of your beans based on the provided definitions.   
+
+4] Dependency Injection (DI):
+The container injects the necessary dependencies into your beans.
+
+5] Bean Management:
+The container manages the lifecycle of your beans.   
+
+6] Bean Retrieval:
+Your application can retrieve beans from the container when needed.
+
+Benefits of IoC:
+1] Loose Coupling: Objects are not tightly coupled to their dependencies, making them easier to change and test.   
+2] Increased Testability: You can easily replace real dependencies with mock objects for unit testing.
+3] Improved Maintainability: Changes to dependencies don't require modifications to the objects that use them.   
+4] Enhanced Reusability: Beans can be reused across different parts of the application.
+
+------------------------------------------------------------------------
+
+In simpler terms:
+
+Imagine you're building a house. Instead of you going out and buying every nail, board, and window, you hire a construction company. The company knows how to get all the materials and put them together. In this analogy:
+
+You are your application.
+The construction company is the Spring IoC container.
+The materials (nails, boards, windows) are the dependencies.
+The construction company (Spring container) takes care of getting and providing all the materials (dependencies) to build your house (application), freeing you from the details.   
+
+IoC is a fundamental design principle that enables Spring's dependency injection and simplifies the development of complex applications.

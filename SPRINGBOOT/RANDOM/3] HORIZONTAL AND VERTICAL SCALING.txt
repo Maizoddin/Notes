@@ -1,0 +1,105 @@
+1. 🔼 Vertical Scaling (Scale-Up)
+
+You increase the power of a single server:
+* Add more CPU
+* Add more RAM
+* Increase Storage
+
+📌 Example:
+Your banking application runs on a MySQL server with:
+* 16 GB RAM
+* 4-core CPU
+* 500GB SSD.
+* Handles 100 transactions/second.
+
+Situation:
+During Diwali season, traffic spikes (people transfer bonus money). DB queries are slow.
+
+What you do:
+You upgrade the machine to:
+* 128 GB RAM
+* 32-core CPU
+* 2TB SSD
+* Now handles 500 transactions/second.
+
+This is vertical scaling — same server, but more powerful.
+
+✅ Pros:
+* Simple: No code/database changes.
+
+Suitable for monolithic or small systems
+
+❌ Cons:
+* Hardware limits: There's a max CPU/RAM limit per machine
+* Downtime may be needed during upgrade
+* Single point of failure — if server crashes, the system goes down
+
+--------------------------------------------------------------------------------------------------------
+
+2. ↔️ Horizontal Scaling (Scale-Out)
+Definition: Adding more servers to distribute load/data.
+Scenario: Your bank expands globally. The single server can’t handle:
+* 10M+ users and 5k transactions/second.
+* Massive data growth (e.g., 10TB of transaction history).
+
+Techniques 
+1] Replication 
+2] Sharding
+
+OPTION 1] Replication :
+* Setup: One primary server (handles writes)[MASTER] + multiple replicas (handle reads).
+* Use application-level logic or a proxy to route SELECT queries to replicas and INSERT/UPDATE/DELETE to master
+
+  1 Master MySQL server for write (49.207.232.213)
+  2 Replica MySQL servers for read (49.207.232.214, 49.207.232.215)
+  You want:
+  INSERT, UPDATE, DELETE → Go to master
+  SELECT → Go to any replica (load-balanced)
+
+✅ Pros:
+* Can scale almost infinitely (just add more nodes)
+* Better fault tolerance (one node fails, others take over)
+* Zero downtime if done properly
+
+❌ Cons:
+* Complex architecture
+* Data consistency challenges (replica lag)
+* Requires synchronization.
+Note : You do not update the replica (read) yourself — MySQL does it automatically through asynchronous replication.
+
+Step-by-step:
+* Your Spring Boot app sends all write operations (INSERT, UPDATE, DELETE) only to the master.
+* The MySQL master logs these changes in a binary log (binlog).
+* The replica(s) continuously read the master's binlog and replay the changes on themselves.
+* Replication is usually asynchronous — replicas may lag slightly behind the master.
+
+
+
+OPTION 2] Sharding :
+* You split your users/data horizontally across different databases servers
+
+Imagine a bank with millions of users. Rather than putting all users in one giant user table, you split them:
+
+Shard 1: Users with ID 1–1 million
+Shard 2: Users with ID 1M–2M
+Shard 3: Users with ID 2M–3M
+
+Note : 1 Shard = 1 DB
+
+You can shard by:
+Sharding Key		Use Case
+user_id			Classic strategy — each user goes to one DB
+region			Users in "South India" go to DB_1, "North" to DB_2
+account_no % n		Use modulo hash to distribute across n shards
+
+
+--------------------------------------------------------------------------------------------------------
+
+** Partitioning:
+What it is: Partitioning is a general term for dividing a single logical database or table into smaller, more manageable pieces called "partitions." These partitions can be stored, accessed, and managed separately.
+Types:
+* Horizontal Partitioning: Divides a table into multiple partitions based on rows. Each partition contains a subset of the original table's rows but has the same schema.
+* Vertical Partitioning: Divides a table into multiple partitions based on columns. Each partition contains a subset of the original table's columns.
+
+Purpose: Improves query performance (by reducing the data scanned), simplifies management (e.g., backups on smaller chunks), and can enhance availability by isolating failures to a specific partition.
+Location: Partitions can reside on the same physical server or different physical servers.

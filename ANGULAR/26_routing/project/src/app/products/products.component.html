@@ -1,0 +1,9 @@
+<h1>Products</h1>
+<div class="container">
+  <div *ngFor="let product of products" (click)="onClick(product.id)">
+    <app-product [product]="product"></app-product>
+  </div>
+</div>
+  <div class="space"></div>
+
+

@@ -1,0 +1,69 @@
+
+import { RouterModule, Routes } from '@angular/router';
+
+
+const routes: Routes = [
+  { path: 'home', component: HomeComponent },
+  { path: 'products', component: ProductsComponent },
+  { path: 'product/:id', component: ProductComponent },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '**', component: ErrorComponent },
+];
+
+
+Note : 
+ pathMatch: 'full'   : Every path will have empty path initially so to make clear that it should redirect to HomeComponent only when the entire path is empty.
+
+.html
+  <li
+      [routerLink]="['/home']"
+      routerLinkActive="active1 active2"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Home
+    </li>
+
+.ts
+    constructor(private activatedRoute: ActivatedRoute)
+
+    navigate :
+    onClick(id: number) {
+      this.router.navigate(['product/' + id]);
+    }
+
+===========================================================
+
+Route Parameters :
+
+.html
+[routerLink]="['/client', client.id, client.name]"
+
+.ts
+this.router.navigate(['/orders', id,name]);
+
+Receiving :
+this.activeRoute.snapshot.paramMap.get('id');
+
+Note : To get subsequent updated parameters use observable.
+this.activatedRoute.paramMap.subscribe((params)=>id=params.get('id'))
+
+==============================================================
+Query Parameters :
+Note : * It is added at the end of the path
+       * It is optional 
+       Example : 
+               product/1    or    product/1?edit=true
+               Both will load the same component
+
+.html
+[routerLink]=['/courses'] [queryParams]="{name: 'js', tutor: 'hitesh'}"
+
+.ts
+this.router.navigate(['/orders', id], {queryParams: {name: 'js', tutor: 'hitesh'}});
+
+Receiving :
+
+this.activeRoute.snapshot.queryParamMap.get('edit')
+this.activatedRoute.queryParamMap.subscribe((params)=>edit=params.get('edit'))
+
+

@@ -1,0 +1,265 @@
+useState :
+In React if we create a normal variable and update its value then it won't get reflected on the UI so we should use state variable.
+
+When we update the state variable then it notifies the DOM to re-render the component.
+import useState as a named import
+Example :
+import {useState} from "react"
+const [count, setCount] = useState(0)
+
+Always use setFunction to update the state variable, If we update the state variable directly without using setFunction then the variable's value will update but re-render will not happen.
+
+Note : If there are multiple state variable updates then react batches them together and updates all at once.
+
+Note : React will render the entire component from top to bottom when the state variable changes
+----------
+Event Handler :
+Event handler takes call back functions.
+const [count, setCount] = useState(0)
+
+<button onClick={()=>setCount(count+1)}>Add</button>
+
+Or
+
+function increament(){
+setCount(count+1)
+}
+<button onClick={increament}>Add</button>
+---
+Note :
+Just pass the function reference and dont call function directly.
+---------------------
+Updation of State variable :
+Calling the set function does not change the current state in the already executing code:
+Example :
+const [name, setName] = useState('Taylor');
+function handleClick() {
+  setName('Robin');
+  console.log(name); // Still "Taylor"!
+}
+<button onClick={handleClick}> Change </button>
+
+-----------------------
+Updating state based on the previous state  :
+Suppose the age is 42. This handler calls setAge(age + 1) three times:
+
+function handleClick() {
+  setAge(age + 1); // setAge(42 + 1)
+  setAge(age + 1); // setAge(42 + 1)
+  setAge(age + 1); // setAge(42 + 1)
+}
+However, after the click, age will only be 43 rather than 45! This is because set function will get scheduled with the current value when it was scheduled that is setAge(42+1), setAge(42+1), setAge(42+1)
+
+So to Update the state based on the previous value pass the callback function. which will receive the current latest stateValue as input and returns new updated state value. Here when we use callBack function react guarantees to provide the latest updated state value as input parameter to callback function
+
+function handleClick() {
+  setAge(prevState => prevState + 1); // setAge(42 => 43)
+  setAge(prevState => prevState + 1); // setAge(43 => 44)
+  setAge(prevState => prevState  + 1); // setAge(44 => 45)
+}
+
+-------------------------
+
+Example of Object in State :
+
+import { useState } from 'react';
+
+export default function Form() {
+  const [form, setForm] = useState({
+    firstName: 'Barbara',
+    lastName: 'Hepworth',
+    email: 'bhepworth@sculpture.com',
+  });
+
+  return (
+    <>
+      <label>
+        First name:
+        <input
+          value={form.firstName}
+          onChange={e => {
+            setForm({
+              ...form,
+              firstName: e.target.value
+            });
+          }}
+        />
+      </label>
+      <label>
+        Last name:
+        <input
+          value={form.lastName}
+          onChange={e => {
+            setForm({
+              ...form,
+              lastName: e.target.value
+            });
+          }}
+        />
+      </label>
+      <label>
+        Email:
+        <input
+          value={form.email}
+          onChange={e => {
+            setForm({
+              ...form,
+              email: e.target.value
+            });
+          }}
+        />
+      </label>
+      <p>
+        {form.firstName}{' '}
+        {form.lastName}{' '}
+        ({form.email})
+      </p>
+    </>
+  );
+}
+---------------------------------------------
+Nested Object :
+
+import { useState } from 'react';
+
+export default function Form() {
+  const [person, setPerson] = useState({
+    name: 'Niki de Saint Phalle',
+    artwork: {
+      title: 'Blue Nana',
+      city: 'Hamburg',
+      image: 'https://i.imgur.com/Sd1AgUOm.jpg',
+    }
+  });
+
+  function handleNameChange(e) {
+    setPerson({
+      ...person,
+      name: e.target.value
+    });
+  }
+
+  function handleTitleChange(e) {
+    setPerson({
+      ...person,
+      artwork: {
+        ...person.artwork,
+        title: e.target.value
+      }
+    });
+  }
+
+  function handleCityChange(e) {
+    setPerson({
+      ...person,
+      artwork: {
+        ...person.artwork,
+        city: e.target.value
+      }
+    });
+  }
+
+  function handleImageChange(e) {
+    setPerson({
+      ...person,
+      artwork: {
+        ...person.artwork,
+        image: e.target.value
+      }
+    });
+  }
+
+  return (
+    <>
+      <label>
+        Name:
+        <input
+          value={person.name}
+          onChange={handleNameChange}
+        />
+      </label>
+      <label>
+        Title:
+        <input
+          value={person.artwork.title}
+          onChange={handleTitleChange}
+        />
+      </label>
+      <label>
+        City:
+        <input
+          value={person.artwork.city}
+          onChange={handleCityChange}
+        />
+      </label>
+      <label>
+        Image:
+        <input
+          value={person.artwork.image}
+          onChange={handleImageChange}
+        />
+      </label>
+      <p>
+        <i>{person.artwork.title}</i>
+        {' by '}
+        {person.name}
+        <br />
+        (located in {person.artwork.city})
+      </p>
+      <img 
+        src={person.artwork.image} 
+        alt={person.artwork.title}
+      />
+    </>
+  );
+}
+-----------
+Note :
+You can reset a component’s state by passing a different key to a component.When the key changes, React re-creates the component(and all of its children) from scratch, so its state gets reset
+Example in Docs : https://react.dev/reference/react/useState
+
+--------------------------
+If prop value changes then components state won't be lost.
+Example:Suppose we have Parent component which has one state variable and that variable is being passed as an prop to Child component so now whenever that state variable changes both parent and child will get rendered but Child's state won't get lost.
+-------------------------
+If state variable of parent changes then child will get re-rendered but if state variable of child changes then parent won't get rerendered.
+-------------------------
+
+Reconciliation-Algorithm OR React-Fiber OR Diff-Algorithm:
+React uses virtual DOM 
+Actual DOM : 
+  <html>
+     <head>
+     </head>
+     <body>
+     </body>
+  </html>
+
+Virtual DOM :
+
+1] Single Virtual DOM Tree: React maintains a single Virtual DOM tree that represents the entire application. This tree is composed of nodes that correspond to each React component and their respective elements.
+
+2] Component Updates: When a component's state or props change, React re-renders that component and generates a new Virtual DOM subtree for that component. This new subtree is then compared to the previous Virtual DOM subtree for the same component.
+
+3] Diffing and Reconciliation: React uses a diffing algorithm to compare the new Virtual DOM subtree with the previous one. It identifies the differences (or "diffs") between the two subtrees. React then calculates the most efficient way to update the actual DOM based on these differences.
+
+4] Efficient Updates: React batches these updates and applies them to the actual DOM in a way that minimizes direct manipulation, which can be slow and inefficient.
+
+Note : It's easy to find out the difference between 2 objects than that of 2 HTML trees, so react compares 2 objects and then updates that part in HTML tree.
+
+
+------------------------------------------------------------------------------
+Important :
+Case : If all components are same page
+1] Let's assume we have <App/> component which is calling <Parent/> component which further calls <Child/> component.
+I have state variable's in all the components so whenever state variable in the <App/> component changes it will re-render all <App/>,<Parent/>,<Child/> components but the state of <Parent/> and <Child/> will not be lost.
+
+2] Suppose we are passing state variable of <App/> component as a key to <Parent/> then whenever state variable's value will change in the <App/> component the <Parent/> and <Child/> component will get re-created and its state will be lost. because if key changes the react will think like its new component so it will re-create component along with the state.
+
+----------------------
+
+Case : If all components are different pages
+Note : so whenever component unmounts from a page then all it's state will be lost if we are managing state locally inside component using useState.
+But if we use some state management libarary like redux then our state will be preserved because it will be managing the state outside of the component globally.
+* If component-1 is managing its own state internally (e.g., using React's useState hook) and you navigate away, the state will typically be lost when you navigate back. This is because the component is unmounted when you leave and re-mounted when you return.
+* If you are using an external state management library like Redux or React's Context API to manage the state of component-1, the state will persist even if you navigate away and come back. This is because the state is stored outside the component and is not affected by the component's lifecycle.

@@ -1,0 +1,61 @@
+Higher Order Components :
+Higher order component is a component which takes a component as an input and returns a new component as an output.
+
+Example :
+(JS Functions example):
+------------
+function Original(name){
+    console.log(`Hello ${name} from Original`)
+}
+
+function HigherOrderFunction(original){
+    return function ModifiedFunction(name){
+        original(name)
+    }
+}
+
+const modified = HigherOrderFunction(Original)
+modified("Maaz")
+
+==========================================
+
+HOC - Higher Order Component Example :
+
+
+const withAuth = (WrappedComponent) => {
+  return (props) => {
+    const isAuthenticated = true; // Authentication logic here
+
+    if (isAuthenticated) {
+      return <WrappedComponent {...props} />;
+    } else {
+      return <div>Please Login</div>;
+    }
+  };
+};
+
+export default withAuth;
+--
+Profile.jsx
+
+const Profile = ({ name }) => {
+  return (
+    <div>
+      <h1>Welcome, {name}!</h1>
+      <p>This is your profile content.</p>
+    </div>
+  );
+};
+
+--
+App.jsx 
+
+const AuthProfile = withAuth(Profile); 
+
+const App = () => {
+  return (
+    <div>
+      <AuthProfile name="John Doe" />
+    </div>
+  );
+}

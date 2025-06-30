@@ -1,0 +1,900 @@
+Required Dependencies :
+1] Core Dependency: spring-boot-starter-web
+This is the main dependency required to build REST APIs. It includes:
+* Spring MVC (for handling HTTP requests)
+* Embedded Tomcat (default web server)
+* Jackson (for JSON serialization/deserialization)
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+
+
+
+JSON : Javascript Object Notation
+Serialization/ DataBinding 	[Converting Java objects → JSON/XML (for API responses)]
+Deserialization/ DataBinding 	[Converting JSON/XML → Java objects (for API requests)]
+
+POST : Create a new entity
+PUT : Update an existing entity
+GET : Read entity
+DELETE : Delete an existing entity
+
+STATUS CODES :
+100-199 : information
+200-299 : Successful
+300-399 : Redirection
+400-499 : Client error  [401 - Authentication Required, 404 - Page not found]
+500-599 : Server error  [500 - Internal Server Error]
+
+@RequestMapping -  It acts as a base path for all methods inside the controller.
+@RestController - It is a specialized version of @Controller. It is a combination of: 
+               	  @Controller (indicates a Spring MVC controller)
+                  @ResponseBody (automatically serializes responses to JSON/XML. i.e converts Java objects into JSON or XML format)
+@GetMapping     - It is a shortcut for @RequestMapping(method = RequestMethod.GET). It is used for handling HTTP GET requests.
+@PostMapping    - 
+@PutMapping     -
+@DeleteMapping  -
+
+
+POJO [(Plain Old Java Object] : 
+It is a simple Java class that follows a few basic rules:
+✔️ It only contains fields (variables), getters, and setters.
+✔️ It does not extend any specific class (like Serializable or JPA Entity).
+✔️ It does not have business logic—just data representation.
+
+Example :
+public class User {
+    private String name;
+    private int age;
+
+    // Constructor
+    public User(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    // Getter and Setter
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+}
+
+
+
+DataBinding [Data Convertion] :
+* It is handled by Jackson project.
+* It automatically converts data from POJO to JSON and vice versa.
+* It uses appropriate getters and setters and converts it
+* spring-boot-starter-web automatically includes dependency for jackson
+
+Example :
+1] Coverting from JSON to POJO 
+   It creates the object of POJO and calls appropriate setters and sets the values from JSON
+2] Converting from POJO to JSON 
+   It creates json object and calls appropriate getters
+
+Spring will automatically handle Jackson integration
+* JSON data being passed to REST controller is converted to POJO
+* Java object being passed from REST controller is converted to JSON
+
+Flow :
+Rest Client  -> Spring Rest[Jackson]  ->  Rest Service
+
+---------
+
+Create dto package of pojo's
+
+Example of pojo :
+UserDTO.java :
+package com.example.demo.dto;
+
+public class UserDTO {
+    private int id;
+    private String name;
+    private boolean isActive;
+
+    public UserDTO(int id, String name, boolean isActive) {
+        this.id = id;
+        this.name = name;
+        this.isActive = isActive;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+}
+
+
+-----------
+
+@PathVariable
+The @PathVariable annotation is used to extract values from the URI path in a Spring Boot REST API. 
+It helps in dynamic URL handling by mapping parts of the URL to method parameters.
+Example: 
+@RestController
+@RequestMapping("/students")
+public class StudentController {
+
+    @GetMapping("/{id}")
+    public String getStudentById(@PathVariable Long id) {
+        return "Student ID: " + id;
+    }
+}
+
+// GET http://localhost:8080/students/101
+
+--------------------
+
+Exception Handling :
+
+1] Create Custom Exception
+2] Create ErrorResponse class
+3] Throw Exception from controller method
+4] Create class with @ControllerAdvice and add methods with @ExceptionHandler
+5] From inside the handler method return the response
+
+
+--------------------
+@ControllerAdvice :
+@ControllerAdvice is a global exception handler that allows you to handle exceptions across multiple controllers in one place. and it creates that class as bean.
+📌 Without @ControllerAdvice: You have to manually handle exceptions in every controller.
+📌 With @ControllerAdvice: You write exception-handling logic once, and it applies to all controllers.
+
+Code :
+Example Code :
+1] UserNotFoundException.java
+package com.example.demo.controller;
+
+public class UserNotFoundException extends RuntimeException{
+    public UserNotFoundException(String message){
+        super(message);
+    }
+}
+
+
+2] UserErrorResponse.java
+package com.example.demo.controller;
+
+public class UserErrorResponse {
+    private int status;
+    private String message;
+    private long timeStamp;
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public UserErrorResponse() {
+    }
+
+    public UserErrorResponse(int status, String message, long timeStamp) {
+        this.status = status;
+        this.message = message;
+        this.timeStamp = timeStamp;
+    }
+}
+
+3] UserController.java
+package com.example.demo.controller;
+
+import com.example.demo.dto.UserDTO;
+import jakarta.annotation.PostConstruct;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+@RequestMapping("api")
+public class UserController {
+    private List<UserDTO> users = new ArrayList<>();
+
+    @PostConstruct
+    private void onInit() {
+        users.add(new UserDTO(1, "Maaz", true));
+        users.add(new UserDTO(2, "Sakib", true));
+        users.add(new UserDTO(3, "Saniya", true));
+    }
+
+    @GetMapping("users")
+    public List<UserDTO> getUsers() {
+        return users;
+    }
+
+    @GetMapping("users/{userId}")
+    public UserDTO getUser(@PathVariable int userId) {
+        if (userId < 0 || userId >= users.size()) {
+            throw new UserNotFoundException("User id not found - " + userId);
+        }
+        return users.get(userId);
+    }
+
+}
+
+
+4] UserExceptionHandler.java
+package com.example.demo.controller;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+@ControllerAdvice
+public class UserExceptionHandler {
+
+    public UserExceptionHandler(){
+        System.out.println("Exception handler");
+    }
+    @ExceptionHandler(UserNotFoundException.class)          OR    @ExceptionHandler
+    public ResponseEntity<UserErrorResponse> handleException(UserNotFoundException exception){
+        UserErrorResponse error = new UserErrorResponse();
+        error.setStatus(HttpStatus.NOT_FOUND.value());
+        error.setMessage(exception.getMessage());
+        error.setTimeStamp(System.currentTimeMillis());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<UserErrorResponse> handleException(Exception exception) {
+        UserErrorResponse error = new UserErrorResponse();
+        error.setStatus(HttpStatus.BAD_REQUEST.value());
+        error.setMessage(exception.getMessage());
+        error.setTimeStamp(System.currentTimeMillis());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+}
+
+
+Flow
+1️⃣ Client sends a request → Jackson deserializes JSON (if it's a POST/PUT request).
+2️⃣ Controller processes the request → Calls the service layer (if applicable).
+3️⃣ If an exception occurs in the controller or service.
+4️⃣ @ControllerAdvice catches the exception → Creates an ErrorResponse object.
+5️⃣ Jackson serializes the ErrorResponse object into JSON.
+6️⃣ Client receives the JSON error response.
+
+
+-------------------------
+
+Spring Boot API design - Best Practices 
+Name : Use common noun with plural form
+
+Example : Employee
+HTTP Methode         Endpoint                          Action
+POST 		     api/employees		       Create a new employee
+GET		     api/employees		       Read a list of employees
+GET		     api/employees/{employeeId}        Read a single employee
+PUT		     api/employees		       Update an existing employee
+DELETE 		     api/employees/{employeeId}        Delete an existing employee
+PATCH		     api/employees/{employeeId}	       Partially update an existing employee
+
+Application Architecture :
+Rest Controller  ->  Service Layer  ->  DAO Layer[Hibernate][Repository]  ->  Database
+
+Dependencies :
+Srping WEB
+Spring Boot Dev Tools
+Spring Data JPA
+MySQL Driver
+
+
+STEPS :
+UPDATE DB CONFIG IN APPLICATION.PROPERTIES
+CREATE EMPLOYEE ENTITY
+CREATE DAO INTERFACE 
+CREATE DAO IMPLEMENTATION [@Repository]
+CREATE SERVICE INTERFACE
+CREATE SERVICE IMPLEMENTATION [@Service]
+CREATE REST CONTROLLER
+
+
+Note :
+Service Layer is required so that When Controller calls ServiceLayer we can FetchData from multipleDAO's and combine and we can send.
+Example : For Employee  ->   [EmployeeDAO, SkillDAO, PayrollDAO] => EmployeServiceResult
+
+It's good practice to use @Transactional on Service Layer instead of DAO.
+Throw exception from Service Layer and not from DAO layer
+
+-----
+
+ObjectMapper is a helper class in the Jackson liberary.
+It converts java object to json and vice-versa
+Allows merging of json nodes
+
+-------
+
+Code for manual approach [Client -> RestController -> ServiceLayer -> DAO] 
+
+EmployeeRestController.java
+package com.maaz.springboot.cruddemo.controller;
+
+import com.maaz.springboot.cruddemo.entity.Employee;
+import com.maaz.springboot.cruddemo.service.EmployeeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api")
+public class EmployeeRestController {
+
+    private EmployeeService employeeService;
+
+    @Autowired
+    public EmployeeRestController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
+
+    @GetMapping("/employees")
+    public ResponseEntity<List<Employee>> findAll() {
+        List<Employee> employees = employeeService.findAll();
+        if (employees.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+        return ResponseEntity.ok(employees);
+    }
+
+
+    @GetMapping("/employees/{id}")
+    public ResponseEntity<Employee> findById(@PathVariable Integer id) {
+        Employee employee = employeeService.findById(id);
+        return ResponseEntity.ok(employee);
+    }
+
+    @PostMapping("/employees")
+    public ResponseEntity<Employee> create(@RequestBody Employee employee) {
+        Employee newEmployee = employeeService.create(employee);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newEmployee);
+    }
+
+    @PutMapping("/employees")
+    public ResponseEntity<Employee> update(@RequestBody Employee employee) {
+        Employee updatedEmployee = employeeService.update(employee);
+        return ResponseEntity.ok(updatedEmployee);
+    }
+
+    @DeleteMapping("/employees/{id}")
+    public ResponseEntity<String> delete(@PathVariable Integer id) {
+        String status = employeeService.delete(id);
+        return ResponseEntity.ok(status);
+    }
+
+    @PatchMapping("employees/{id}")
+    public ResponseEntity<Employee> patch(@PathVariable Integer id, @RequestBody Map<String, Object> updates) {
+        Employee employee = employeeService.patch(id, updates);
+        return ResponseEntity.ok(employee);
+    }
+}
+
+
+--
+EmployeeService.java
+package com.maaz.springboot.cruddemo.service;
+
+import com.maaz.springboot.cruddemo.entity.Employee;
+
+import java.util.List;
+import java.util.Map;
+
+public interface EmployeeService {
+    List<Employee> findAll();
+
+    Employee findById(Integer id);
+
+    Employee create(Employee employee);
+
+    Employee update(Employee employee);
+
+    String delete(Integer id);
+
+    Employee patch(Integer id, Map<String, Object> updates);
+}
+
+
+EmployeeServiceImpl.java
+package com.maaz.springboot.cruddemo.service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.maaz.springboot.cruddemo.dao.EmployeeDAO;
+import com.maaz.springboot.cruddemo.entity.Employee;
+import com.maaz.springboot.cruddemo.exception.EmployeeNotFoundException;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+
+@Service
+public class EmployeeServiceImpl implements EmployeeService {
+    private EmployeeDAO employeeDAO;
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    public EmployeeServiceImpl(EmployeeDAO employeeDAO, ObjectMapper objectMapper) {
+        this.employeeDAO = employeeDAO;
+        this.objectMapper = objectMapper;
+    }
+
+    public List<Employee> findAll() {
+        return employeeDAO.findAll();
+    }
+
+    @Override
+    public Employee findById(Integer id) {
+        Employee employee = employeeDAO.findById(id);
+        if (employee == null) {
+            throw new EmployeeNotFoundException("Employee with ID " + id + " not found");
+        }
+        return employee;
+    }
+
+    @Transactional
+    @Override
+    public Employee create(Employee employee) {
+        employee.setId(null);
+        return employeeDAO.create(employee);
+    }
+
+    @Transactional
+    @Override
+    public Employee update(Employee employee) {
+        return employeeDAO.update(employee);
+    }
+
+    @Transactional
+    @Override
+    public String delete(Integer id) {
+        return employeeDAO.delete(id);
+    }
+
+    @Transactional
+    public Employee patch(Integer id, Map<String, Object> updates) {
+
+        Employee employee = employeeDAO.findById(id);
+        if (employee == null) {
+            throw new EmployeeNotFoundException("Employee with ID " + id + " not found");
+        }
+        ObjectNode existingNode = objectMapper.convertValue(employee, ObjectNode.class);
+
+        if (updates.containsKey("id")) {
+            throw new RuntimeException("Id can't be updated");
+        }
+        ObjectNode updatesNode = objectMapper.convertValue(updates, ObjectNode.class);
+
+        existingNode.setAll(updatesNode);
+        Employee mergedEmployee = objectMapper.convertValue(existingNode, Employee.class);
+
+        return employeeDAO.update(mergedEmployee);
+    }
+
+}
+
+---
+EmployeeDAO.java
+package com.maaz.springboot.cruddemo.dao;
+
+import com.maaz.springboot.cruddemo.entity.Employee;
+
+import java.util.List;
+
+public interface EmployeeDAO {
+    List<Employee> findAll();
+
+    Employee findById(Integer id);
+
+    Employee create(Employee employee);
+
+    Employee update(Employee employee);
+
+    String delete(Integer id);
+}
+
+
+EmployeeDAOImpl.java
+package com.maaz.springboot.cruddemo.dao;
+
+import com.maaz.springboot.cruddemo.entity.Employee;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public class EmployeeDAOImpl implements EmployeeDAO {
+
+    private EntityManager entityManager;
+
+    @Autowired
+    public EmployeeDAOImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+    @Override
+    public List<Employee> findAll() {
+        String jpql = "SELECT e FROM Employee e";
+        TypedQuery<Employee> query = entityManager.createQuery(jpql, Employee.class);
+        List<Employee> employees = query.getResultList();
+        return employees;
+    }
+
+    @Override
+    public Employee findById(Integer id) {
+        return entityManager.find(Employee.class, id);
+    }
+
+    @Override
+    public Employee create(Employee employee) {
+        entityManager.persist(employee);
+        return employee;
+    }
+
+    @Override
+    public Employee update(Employee employee) {
+        return entityManager.merge(employee);
+    }
+
+    @Transactional
+    @Override
+    public String delete(Integer id) {
+        Employee employee = entityManager.find(Employee.class, id);
+        entityManager.remove(employee);
+        return "Employee ID with " + id + " was deleted successfully.";
+    }
+
+}
+
+---
+Entity
+Employee.java
+
+package com.maaz.springboot.cruddemo.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "employees")
+public class Employee {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "email")
+    private String email;
+
+    public Employee() {
+    }
+
+    public Employee(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+}
+
+---
+EmployeeErrorResponse.java
+package com.maaz.springboot.cruddemo.exception;
+
+public class EmployeeErrorResponse {
+    private int status;
+    private String message;
+    private long timestamp;
+
+    public EmployeeErrorResponse() {
+    }
+
+    public EmployeeErrorResponse(int status, String message, long timestamp) {
+        this.status = status;
+        this.message = message;
+        this.timestamp = timestamp;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+}
+
+
+EmployeeNotFoundException.java
+package com.maaz.springboot.cruddemo.exception;
+
+
+public class EmployeeNotFoundException extends RuntimeException {
+    public EmployeeNotFoundException(String message){
+        super(message);
+    }
+}
+
+
+GlobalExceptionHandler.java
+package com.maaz.springboot.cruddemo.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(EmployeeNotFoundException.class)
+    public ResponseEntity<EmployeeErrorResponse> handleNotFound(EmployeeNotFoundException exception) {
+        EmployeeErrorResponse errorResponse = new EmployeeErrorResponse();
+        errorResponse.setStatus(HttpStatus.NOT_FOUND.value());
+        errorResponse.setMessage(exception.getMessage());
+        errorResponse.setTimestamp(System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<EmployeeErrorResponse> handleGeneral(Exception exception) {
+        EmployeeErrorResponse errorResponse = new EmployeeErrorResponse();
+        errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+        errorResponse.setMessage(exception.getMessage());
+        errorResponse.setTimestamp(System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+}
+
+===========================
+
+Spring Data JPA provides interface called JpaRepository
+
+JpaRepository provides built in crud operations
+[save, findById, findAll, deleteById, delete, deleteAll]
+
+Architecture :
+Client -> Controller -> Service -> JpaRepository[Spring Data JPA] -> Database
+
+Note : So now with JpaRepository, DAO layer is gone, we should just create an interface which extends JpaRepository.
+
+
+Example :
+package repository;
+public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
+}
+
+Now I can call methods from service layer
+
+package com.maaz.springboot.cruddemo.service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.maaz.springboot.cruddemo.entity.Employee;
+import com.maaz.springboot.cruddemo.exception.EmployeeNotFoundException;
+import com.maaz.springboot.cruddemo.repository.EmployeeRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+@Service
+public class EmployeeServiceImpl implements EmployeeService {
+    private EmployeeRepository employeeRepository;
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, ObjectMapper objectMapper) {
+        this.employeeRepository = employeeRepository;
+        this.objectMapper = objectMapper;
+    }
+
+    public List<Employee> findAll() {
+        return employeeRepository.findAll();
+    }
+
+    @Override
+    public Employee findById(Integer id) {
+        Employee employee = null;
+        Optional<Employee> result = employeeRepository.findById(id);
+        if (result.isPresent()) {
+            employee = result.get();
+        }
+        return employee;
+
+    }
+
+
+    @Override
+    public Employee create(Employee employee) {
+        employee.setId(null);
+        return employeeRepository.save(employee);
+    }
+
+
+
+    @Override
+    public Employee update(Employee employee) {
+        return employeeRepository.save(employee);
+    }
+
+
+
+    @Override
+    public String delete(Integer id) {
+        employeeRepository.deleteById(id);
+        return "Employee ID with " + id + " was deleted successfully.";
+    }
+
+    @Transactional
+    public Employee patch(Integer id, Map<String, Object> updates) {
+
+        Employee employee =findById(id);
+        if (employee == null) {
+            throw new EmployeeNotFoundException("Employee with ID " + id + " not found");
+        }
+        ObjectNode existingNode = objectMapper.convertValue(employee, ObjectNode.class);
+
+        if (updates.containsKey("id")) {
+            throw new RuntimeException("Id can't be updated");
+        }
+        ObjectNode updatesNode = objectMapper.convertValue(updates, ObjectNode.class);
+
+        existingNode.setAll(updatesNode);
+        Employee mergedEmployee = objectMapper.convertValue(existingNode, Employee.class);
+
+        return employeeRepository.save(mergedEmployee);
+    }
+
+}
+
+===========================
+
+Spring Data Rest :
+Spring Data Rest will scan for JpaRespository and based on entity it will provide rest api's for POST, GET, PUT, DELETE.
+It will take the entity name and makes it pluralized and starting letter as lowercase.
+
+Example :
+public interface EmployeeRepository extends JpaRepository<Employee, Integer> {}
+POST : /employees
+GET  : /employees
+GET  : /employees/{employeeId}
+PUT  : /employees/{employeeId}
+DELETE : /employees/{employeeId}
+
+Requirements :
+1] ENTITY  : Employee
+2] JPA REPOSITORY  :  EmployeeRepository extends JpaRepository
+3] MAVEN DEPENDENCY : spring-boot-starter-data-rest
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-rest</artifactId>
+  </dependency>
+
+OLD ARCHITECTURE :
+CLIENT -> REST CONTROLLER -> SERVICE LAYER -> REPOSITORY[JPA REPOSITORY] -> DATABASE
+
+NEW ARCHITECTURE :
+CLIENT -> SPRING DATA REST -> REPOSITORY[JPA REPOSITORY] -> DATABASE
+
+Note : 
+It removes controller and service layer code and gives endpoints automagically.
+It is not used in the industry , In large project custom RestController layer will be there

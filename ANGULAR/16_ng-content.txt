@@ -1,0 +1,12 @@
+<ng-content></ng-content>
+
+Note : It is used when parent component injects some content to child component 
+
+Example :
+parent.html
+<h1>This is parent component</h1>
+<child> <span>Example</span> </child>
+
+child.html
+<h1>This is child component</h1>
+<ng-content></ng-content>

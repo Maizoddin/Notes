@@ -1,0 +1,57 @@
+Subject :
+* Subject emits data even if there is no subscriber.
+
+   * It is multicast:
+       Each subscriber of a Subject shares the same execution of the Subject, meaning they all receive the same sequence of values.
+       
+   * Here we can emit values from outside as well.
+
+   Note :
+   A] Plain Subject |Behavioral Subject]:
+     In plain subject if any Subscriber subscribes late then he will start receiving values from that point[i.e current values]. he will not receive the old previous emitted values. 
+     Example : If we see cricket score then when we start the TV we will get current    
+               score, we won't get previous scores.
+      The only difference between plain Subject and BehavioralSubject is BehavioralSubject taken intitial value
+    
+    B] ReplaySubject :
+       Here when we subscribe we will get all the previous values and current values.
+
+----------------------------------------------------
+PlainSubject | BehavioralSubject :
+So in the Example project when i subscribe-1 i will get the current value and later after some time if i subscribe subscribe-2 then both will get the same values.
+
+Output :
+Subscriber-1 :  1                   Subscriber-1 Started
+Subscriber-1 :  2
+Subscriber-1 :  3
+Subscriber-1 :  4
+Subscriber-1 :  5
+Subscriber-2 :  5                   Subscriber-2 Started
+Subscriber-1 :  6
+Subscriber-2 :  6
+Subscriber-1 :  7
+Subscriber-2 :  7
+
+So here if any one subscribes late then he won't receive the old previous data.
+so to acheive that we can use ReplaySubject
+
+---------------------------
+Replay Subject :
+
+custom_subject:ReplaySubject<number> = new ReplaySubject;
+
+Here even if we subscribe late we will get all the old values.
+Output :
+Subscriber-1 :  1           Subscriber-1 Started
+Subscriber-1 :  2
+Subscriber-1 :  3
+Subscriber-1 :  4
+Subscriber-2 :  1           Subscriber-2 Started
+Subscriber-2 :  2
+Subscriber-2 :  3
+Subscriber-2 :  4
+Subscriber-1 :  5
+Subscriber-2 :  5                  
+Subscriber-1 :  6
+Subscriber-2 :  6
+

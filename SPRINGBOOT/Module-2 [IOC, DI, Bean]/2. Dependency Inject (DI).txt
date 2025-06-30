@@ -1,0 +1,147 @@
+Dependency Injection (DI) :
+Dependency Injection is a design pattern where the dependencies of a class are injected by an external entity (like the Spring container) rather than the class creating them itself. It is a way to implement IoC.
+
+Scenario : Imagine you're building a car. You need various components:
+
+Engine: Provides the power.
+Wheels: Allow movement.
+Steering Wheel: Controls direction.
+Audio System: Provides entertainment.
+
+Traditional Approach (Without DI) :
+class Car {
+    Engine engine = new Engine(); // Car creates its own engine
+    Wheels wheels = new Wheels(); // Car creates its own wheels
+    SteeringWheel steeringWheel = new SteeringWheel(); // Car creates its own steering
+    AudioSystem audioSystem = new AudioSystem(); // car creates its own audio system
+
+    void drive() {
+        engine.start();
+        wheels.rotate();
+        steeringWheel.turn();
+        System.out.println("Driving with music from " + audioSystem.getBrand());
+    }
+}
+
+
+Problems with this approach:
+1] Tight Coupling: The Car class is tightly coupled to the specific implementations of Engine, Wheels, SteeringWheel, and AudioSystem. If you want to change the engine type, you have to modify the Car class itself.
+2] Code Duplication: If another class, like a Truck, also needs an Engine, you'd have to duplicate the engine creation code.
+
+----------------------------------------------------
+
+Dependency Injection (DI) Approach :
+With DI, instead of the Car class creating its dependencies, those dependencies are "injected" into the Car from an external source.
+
+class Car {
+    Engine engine;
+    Wheels wheels;
+    SteeringWheel steeringWheel;
+    AudioSystem audioSystem;
+
+    @AutoWired
+    Car(Engine engine, Wheels wheels, SteeringWheel steeringWheel, AudioSystem audioSystem) {
+        this.engine = engine;
+        this.wheels = wheels;
+        this.steeringWheel = steeringWheel;
+        this.audioSystem = audioSystem;
+    }
+
+    void drive() {
+        engine.start();
+        wheels.rotate();
+        steeringWheel.turn();
+        System.out.println("Driving with music from " + audioSystem.getBrand());
+    }
+}
+
+Benefits of DI in Spring Boot:
+1] Loose Coupling: The Car class doesn't need to know the specific implementations of its dependencies. It only knows about the interfaces or abstract classes.
+2] Improved Testability: You can easily inject mock objects into the Car class for unit testing.
+3] Increased Reusability: Dependencies can be reused across multiple classes.
+4] Enhanced Maintainability: Changes to dependencies don't require modifications to the classes that use them.
+5] Better Code Organization: Manages the creation and wiring of objects.
+
+----------------------------------------------------
+
+The Role of @Autowired :
+
+@Autowired is a Spring annotation that instructs the Spring IoC (Inversion of Control) container to automatically inject dependencies into a bean. Essentially, it tells Spring: "Find a suitable bean of this type and give it to me."
+
+Types of injection :
+1] Constructor Injection (Preferred)
+2] Setter Injection (Not recommended)
+3] Field Injection (Not recommended)
+
+Important Note :
+If a class has only one constructor, Spring Boot automatically injects the dependencies, even without the @Autowired annotation.
+
+----------------------------------------------------
+
+1] Constructor Injection (Preferred) :
+Advantages :
+Forces dependencies to be provided at object creation, ensuring the object is always in a valid state.
+
+Example :
+
+import org.springframework.stereotype.Component;
+
+@Component
+class DatabaseService {
+    public void connect() {
+        System.out.println("Connecting to database...");
+    }
+}
+
+@Component
+class UserService {
+    private final DatabaseService databaseService; // Dependency
+
+    // Constructor Injection
+    @Autowired
+    public UserService(DatabaseService databaseService) {
+        this.databaseService = databaseService;
+    }
+
+    public void performUserOperation() {
+        databaseService.connect();
+        System.out.println("Performing user operation...");
+    }
+}
+
+
+2] Setter Injection (Not recommended) :
+DisAdvantage :
+Can lead to objects in an invalid state if dependencies are not set.
+
+Example :
+
+import org.springframework.stereotype.Component;
+
+@Component
+class EmailService {
+    public void sendEmail() {
+        System.out.println("Sending email...");
+    }
+}
+
+@Component
+class NotificationService {
+    private EmailService emailService; // Dependency
+
+    // Setter Injection
+    @Autowired
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
+    }
+
+    public void sendNotification() {
+        if (emailService != null) {
+            emailService.sendEmail();
+        }
+        System.out.println("Sending notification...");
+    }
+}
+
+Note : Setter method will get called automatically, but use @AutoWired annotation.
+ 

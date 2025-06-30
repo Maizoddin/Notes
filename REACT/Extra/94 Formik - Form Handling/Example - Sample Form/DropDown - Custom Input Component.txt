@@ -1,0 +1,20 @@
+import React from "react";
+
+const DropDown = ({ label, name, id, data, ...prop }) => {
+
+  return (
+    <div>
+      <label htmlFor={id}>{label} :</label>
+      <select name={name} {...prop}>
+        <option value="">Select</option>
+        {data.map((option) => (
+          <option value={option.key} key={option.key}>
+            {option.description}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
+
+export default DropDown;

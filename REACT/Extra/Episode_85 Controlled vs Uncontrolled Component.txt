@@ -1,0 +1,91 @@
+Controlled vs Uncontrolled components
+
+Controlled Components
+Definition: A component where React controls the state of the input via useState or another state management mechanism.
+Behavior: The input's value is bound to a React state, and changes to the input are handled through onChange handlers.
+Advantages:
+Easier to maintain and debug as the state is predictable.
+Allows for form validation and complex interactions.
+Use Case: When you need to validate, track, or manipulate user input.
+Example of a Controlled Component:
+import React, { useState } from "react";
+
+const ControlledInput = () => {
+  const [value, setValue] = useState("");
+
+  const handleChange = (e) => {
+    setValue(e.target.value); // React manages the input value
+  };
+
+  const handleSubmit = () => {
+    alert(`Submitted value: ${value}`);
+  };
+
+  return (
+    <div>
+      <input value={value} onChange={handleChange} placeholder="Enter text" />
+      <button onClick={handleSubmit}>Submit</button>
+    </div>
+  );
+};
+
+export default ControlledInput;
+
+
+
+------------------------------------------------------
+
+Uncontrolled Component :
+Definition: A component where the input value is controlled by the DOM itself, not by React.
+Behavior: The input's value is managed directly by the browser's DOM. Accessing the value requires using useRef or similar.
+Advantages:
+Simpler for basic use cases or when integration with non-React libraries is required.
+Less boilerplate for small forms.
+Use Case: When you need minimal interaction with the form data.
+Example of an Uncontrolled Component:
+
+import React, { useRef } from "react";
+
+const UncontrolledInput = () => {
+  const inputRef = useRef();
+
+  const handleSubmit = () => {
+    alert(`Submitted value: ${inputRef.current.value}`); // Accessing DOM value
+  };
+
+  return (
+    <div>
+      <input ref={inputRef} placeholder="Enter text" />
+      <button onClick={handleSubmit}>Submit</button>
+    </div>
+  );
+};
+
+export default UncontrolledInput;
+
+
+
+===============================================
+
+When to Use Which?
+Controlled Components are preferable for:
+Real-time input validation.
+Interactive forms with dynamic fields or conditional rendering.
+When you need to track or manipulate input values.
+
+Uncontrolled Components are suitable for:
+Simple forms with minimal logic.
+Integrating with non-React libraries (e.g., file uploads, third-party tools).
+
+
+
+
+
+
+
+
+
+
+
+
+

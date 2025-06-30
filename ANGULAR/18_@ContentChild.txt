@@ -1,0 +1,26 @@
+@ContentChild
+
+Note : 
+* It is used to get access of projected content element.
+* We can access that element in our (.ts) file using @ContentChild
+* These elements are accessible only after ngAfterContentInit hook.
+
+Example :
+
+Example :
+
+parent.html
+<h1>This is parent component</h1>
+<child> 
+  <span #localRef> Example </span> 
+</child>
+
+child.html
+<h1>This is child component</h1>
+<ng-content></ng-content>
+
+child.ts
+@ContentChild('localRef') ele! : ElementRef;
+onClick(){
+    console.log(this.ele.nativeElement.textContent)
+}

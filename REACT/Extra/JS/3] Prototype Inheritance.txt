@@ -1,0 +1,248 @@
+ProtoType Inheritance :
+
+__proto__ :
+
+In js each object has property called "__proto__",  which will be an object.
+When we try to access any property on the object then js first checks the property in the object's own property and then it checks that property inside that object's "__proto__" object and finally returns value if present.
+
+object's  __proto__  points to one object and 
+__proto__ object's  __proto__ points to null
+
+Example :
+const person = {
+  name:"John",
+  age:"22",
+  contact : "9999999999",
+  status:"Active"
+}
+
+If I try to access any property then first it checks in objects property if not present then checks in that objects __proto__ which is again an object.
+
+======================================================================================
+
+Inheritance :
+const person = {
+  name:"John",
+  age:"22",
+  contact : "9999999999",
+  status:"Active"
+}
+
+const p2 = Object.create(person)
+console.log(p2.name) // John
+
+So here p2 will be an empty object but it's __proto__ will be pointing to person object.
+
+So if we write 
+p2.__proto__.name = "Alex";
+then it will change the person object's name value because p2's __proto__ is pointing to person object
+
+It's similar to 
+const p2 = {
+  __proto__:person
+}
+
+=========================================================================================
+
+Base class will be having the property "prototype" and instance will be having the property "__proto__".
+
+Object's __proto__ will point to base classes prototype
+
+Example :
+class User {
+    constructor(name){
+        this.name = name
+    }
+    getInformation(){
+        console.log(this.name)
+    }
+}
+
+const u = new User("John");
+
+// User.prototype     OR     u.__proto__
+     {
+	constructor:(){},
+	getInformation:(){}
+     }
+
+// It gives all the methodes
+
+So behind the scene when we create an object of the class then what js does behind the scene is
+const u = {
+  __proto__ : User.prototype
+}
+
+
+so if we want to create an object then we can do like 
+const obj = {
+  __proto__ : User.prototype 
+ }
+
+
+
+User.call(obj, "John")
+obj.getInformation()
+
+
+OR
+
+const obj = Object.create(User.prototype)
+User.call(obj, "Maaz")
+================================================================================================
+
+In js everything is object
+Example 1] :
+
+const name = "John";     
+// will be equal to 
+   const name = new String("John")  
+
+// so it will be like 
+   name.__proto__ = String.prototype
+   
+
+so we have access to all the methodes of the String class.
+
+Example 2] :
+const num = 100;
+
+// const num = new Number(100);
+// num.__proto__ = Number.prototype
+
+=================================================================================================
+
+const name = {
+    fname:"John",
+    lname:"Muller"
+}
+
+const job = {
+    company : "TCS",
+    role : "Software Engineer",
+    __proto__:name
+}
+
+const info = {
+    __proto__ : job
+}
+
+console.log(info.role)
+console.log(info.fname)
+
+=================================================================================================
+
+
+class Person{
+    constructor(name){
+        this.name = name
+    }
+    printName(){
+        console.log(this.name)
+    }
+}
+
+const p1 = new Person("John")
+p1.__proto__.greet = function(){
+    console.log(`Good Morning ${this.name}`)
+}
+
+const p2 = new Person("Shane")
+p2.greet()
+
+=================================================================================================
+String.prototype.finalLen = function(){
+    return this.trim().length
+}
+
+const name = "Maaz    "
+const len = name.finalLen()
+
+console.log(len)
+// 4
+=================================================================================================
+In js class is just a syntactical sugar but behind the scene it uses function constructor, proptotypal inheritance only
+
+Example :
+Class Based :
+class Parent {
+    constructor(name) {
+        this.name = name;
+    }
+
+    greet() {
+        console.log(`Hello, ${this.name}`);
+    }
+}
+
+class Child extends Parent {
+    constructor(name, age) {
+        super(name); // Calls the Parent constructor
+        this.age = age;
+    }
+
+    introduce() {
+        console.log(`I am ${this.name}, and I am ${this.age} years old.`);
+    }
+}
+
+const child = new Child("Maaz", 25);
+child.greet();        // Output: Hello, Maaz
+child.introduce();    // Output: I am Maaz, and I am 25 years old.
+
+----
+
+Functional Constructor
+function Parent(name) {
+    this.name = name;
+}
+
+Parent.prototype.greet = function () {
+    console.log(`Hello, ${this.name}`);
+};
+
+function Child(name, age) {
+    // Call the Parent constructor with `this`
+    Parent.call(this, name); 
+    this.age = age;
+}
+
+// Set up inheritance by linking prototypes
+Child.prototype = Object.create(Parent.prototype);
+
+// Set the `constructor` property back to `Child`
+Child.prototype.constructor = Child;
+
+// Add a new method to Child's prototype
+Child.prototype.introduce = function () {
+    console.log(`I am ${this.name}, and I am ${this.age} years old.`);
+};
+
+const child = new Child("Maaz", 25);
+child.greet();        // Output: Hello, Maaz
+child.introduce();    // Output: I am Maaz, and I am 25 years old.
+
+
+-----------
+
+Note : 
+If we create introduce function directly inside Child function then each instance will get separate copy of that function and it will create new one each time (waste of memory).
+So add it to the prototype.
+Even when we create class and inside that if we create mehodes then it add's it to that classes prototype only.
+
+===================================================================================================
+
+function Fun(){
+    this.name = "Maaz";
+    this.greet= function(){
+        console.log("Greeting...")
+    }
+}
+
+const f = new Fun()
+f.greet()
+
+===================================================================================================
+
+Note : 
+We should never modify or use __proto__

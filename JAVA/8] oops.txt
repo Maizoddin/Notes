@@ -1,0 +1,113 @@
+Key concepts of OOPS :
+1] Inheritance
+2] Polymorphism
+3] Encapsulation
+4] Abstraction
+5] Data hiding
+
+Class : 
+Class is a blue print of an object
+
+Object :
+Object is an instance of a class
+
+Example :
+
+public class Main {
+    public static void main(String[] args) {
+        Box b1 = new Box();
+        b1.setDimentions(2, 3, 4);
+        b1.showDimentions();
+    }
+}
+
+
+class Box {
+    int length, bredth, height;
+
+    void setDimentions(int len, int bred, int hgt) {
+        length = len;
+        bredth = bred;
+        height = hgt;
+    }
+
+    void showDimentions() {
+        System.out.println("Length : " + length + " Bredth : " + bredth + " Height : " + height);
+    }
+}
+
+===========================================================================================================
+static :
+static member means it belongs to the class and not to any instance.
+We can use static keyword for : variable, methodes, inner class, block
+
+1] static variables :
+static variables are initialized to default value.
+static variable are created only once.
+static variables can be accessed using both classname and reference.
+instance member function can access both static and instance variables.
+static functions can access only static variables.
+Example:
+class Box {
+    static int height; // static variables
+    int width; // instance variables
+
+    void setWidth(int wid) {
+        width = wid;
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Box b = new Box();
+        b.setWidth(100);
+        System.out.println(b.width);
+        System.out.println(Box.height);
+        System.out.println(Box.height);
+    }
+}
+
+
+
+2] static Methods:
+static methodes belongs to class.
+static methodes can be accessed using both classname and reference.
+static methodes can access only static variables.
+We should make methode as static when it's not using any instance variables.
+
+Example :
+class Main {
+    public static void main(String[] args) {
+        Account user = new Account();
+        Account.setBranch("Union");
+        user.setValues(1234, "John");
+        user.printDetails();
+    }
+}
+
+class Account {
+    static String branch;
+    int accountNumber;
+    String userName;
+
+    //    static method
+    static void setBranch(String brnch) {
+        branch = brnch;
+    }
+
+    void setValues(int accNo, String name) {
+        accountNumber = accNo;
+        userName = name;
+    }
+
+    void printDetails() {
+        System.out.println("Name : " + userName + "\nAccount No : " + accountNumber + "\nBranch : " + branch);
+    }
+}
+
+
+
+
+
+
+

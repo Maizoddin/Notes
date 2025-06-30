@@ -1,0 +1,53 @@
+Iterators :
+Note : 
+We can use break keyword to break the loop.
+We can use continue to skip the current iteration.
+
+1] while(){}
+   Enrty Control
+
+2] do{
+      
+     }while();
+    
+   Exit Control
+   Atleast one time block will execute
+
+3] for(int i = 1; i <= 10; i ++){}
+
+In java we have lable,
+We can use label for break and continue, we should give label to our loop and then we should mention that label name which we want to break or continue;
+
+Example :
+Without label :
+	int num = 1;
+        for (int i = 1; i < 5; i++) {
+            for (int j = 1; j <= 5; j++) {
+                System.out.println(i + j);
+                if (i + j > 3) {
+                    break;
+                }
+            }
+        }
+
+It will just break from inner loop.
+
+With label :
+	int num = 1;
+        outerLoop:for (int i = 1; i < 5; i++) {
+            for (int j = 1; j <= 5; j++) {
+                System.out.println(i + j);
+                if (i + j > 3) {
+                    break outerLoop;
+                }
+            }
+        }
+It breaks the outer loop.
+
+
+4] for-each :
+It can be used only on collection of values.
+ int []nums = {24,56,78,90};
+        for(int val:nums){
+            System.out.println(val);
+ }

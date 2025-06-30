@@ -1,0 +1,13 @@
+Directives :
+
+1] Structural Directives :
+   These directives modifies the structure of the DOM by adding or removing elements.
+   a] *ngIf
+   b] *ngFor
+   c] [ngSwitch]
+
+2] Attribute Directives :
+   These directives does not change the structure of the DOM but modify the existing element or component.
+   a] [ngStyle]
+   b] [ngClass]
+

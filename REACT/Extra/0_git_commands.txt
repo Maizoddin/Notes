@@ -1,0 +1,163 @@
+GIT NOTES
+
+GIT :
+It is a software to create local repository.
+
+GIT-HUB, GUT-LAB, BIT-BUCKET :
+These are service providers to host our local repository on cloud.
+
+SETUP :
+* Download and Install GIT
+* Change the configuration by using following commands
+  i] git config --global --list
+     // List out all the git configuration
+  ii] git config --global user.name "JOHN"
+      // Set the name
+  iii] git config --global user.email "john@gmail.com"
+      // Set the email
+
+* Now check the GIT Version 
+  git --Version
+
+GIT FLOW :
+ Box 1] LOCAL WORKING DIRECTORY
+ Box 2] LOCAL GIT REPOSITORY
+       It has 2 Inner Boxes 
+       i] STAGING AREA
+       ii] COMMIT OBJECT
+ Box 3] REMOTE REPOSITORY
+
+ MOVEMENT : 
+ WORKING DIRECTORY -> STAGING AREA -> COMMIT OBJECT -> REMOTE REPOSITO
+
+BASIC COMMANDS :
+1] git init 
+   // Initialize empty git repository in local machine
+
+2] git status 
+   // Shows current status
+
+3] git remote add origin https://github.com/John/RepoName.git
+   // It will add remote repository to our local configuration
+   // origin : It refers to the remote repository URL
+
+4] git add fileName    OR    git add .
+   // It will move file from working directory to staging AREA
+
+5] git commit -m "MESSAGE"
+   // It will move changes from staging area to commit OBJECT
+   // Note : Always use present tense for commit messages.
+             Example : git commit -m "Add Authentication"
+    // Important :
+       when we do commit it will take snapshot of current status and stores it into local repo
+
+5] git push origin main 
+   // It will move changes from Local repository to Remote repository.
+   // main : It refers to local branch which we want to push 
+   // Important :  * git push origin feature
+                  It will push from local branch feature to remote branch feature and if the remote branch with the name feature doesn't exist the it will create one
+                  * git push origin feature:main
+                    It will push from local branch feature to remote branch main
+
+6] git pull origin main
+   // It will pull the latest code from Remote repository to our Local branch
+   // main : It refers to remote branch from which we want to pull the content
+
+7] git remote -v 
+   // It will list all the remote repositories associated with our local repository
+
+8] git log --oneline
+   // It will list the commit history
+
+
+BRANCH :
+1] git branch
+   // It will list all the local branches
+
+2] git branch -r
+   // It will list all the remote branches
+
+3] git branch -a
+   // It will list both local and remote branches
+
+4]   git fetch --prune
+    // It will fetch the updates list of remote branches
+
+5] git branch branchName 
+   // It will create new branch
+
+6] git checkout -b branchName   OR   git switch -c branchName
+   // It will create and switch to new branch
+
+7] git checkout branchName   OR   git switch branchName
+   // It will switch to specified branch
+
+8] git stash
+   // It allows to save the changes temprarily without commiting
+   // It is usefule when we want to switch to other branch without commiting the changes of current branch.
+
+9] git stash pop
+   // It brings back the stashed content
+   // So once we returns back to previos branch then we can use this command which will bring all the uncommitted content back.
+
+10] git branch -D branchName
+   // It will delete local branch 
+
+11] git push origin --delete branchName
+   // It will delete remote branch
+
+12] git branch -M newName
+   // It will rename the current branch
+
+13] git merge branchName
+    // It will merge the specified branch to the current branch
+    // After merge all the commits of new branch will come to current branch
+
+
+MOVE TO PREVIOUS COMMITS :
+1] git checkout commitID   OR   git checkout HEAD~1
+2] git checkout main
+   // It is used to move back to original commit where we were.
+
+
+FINDING THE DIFFERENCE :
+1] git diff 
+   // It shows the DIFFERENCE between current working directory and staging area
+2] git diff --staged
+   // It shows the difference between staging area and previous commit 
+
+
+TO REMOVE/UNDO PREVIOUS COMMIT
+git reset --hard HEAD~1
+
+
+.gitignore :
+ // GIT will not track and push the files which are mention inside .gitignore file.
+ Example : /node_modules
+
+
+CLONE :
+git clone https://github.com/username/reponame.git
+// It will clone the remote repository to local system with all the branches
+// Only main branch will be visible but to see other branches we should switch there manually using  'git checkout branchname'
+
+
+DIFFERENCE BETWEEN HTTPS AND SSH :
+1] HTTPS : while cloning if we choose https url then every time we push the code we should enter our credentials
+2] SSH : while cloning if we choose ssh then we should create one ssh key using "ssh-keygen -o" and then we should add this ssh key in our account so every time we push it will automatically compare our local systems ssh key and github's remote key and it will allow us to push 
+
+
+OPEN SOURCE CONTRIBUTION :
+STEPS
+1] Fork the repository
+   //This will create the local copy of that repository in our account
+2] Clone the Forked repository in local machine
+3] Create a new branch
+4] Develop code
+5] Commit all this code to newly created local branch
+6] Push this branch to remote repository of our Forked repository
+7] Create a pull request
+
+    
+IMPORTANT :
+To push code to others repository we should be added there as a contributor then we only we can push or pull.

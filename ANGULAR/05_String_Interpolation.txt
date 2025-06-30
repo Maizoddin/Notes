@@ -1,0 +1,26 @@
+String Interpolation {{ }} : 
+
+Note : One way binding from the component to the view
+
+----
+Example :
+
+// app.component.ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  message = 'Hello, Angular!';
+  user = {name:"John", id:1}
+}
+
+----
+
+<!-- app.component.html -->
+<p>{{ message }}</p>
+<p>{{ user.name }}</p>
+

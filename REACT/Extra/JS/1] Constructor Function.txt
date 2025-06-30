@@ -1,0 +1,67 @@
+Normal Object Creation :
+
+
+const person1 = {
+    name:"Maaz",
+    role:"Admin",
+    getInfo : function(){
+        console.log(this.name, "is", this.role)
+    }
+}
+
+
+const person2 = {
+    name:"John",
+    role:"User",
+    getInfo : function(){
+        console.log(this.name, "is", this.role)
+    }
+}
+
+DisAdvantages : 
+1] For each person we should keep on creating the same structure again and again. 
+2] If we want to add any new property then we should add it everywhere manually.
+
+Solution :
+Before ES6 = Constructor Function
+After ES6 = Class
+
+======================================================
+
+Constructor Function :
+It follow's PascalCase
+
+function Person(name, role){
+    this.name = name;
+    this.role = role;
+    this.getInfo = function(){
+        console.log(this.name, "is", this.role)
+    }
+}
+
+const p1 = new Person("Maaz", "Admin");
+const p2 = new Person("John", "User")
+p1.getInfo()
+
+
+======================================================
+
+Class :
+It follows CamelCase
+
+class Person{
+    constructor(name, role){
+        this.name = name;
+        this.role = role;
+    };
+    age = 22;
+    getInfo = function(){
+        console.log(this.name, "is", this.role, this.age)
+    }
+}
+
+const p1 = new Person("Maaz", "Admin")
+const p2 = new Person("John", "User")
+p1.getInfo()
+
+=========================================================

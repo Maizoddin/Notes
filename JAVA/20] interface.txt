@@ -1,0 +1,213 @@
+Interface :
+An interface in Java is a blueprint of a class that defines a set of abstract methods (methods without a body). It is used to achieve abstraction and multiple inheritance in Java.
+
+
+* Interface do not have constructor.
+* Object creation is not allowed.(but we can create reference variable)
+* We should not specify any access specifier for members inside interface.
+* methods are bydefault public and abstract.
+* variables are bydefault public, static and final.
+* infront of methods we can't write static, private.
+* Child class must override all the methods which are abstract in interface else even child class should be declared as abstract.
+* If parent class has already method with the same name as that of method in the interface then even if child doesn't override it will be fine because method will already be present in the child because of inheritance from parent.
+
+* In java 8 we got default and static method
+
+Example :
+interface Area{
+    double PI = 3.14;  // public, static, final
+    double getArea();  // public, abstract
+}
+
+class Circle implements Area {
+    private int radius;
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+    public double getArea() {
+        return PI * this.radius * this.radius;
+    }
+}
+
+
+* implements keyword is used.
+* All the interface methods in the child should be public because in interface they are bydefault public.
+* Child class should implement all the interface methods else child class should be declared as abstract.
+
+Important :
+Class can implement multiple interfaces.
+
+
+Example :
+public class Test {
+    public static void main(String[] args) {
+        Child child = new Child();
+        child.displayOne();
+        child.displayTwo();
+    }
+}
+
+
+class Parent {
+}
+
+interface one {
+    void displayOne();
+}
+
+interface two {
+    void displayTwo();
+}
+
+class Child extends Parent implements one, two {
+    public void displayOne() {
+        System.out.println("ONE");
+    }
+
+    public void displayTwo() {
+        System.out.println("TWO");
+    }
+}
+
+----------
+
+Important :
+One interface can extend multiple interfaces.
+But then the child class which implements this interface should override all the methods.
+
+Example :
+class Parent {
+}
+
+interface one {
+    void displayOne();
+}
+
+interface two {
+    void displayTwo();
+}
+
+interface three extends one, two {
+    void displayThree();
+}
+
+class Child extends Parent implements three {
+    public void displayOne() {
+        System.out.println("ONE");
+    }
+
+    public void displayTwo() {
+        System.out.println("TWO");
+    }
+
+    public void displayThree() {
+        System.out.println("THREE");
+    }
+}
+
+=====================================================================
+
+/*
+ * In Java, interfaces can have methods with implementation bodies using the `default` keyword || `static` keyword. This will be an instance||static methode.
+* static method can be accessed using Interface name
+* Instance method can be accessed using child object || (If accessing inside instance methode of child class then can use InterfaceName.super.method)
+ * 
+ * 🔍 **Reason:**
+ * Let's say a class implements an interface with 3 abstract methods. Later, if the interface is updated 
+ * to add 2 more methods, the class would normally break because it hasn't provided implementations 
+ * for the new methods. 
+ *
+ * To prevent this issue and maintain backward compatibility, Java 8 introduced **default methods** in interfaces. 
+ * These methods have a default implementation, so existing classes won't break when new methods are added 
+ * to an interface.
+ *
+ * ✅ **Syntax Example:**
+ * default void play() {
+ *     System.out.println("Playing default behavior");
+ * }
+ *
+ * 🚩 **Multiple Inheritance Conflict:**
+ * If a class implements **two interfaces** that both define a `default` method with the same name, 
+ * the compiler will throw an error due to ambiguity. 
+ * 
+ * To resolve this conflict, the class **must override** the conflicting default method and provide 
+ * its own implementation.
+ * 
+ * ✅ **Example of Conflict Resolution:**
+ * 
+ * interface A {
+ *     default void play() {
+ *         System.out.println("Play from A");
+ *     }
+ * }
+ * 
+ * interface B {
+ *     default void play() {
+ *         System.out.println("Play from B");
+ *     }
+ * }
+ * 
+ * class C implements A, B {
+ *     @Override
+ *     public void play() {   // Must override to resolve conflict
+ *         A.super.play();    // Optionally, call a specific interface's method
+ *     }
+ * }
+ * 
+ * public class Test {
+ *     public static void main(String[] args) {
+ *         C obj = new C();
+ *         obj.play();   // Calls the overridden method in class C
+ *     }
+ * }
+ */
+------------------------------------------------------------------------
+Example of static and default(instance) methods in interface
+
+interface MyInterface {
+    // Default method
+    default void defaultMethod() {
+        System.out.println("This is a default method.");
+    }
+
+    // Static method
+    static void staticMethod() {
+        System.out.println("This is a static method.");
+    }
+}
+
+class MyClass implements MyInterface {
+    // Overriding the default method (optional)
+    @Override
+    public void defaultMethod() {
+        System.out.println("Overridden default method.");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        MyClass obj = new MyClass();
+        obj.defaultMethod(); // Calls overridden default method
+        MyInterface.staticMethod(); // Calls static method
+    }
+}
+
+=============================================================================
+
+An interface can also contain private method which can be used as a helper method inside default method of interface.
+It can't be used or called from outside of interface.
+Even static method of interface also can't use it.
+
+Example :
+interface Test {
+    private void helper() {
+        System.out.println("Helper");
+    }
+
+    default void d() {
+        this.helper();
+    }
+    
+}

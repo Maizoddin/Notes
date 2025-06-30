@@ -1,0 +1,45 @@
+Conditional statements :
+
+Note : As java is strictly typed language always the condition value should be of type boolean.
+
+if(bool){}
+else{}
+
+-----------
+
+if(){}
+else if(){}
+else{}
+
+-----------
+
+Conditional :
+? :
+
+Note : It must return a result of the expression.
+
+Valid :
+String message = score > 90 ? "Good" : "Bad"
+OR
+System.out.println(score > 90 ? "Good" : "Bad") 
+
+Invalid :
+score > 90 ? System.out.println("Good") : System.out.println("Bad");
+
+-----------
+
+	String day = "thursday";
+        switch (day) {
+            case "monday":
+                System.out.println("It's Monday");
+                break;
+            case "wednesday":
+                System.out.println("It's Wednesday");
+                break;
+            case "thursday":
+                System.out.println("It's Thurday");
+                break;
+            default:
+                System.out.println("It's Sunday");
+        }
+
