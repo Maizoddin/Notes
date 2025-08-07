@@ -1,0 +1,14 @@
+[1] Spring Boot starts
+     ↓
+[2] Scans for @Component classes → finds MyService
+     ↓
+[3] Registers BeanPostProcessors (e.g., for @Value)
+     ↓
+[4] Instantiates MyService via reflection
+     ↓
+[5] BeanPostProcessor processes @Value
+     - Resolves ${app.name}
+     - Injects value using reflection
+     ↓
+[6] Bean ready → added to container
+

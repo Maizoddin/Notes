@@ -1,0 +1,145 @@
+ANNOTATION :
+* Annotations can be used to give instructions to the compiler, runtime, or frameworks.
+* Built-in Java Annotations : @Override, @FunctionalInterface
+
+Annotation Targets :
+ElementType.TYPE – class, interface
+ElementType.METHOD – method
+ElementType.FIELD – fields
+ElementType.PARAMETER – parameters
+ElementType.CONSTRUCTOR – constructors
+
+Retention Policies :
+SOURCE – Discarded during compilation.
+CLASS – Present in .class file, not at runtime.
+RUNTIME – Available at runtime via reflection. ✅
+
+
+Example :
+Step 1: Create the Annotation
+
+import java.lang.annotation.*;
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface IncrementBy100 {
+}
+
+
+Step 2: Create a Class with That Annotation
+public class Demo {
+    @IncrementBy100
+    private int salary = 500;
+
+    public void print() {
+        System.out.println("Salary: " + salary);
+    }
+}
+
+Step 3: Create the Annotation Processor [This is where the real logic happens]
+import java.lang.reflect.Field;
+
+public class IncrementProcessor {
+    public void process(Object object) throws Exception {
+        Class<?> clazz = object.getClass();
+
+        for (Field field : clazz.getDeclaredFields()) {
+            if (field.isAnnotationPresent(IncrementBy100.class)) {
+                if (field.getType() == int.class) {
+                    field.setAccessible(true);
+                    int currentValue = field.getInt(object);
+                    field.setInt(object, currentValue + 100);
+                } else {
+                    throw new IllegalArgumentException("@IncrementBy100 can only be applied to int fields.");
+                }
+            }
+        }
+    }
+}
+
+
+Step 4: Demo Runner
+public class Main {
+    public static void main(String[] args) throws Exception {
+        Demo demo = new Demo();
+
+        System.out.println("Before Processing:");
+        demo.print(); // Salary: 500
+
+        IncrementProcessor processor = new IncrementProcessor();
+        processor.process(demo);
+
+        System.out.println("After Processing:");
+        demo.print(); // Salary: 600
+    }
+}
+==================================================================================================================
+
+ANNOTATION WITH FEILDS :
+1. Define a Custom Annotation
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.annotation.ElementType;
+
+@Retention(RetentionPolicy.RUNTIME) // Required for reflection
+@Target({ElementType.METHOD, ElementType.TYPE}) // Can be used on class or method
+public @interface CustomInfo {
+    String message();
+    int priority() default 1; // default value
+}
+
+
+2. Use the Annotation
+@CustomInfo(message = "This is a demo", priority = 5)
+public class MyService {
+
+    @CustomInfo(message = "Running important task")
+    public void run() {
+        System.out.println("Running task...");
+    }
+}
+
+3. Read Annotation Values via Reflection
+import java.lang.reflect.Method;
+
+public class AnnotationProcessor {
+    public static void main(String[] args) throws Exception {
+        // Load class
+        Class<MyService> clazz = MyService.class;
+
+        // Check class-level annotation
+        if (clazz.isAnnotationPresent(CustomInfo.class)) {
+            CustomInfo annotation = clazz.getAnnotation(CustomInfo.class);
+            System.out.println("Class Annotation → message: " + annotation.message() + ", priority: " + annotation.priority());
+        }
+
+        // Check method-level annotations
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(CustomInfo.class)) {
+                CustomInfo annotation = method.getAnnotation(CustomInfo.class);
+                System.out.println("Method " + method.getName() + " → message: " + annotation.message() + ", priority: " + annotation.priority());
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

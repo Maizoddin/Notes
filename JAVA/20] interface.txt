@@ -120,9 +120,8 @@ class Child extends Parent implements three {
  * for the new methods. 
  *
  * To prevent this issue and maintain backward compatibility, Java 8 introduced **default methods** in interfaces. 
- * These methods have a default implementation, so existing classes won't break when new methods are added 
- * to an interface.
- *
+ * These methods have a default implementation, so existing classes won't break when new methods are added to an interface.
+ 
  * ✅ **Syntax Example:**
  * default void play() {
  *     System.out.println("Playing default behavior");

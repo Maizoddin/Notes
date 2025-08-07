@@ -1,0 +1,92 @@
+API FLOW :
+
+                ┌────────────────────┐
+                │  Embedded Tomcat   │ ← starts on port 8080 [Servlet Container]
+                └────────┬───────────┘ 
+                         │
+                         ▼
+                ┌────────────────────┐
+                │ DispatcherServlet  │ ← Front Controller Servlet
+                └────────┬───────────┘
+                         │
+      ┌──────────────────┼─────────────────────┐
+      ▼                  ▼                     ▼
+HandlerMapping     HandlerAdapter         ViewResolver
+ (maps URL to      (calls controller      (builds response view)
+ controller)        method)
+
+
+Servlet Container :
+* It is a Java server that runs web applications
+* Examples: Tomcat
+* What does it do?
+  Listens to HTTP requests on a port (e.g., 8080).
+
+1. Embedded Tomcat Is Started
+* Spring Boot starts Tomcat server internally BY SpringApplication.run(MyApp.class, args);
+* It also creates DispatcherServlet AND 
+  does component scanning:
+   - It finds all @RestController, @Controller beans.
+   - It maps URLs to methods like
+     - "/hello" (GET) → HelloController.hello()
+     - "/users" (POST) → UserController.createUser()
+
+
+2. DispatcherServlet (Front Controller)
+* Acts as the central point for handling all web requests.
+* Receives all requests from the Servlet Container.
+* HandlerMapping finds the matching method
+* HandlerAdapter invokes the matching method
+* Response is returned via HttpServletResponse
+
+
+
+FLOW :
+Browser sends HTTP request → 
+     Tomcat receives it (Servlet Container) →
+         Tomcat forwards to DispatcherServlet →
+             DispatcherServlet asks HandlerMapping →
+                 HandlerMapping returns correct controller method →
+                     DispatcherServlet calls controller →
+                         Response sent back through Tomcat to client.
+
+
+======================================================================================
+
+FLOW WITH INTERCEPTORS :
+
+           ┌─────────────────┐
+           │ Embedded Tomcat │
+           └────────┬────────┘
+                    │
+           ┌────────▼────────┐
+           │DispatcherServlet│
+           └────────┬────────┘
+                    │
+           ┌────────▼────────┐
+           │ HandlerMapping  │ → Finds HandlerExecutionChain
+           └────────┬────────┘
+                    │
+          ┌─────────┴──────────┐
+          │ Interceptor.preHandle │ ← Auth/Logging
+          └─────────┬──────────┘
+                    │
+           ┌────────▼────────┐
+           │ HandlerAdapter  │ → Invokes controller
+           └────────┬────────┘
+                    │
+          ┌─────────┴──────────┐
+          │ Interceptor.postHandle │ ← Add headers
+          └─────────┬──────────┘
+                    │
+           ┌────────▼────────┐
+           │  ViewResolver   │ ← Skips if @RestController
+           └────────┬────────┘
+                    │
+          ┌─────────┴────────────┐
+          │ Interceptor.afterCompletion │ ← Cleanup
+          └─────────┬────────────┘
+                    │
+           ┌────────▼────────┐
+           │  HTTP Response  │
+           └─────────────────┘

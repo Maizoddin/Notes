@@ -60,7 +60,31 @@ public List<Seat> getAndBookFreeSeats() {
 }
 
 
+----
+SERIALIZABLE PUTS LOCKS
+FOR READ IT PUTS READ LOCK - ROW LEVEL LOCK.
 
+T1 and T2 both started TRANSACTION
+
+SCENARIO 1]
+T1 
+SELECT name FROM users WHERE id=2;
+
+T2
+CAN READ ANY ROW
+CAN ADD NEW ENTRY 
+BUT CAN'T UPDATE/DELETE same row[until T1 commits]
+
+SCENARIO 2] 
+T1 
+UPDATE users SET name='x' WHERE id=2;
+
+T2 
+CAN'T READ/WRITE same row[until T1 commits]
+CAN READ/UPDATE/DELETE OTHER ROWS
+
+
+===================================================================================
 BASIC QUERIES FOR TESTING ::::
 
 SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;

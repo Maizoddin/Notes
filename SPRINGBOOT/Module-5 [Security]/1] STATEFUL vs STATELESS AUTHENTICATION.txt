@@ -1,0 +1,102 @@
+1. Session-Based Authentication (Stateful)
+
+Login Flow :
+
+1] User submits credentials:
+   POST /login
+   { "username": "alice", "password": "secret123" }
+
+2] Server validates credentials:
+   Checks against users table in DB:
+
+   id	username	password_hash
+   101	alice	        $2a$10$...
+
+3] Server creates session:
+   Generates a unique session ID (e.g., SESS_abc123).
+   Stores session data in sessions table:
+   session_id	 user_id	data	                expires_at
+   SESS_abc123	 101	   { role: "user" }	    2025-07-20 12:00:00
+
+4] Server responds:
+   Sends session_id as a cookie:
+   HTTP/1.1 200 OK
+   Set-Cookie: session_id=SESS_abc123; Path=/; HttpOnly
+
+
+Subsequent Request Flow :
+1] User requests profile:
+   http
+   GET /profile
+   Cookie: session_id=SESS_abc123
+
+2] Server validates session:
+   Queries DB: SELECT * FROM sessions WHERE session_id = 'SESS_abc123'.
+   If valid, fetches user data from users table using user_id=101.
+   Server responds with profile data.
+
+3] Database State
+   sessions table grows with active sessions.
+   Sessions must be manually purged (e.g., cron job) when expired.
+
+
+=================================================================
+2. JWT Authentication (Stateless) :
+
+Login Flow :
+
+1] User submits credentials:
+   http
+   POST /login
+   { "username": "alice", "password": "secret123" }
+
+2] Server validates credentials:
+   Checks against users table (same as above).
+
+3] Server generates JWT:
+   Creates a token with embedded data:
+  {
+  "sub": "101",          // User ID
+  "role": "user",
+  "exp": 1753041600      // Expiry timestamp
+  }
+
+  Signs it with a secret key (e.g., my_secret).
+  Does NOT store anything in the database.
+
+4] Server responds:
+   HTTP/1.1 200 OK
+   Set-Cookie: token=eyJhbGciOiJIUz...; Path=/; HttpOnly 
+
+
+Subsequent Request Flow :
+
+1] User requests profile:
+   GET /profile
+   Cookie: token=eyJhbGciOiJIUz...
+
+2] Server validates JWT:
+   Decodes the token using my_secret.
+   Verifies signature and expiry time (exp).
+   No database query for session validation.
+
+3] Server responds with profile data (uses sub:101 to fetch user data from DB if needed).
+
+Database State :
+No session storage!
+Only the users table exists (for credentials/user data).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

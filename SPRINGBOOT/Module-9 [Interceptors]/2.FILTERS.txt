@@ -1,0 +1,332 @@
+FILTERS :
+* A filter is a component in Java Servlet specification used to intercept requests and responses.
+
+* FLOW :
+  CLIENT -> SERVLET CONTAINER -> FILTERS -> DISPATCHER SERVLET -> INTERCEPTORS -> CONTROLLER
+
+*  Why Use Filters?
+   • CORS headers
+   • Authentication & Authorization
+   • Request/Response logging
+   • Response Modification
+   • Rate limiting, header manipulation
+
+* Filter Interface
+  It has doFilter() method.
+  It can run multiple times incase of internal forwarding to other route.
+
+Solution : "OncePerRequestFilter" class which has doFilterInternal() method.
+           [It's just a wrapper around Filter and it runs only once per request and autoregisters]
+
+Example of Filter :
+1] CorsFilter :
+package com.example.Learn.filters;
+
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.filter.OncePerRequestFilter;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+public class CorsFilter extends OncePerRequestFilter {
+    @Override
+    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        String origin = request.getHeader("Origin");
+
+        if(isOriginAllowed(origin)){
+            response.setHeader("Access-Control-Allow-Origin", origin);
+            response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
+            response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-API-KEY");
+            response.setHeader("Access-Control-Allow-Credentials", "true");
+            response.setHeader("Access-Control-Max-Age", "3600");
+
+            if("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+                response.setStatus(HttpServletResponse.SC_OK);
+                return;
+            }else {
+                chain.doFilter(request, response);
+            }
+        }else {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+    }
+
+    public boolean isOriginAllowed(String origin){
+        Set<String> origins = new HashSet<>();
+        origins.add("http://localhost:4200");
+        origins.add("http://localhost:3000");
+        return origins.contains(origin);
+    }
+}
+
+
+2] AuthenticationFilter :
+package com.example.authentication.filters;
+
+import com.example.authentication.security.JwtService;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+
+public class AuthenticationFilter extends OncePerRequestFilter {
+
+    private JwtService jwtService;
+    public AuthenticationFilter(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
+
+    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+
+        if (isPublicEndPoint(request)){
+            chain.doFilter(request, response);
+            return;
+        }
+
+        String token = getToken(request);
+
+        if(token == null || jwtService.validateAccessToken(token)){
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        Authentication authentication = jwtService.getAuthentication(token);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        chain.doFilter(request, response);
+
+    }
+
+    public boolean isPublicEndPoint(HttpServletRequest request){
+        return request.getRequestURI().startsWith("api/v1/auth/");
+    }
+
+    public String getToken(HttpServletRequest request){
+        String header = request.getHeader("Authorization");
+        if(header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
+        }
+        return null;
+    }
+
+}
+
+
+3] LoggingFilter :
+package com.example.Learn.filters;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+
+public class LoggingFilter extends OncePerRequestFilter {
+    private static final Logger log = LoggerFactory.getLogger(LoggingFilter.class);
+    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+
+        long startTime = System.currentTimeMillis();
+        try {
+            chain.doFilter(request, response);
+        }finally {
+            long duration = System.currentTimeMillis() - startTime;
+            log.info("{} {} - {}ms (Status : {})", request.getRequestURI(), request.getMethod(), duration, response.getStatus());
+        }
+    }
+}
+
+
+Registration :
+package com.example.authentication.config;
+
+import com.example.authentication.filters.AuthenticationFilter;
+import com.example.authentication.filters.CorsFilter;
+import com.example.authentication.security.JwtService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    private final JwtService jwtService;
+
+    public SecurityConfig(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception{
+        return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public AuthenticationFilter authenticationFilter(){
+        return new AuthenticationFilter(jwtService);
+    }
+
+    @Bean
+    public CorsFilter corsFilter(){
+        return new CorsFilter();
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
+        httpSecurity
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(corsFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(authenticationFilter(), CorsFilter.class);
+
+        return httpSecurity.build();
+    }
+}
+
+
+
+
+Note :
+Don't log request payload and response body in logs.
+Incase needed to log then wrap request and response in ContentCachingRequestWrapper and ContentCachingResponseWrapper these wrappers creates custom Input and Output streams which can be read twice.
+If we don't wrap and read the request in filter then when it goes to controller then stream will be empty. same for response.
+
+
+
+********************************************************************EXTRA****************************************************************
+import org.slf4j.MDC;
+import org.springframework.stereotype.Component;
+import java.util.UUID;
+
+@Component
+public class LoggingFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
+    private static final int MAX_PAYLOAD_LENGTH = 1000;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+        throws ServletException, IOException {
+        
+        // Skip logging for health checks
+        if (request.getRequestURI().contains("/health")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        long startTime = System.currentTimeMillis();
+        String requestId = UUID.randomUUID().toString();
+        MDC.put("requestId", requestId);
+
+        // Wrap request/resposne to capture payloads
+        ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(request);
+        ContentCachingResponseWrapper wrappedResponse = new ContentCachingResponseWrapper(response);
+
+        try {
+            // Log request details
+            logRequest(wrappedRequest);
+            
+            // Process request
+            filterChain.doFilter(wrappedRequest, wrappedResponse);
+            
+        } finally {
+            // Log response details
+            logResponse(wrappedRequest, wrappedResponse, startTime);
+            wrappedResponse.copyBodyToResponse();
+            MDC.clear();
+        }
+    }
+
+    private void logRequest(ContentCachingRequestWrapper request) {
+        StringBuilder msg = new StringBuilder()
+            .append("REQUEST: ")
+            .append(request.getMethod()).append(" ")
+            .append(request.getRequestURI());
+        
+        if (request.getQueryString() != null) {
+            msg.append("?").append(request.getQueryString());
+        }
+        
+        msg.append(" [Client: ").append(request.getRemoteAddr()).append("]");
+        
+        // Log headers in debug mode
+        if (logger.isDebugEnabled()) {
+            Collections.list(request.getHeaderNames()).forEach(headerName ->
+                msg.append("\n  ").append(headerName).append(": ").append(request.getHeader(headerName)));
+        }
+        
+        // Log body
+        byte[] content = request.getContentAsByteArray();
+        if (content.length > 0) {
+            String body = new String(content, StandardCharsets.UTF_8);
+            msg.append("\nBody: ").append(abbreviate(body, MAX_PAYLOAD_LENGTH));
+        }
+        
+        logger.info(msg.toString());
+    }
+
+    private void logResponse(ContentCachingRequestWrapper request, 
+                             ContentCachingResponseWrapper response, 
+                             long startTime) {
+        long duration = System.currentTimeMillis() - startTime;
+        
+        StringBuilder msg = new StringBuilder()
+            .append("RESPONSE: ")
+            .append(request.getMethod()).append(" ")
+            .append(request.getRequestURI())
+            .append(" - Status ").append(response.getStatus())
+            .append(" [").append(duration).append(" ms]");
+        
+        // Log headers in debug mode
+        if (logger.isDebugEnabled()) {
+            response.getHeaderNames().forEach(headerName ->
+                msg.append("\n  ").append(headerName).append(": ").append(response.getHeader(headerName)));
+        }
+        
+        // Log body
+        byte[] content = response.getContentAsByteArray();
+        if (content.length > 0) {
+            String body = new String(content, StandardCharsets.UTF_8);
+            msg.append("\nBody: ").append(abbreviate(body, MAX_PAYLOAD_LENGTH));
+        }
+        
+        logger.info(msg.toString());
+    }
+
+    private String abbreviate(String str, int maxLength) {
+        if (str.length() <= maxLength) return str;
+        return str.substring(0, maxLength) + "... [TRUNCATED]";
+    }
+}

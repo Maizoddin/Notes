@@ -1,0 +1,56 @@
+REFLECTION :
+* It allows a Java program to inspect and manipulate classes, interfaces, fields, methods, and constructors at runtime, even if they are private.
+* Reflection is part of the java.lang.reflect package and is commonly used in frameworks like Spring, Hibernate
+
+
+Why Use Reflection?
+* To modify the runtime behavior of applications.
+* To create instances, invoke methods, or access fields dynamically.
+
+Core Classes in Reflection API
+* Class<?>: Represents classes and interfaces.
+* Method: Represents methods of a class.
+* Field: Represents fields (variables) of a class.
+* Constructor: Represents constructors of a class.
+
+Example :
+Person.java :
+public class Person {
+    private String name = "John";
+
+    public void sayHello() {
+        System.out.println("Hello, my name is " + name);
+    }
+}
+
+
+ReflectionDemo.java :
+import java.lang.reflect.*;
+public class ReflectionDemo {
+    public static void main(String[] args) throws Exception {
+        // 1. Get Class object
+        Class<?> personClass = Class.forName("Person");
+
+        // 2. Create object dynamically
+        Object personObj = personClass.getDeclaredConstructor().newInstance();
+
+        // 3. Access private field
+        Field nameField = personClass.getDeclaredField("name");
+        nameField.setAccessible(true);  // allow access to private field
+        nameField.set(personObj, "Alice");
+
+        // 4. Call method
+        Method sayHelloMethod = personClass.getMethod("sayHello");
+        sayHelloMethod.invoke(personObj);  // prints: Hello, my name is Alice
+    }
+}
+
+
+✅ Pros:
+* Allows for flexible and dynamic code.
+* Enables tools and frameworks (e.g., Spring, Hibernate).
+
+❌ Cons:
+* Performance overhead: Slower than direct access.
+* Security risk: Can break encapsulation.
+* Complexity: Can make code harder to understand and maintain.
